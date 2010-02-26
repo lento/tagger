@@ -1,0 +1,4 @@
+recursive-include tagger/public *
+include tagger/public/favicon.ico
+recursive-include tagger/i18n *
+recursive-include tagger/templates *
