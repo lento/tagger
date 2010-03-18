@@ -31,12 +31,12 @@ def setup_schema(command, conf, vars):
     # Load the models
 
     # <websetup.websetup.schema.before.model.import>
-    from tagger.model import versioning
+    from tagger import model
     # <websetup.websetup.schema.after.model.import>
 
     
     # <websetup.websetup.schema.before.metadata.create_all>
     log.debug('Creating tables')
-    versioning.db_init()
+    model.metadata.create_all(bind=config['pylons.app_globals'].sa_engine)
     # <websetup.websetup.schema.after.metadata.create_all>
     transaction.commit()
