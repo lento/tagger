@@ -51,11 +51,11 @@ class ModelTest(object):
         """
         return {}
 
-    def test_create_obj(self):
+    def _obj_creation(self):
         """Model objects can be created"""
         pass
 
-    def test_query_obj(self):
+    def _obj_query(self):
         """Model objects can be queried"""
         obj = DBSession.query(self.klass).one()
         for key, value in self.attrs.iteritems():
