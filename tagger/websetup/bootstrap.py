@@ -35,10 +35,10 @@ def bootstrap(command, conf, vars):
     from sqlalchemy.exc import IntegrityError
     try:
         u = model.User()
-        u.user_name = u'lorenzo'
-        u.display_name = u'Lorenzo'
-        u.email_address = u'lpierfederici@gmail.com'
-        u.password = u'nessuna'
+        u.user_name = u'admin'
+        u.display_name = u'Admin'
+        u.email_address = u''
+        u.password = u'none'
     
         model.DBSession.add(u)
     
