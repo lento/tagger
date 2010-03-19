@@ -99,7 +99,7 @@ class User(DeclarativeBase):
     # Columns
     user_id = Column(Integer, autoincrement=True, primary_key=True)
     user_name = Column(Unicode(16), unique=True, nullable=False)
-    email_address = Column(Unicode(255), unique=True, nullable=False,
+    email_address = Column(Unicode(255), unique=True, nullable=True,
                            info={'rum': {'field':'Email'}})
     display_name = Column(Unicode(255))
     _password = Column('password', Unicode(80),

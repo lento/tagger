@@ -82,11 +82,11 @@ class TestPermission(ModelTest):
         """model.Permission objects can be queried"""
         self._obj_query()
 
-    def test_obj_creation_email(self):
+    def test_obj_creation_permission_name(self):
         """model.Permission constructor must set the name right"""
         eq_(self.obj.permission_name, u"test_permission")
 
-    def test_obj_creation_email(self):
+    def test_obj_creation_description(self):
         """model.Permission constructor must set the description right"""
         eq_(self.obj.description, u"This is a test Description")
 
