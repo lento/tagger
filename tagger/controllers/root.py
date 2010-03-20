@@ -29,6 +29,7 @@ from repoze.what import predicates
 from tagger.lib.base import BaseController
 from tagger.model import DBSession, metadata
 from tagger.controllers.error import ErrorController
+from tagger.controllers import category
 from tagger import model
 
 __all__ = ['RootController']
@@ -36,8 +37,9 @@ __all__ = ['RootController']
 
 class RootController(BaseController):
     """The root controller for the tagger application."""
-    admin = AdminController(model, DBSession, config_type=TGAdminConfig)
+    #admin = AdminController(model, DBSession, config_type=TGAdminConfig)
     error = ErrorController()
+    category = category.Controller()
 
     @expose('tagger.templates.index')
     def index(self):
