@@ -76,6 +76,42 @@ class Controller(RestController):
     
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
+    def edit(self, category_id, **kwargs):
+        """Display a EDIT form."""
+        tmpl_context.form = f_edit
+        category = DBSession.query(Category).get(category_id)
+        fargs = dict(category_id=category.id, id_=category.id,
+                     name=category.name,
+                     description=category.description)
+        fcargs = dict()
+        return dict(title='Edit category "%s"' % category.id, args=fargs,
+                                                            child_args=fcargs)
+        
+    @require(has_permission('manage'))
+    @expose('json')
+    @expose('tagger.templates.forms.result')
+    @validate(f_edit, error_handler=edit)
+    def put(self, category_id, name, description=None):
+        """Edit a category"""
+        category = DBSession.query(Category).get(int(category_id))
+        
+        modified = False
+        if category.name != name:
+            category.name = name
+            modified = True
+        
+        if description:
+            category.description = description
+            modified = True
+        
+        if modified:
+            return dict(msg='updated category "%s"' %
+                                                category_id, result='success')
+        return dict(msg='category "%s" unchanged' %
+                                                category_id, result='success')
+
+    @require(has_permission('manage'))
+    @expose('tagger.templates.forms.form')
     def get_delete(self, category_id, **kwargs):
         """Display a DELETE confirmation form."""
         tmpl_context.form = f_delete

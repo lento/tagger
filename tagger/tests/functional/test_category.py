@@ -30,7 +30,7 @@ class TestCategoryController(TestController):
     """Tests for the methods in the category controller."""
 
     def test_get_all(self):
-        """controllers.category.Controller.get_all page is working properly"""
+        """controllers.category.Controller.get_all is working properly"""
         DBSession.add(Category(u'test_category', u'A Test Category'))
         transaction.commit()
         
@@ -48,7 +48,7 @@ class TestCategoryController(TestController):
         eq_(str(response.html.table.tr), expected)
 
     def test_get_one(self):
-        """controllers.category.Controller.get_one page is working properly"""
+        """controllers.category.Controller.get_one is working properly"""
         DBSession.add(Category(u'test_category', u'A Test Category'))
         transaction.commit()
         
@@ -64,7 +64,7 @@ class TestCategoryController(TestController):
         eq_(str(response.html.find(id='content')), expected)
 
     def test_new(self):
-        """controllers.category.Controller.new page is working properly"""
+        """controllers.category.Controller.new is working properly"""
         environ = {'REMOTE_USER': 'admin'}
         response = self.app.get('/category/new', extra_environ=environ,
                                                                     status=200)
@@ -75,5 +75,86 @@ class TestCategoryController(TestController):
                                             '"name" input element not found')
         assert_true(response.html.find('textarea', {'id': 'description'}),
                                     '"description" textarea element not found')
+
+    def test_post(self):
+        """controllers.category.Controller.post is working properly"""
+        environ = {'REMOTE_USER': 'admin'}
+        response = self.app.post('/category?name=test&description=Test',
+                                            extra_environ=environ, status=200)
+        
+        assert_true(response.html.find('div', 'result success'),
+                            'result div should have a "result success" class')
+
+        cat = DBSession().query(Category).get(1)
+        eq_(cat.name, 'test')
+        eq_(cat.description, 'Test')
+
+    def test_edit(self):
+        """controllers.category.Controller.edit is working properly"""
+        environ = {'REMOTE_USER': 'admin'}
+        DBSession.add(Category(u'test_category', u'A Test Category'))
+        transaction.commit()
+        
+        response = self.app.get('/category/1/edit', extra_environ=environ,
+                                                                    status=200)
+        
+        eq_(response.html.form['action'], u'/category/')
+        eq_(response.html.form['method'], u'post')
+        assert_true(response.html.find('input',
+                                        {'name': '_method', 'value': 'PUT'}),
+                                        '"_method" should be "PUT"')
+        assert_true(response.html.find('input',
+                                        {'name': 'category_id', 'value': '1'}),
+                                        'wrong category_id')
+        eq_(response.html.find('input', {'id': 'name'})['value'],
+                                                            u'test_category')
+        eq_(response.html.find('textarea', {'id': 'description'}).string,
+                                                            u'A Test Category')
+
+    def test_put(self):
+        """controllers.category.Controller.put is working properly"""
+        environ = {'REMOTE_USER': 'admin'}
+        DBSession.add(Category(u'test_category', u'A Test Category'))
+        transaction.commit()
+        
+        response = self.app.put('/category/1?name=test&description=Test',
+                                            extra_environ=environ, status=200)
+        
+        assert_true(response.html.find('div', 'result success'),
+                            'result div should have a "result success" class')
+
+        cat = DBSession.query(Category).get(1)
+        eq_(cat.name, 'test')
+        eq_(cat.description, 'Test')
+
+    def test_get_delete(self):
+        """controllers.category.Controller.get_delete is working properly"""
+        environ = {'REMOTE_USER': 'admin'}
+        DBSession.add(Category(u'test_category', u'A Test Category'))
+        transaction.commit()
+        
+        response = self.app.get('/category/1/delete', extra_environ=environ,
+                                                                    status=200)
+        
+        eq_(response.html.form['action'], u'/category/')
+        eq_(response.html.form['method'], u'post')
+        assert_true(response.html.find('input',
+                                        {'name': '_method', 'value': 'DELETE'}),
+                                        '"_method" should be "DELETE"')
+        assert_true(response.html.find('input',
+                                        {'name': 'category_id', 'value': '1'}),
+                                        'wrong category_id')
+
+    def test_post_delete(self):
+        """controllers.category.Controller.post_delete is working properly"""
+        environ = {'REMOTE_USER': 'admin'}
+        DBSession.add(Category(u'test_category', u'A Test Category'))
+        transaction.commit()
+        
+        response = self.app.delete('/category?category_id=1',
+                                            extra_environ=environ, status=200)
+        
+        assert_true(response.html.find('div', 'result success'),
+                            'result div should have a "result success" class')
 
 

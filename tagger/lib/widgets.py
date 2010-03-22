@@ -41,6 +41,7 @@ class FormCategoryEdit(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='PUT', validator=None)
         category_id = HiddenField(validator=NotEmpty)
+        id_ = TextField(validator=None, disabled=True)
         name = TextField(validator=NotEmpty)
         description = TextArea(rows=10)
 

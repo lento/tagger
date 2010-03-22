@@ -60,11 +60,13 @@ class Associable(DeclarativeBase):
     def __repr__(self):
         return '<Associable: %s (%s)>' % (self.id or 0, self.association_type)
 
-associable_delete_trigger = (
-    'CREATE TRIGGER delete_orphaned_%(table)s_associable DELETE ON %(table)s '
-    'BEGIN '
-        'DELETE FROM associables WHERE id=old.id; '
-    'END;')
+orphaned_associable_trigger = (
+    'CREATE TRIGGER delete_orphaned_%(table)s_associable '
+    'AFTER DELETE '
+    'ON %(table)s '
+    'FOR EACH ROW '
+        'DELETE FROM associables WHERE id=old.associable_id; '
+    )
 
 
 # Association table for the many-to-many relationship associables-tags.
@@ -158,5 +160,5 @@ class Article(DeclarativeBase):
     def __repr__(self):
         return '<Article: %s "%s">' % (self.id or 0, self.title)
 
-DDL(associable_delete_trigger).execute_at('after-create', Article.__table__)
+DDL(orphaned_associable_trigger).execute_at('after-create', Article.__table__)
 
