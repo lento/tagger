@@ -2,15 +2,14 @@
 
 """The base Controller API."""
 
-from tg import TGController, tmpl_context
+from tg import TGController, tmpl_context, config
 from tg.render import render
 from tg import request
 from pylons.i18n import _, ungettext, N_
 from tw.api import WidgetBunch
-import tagger.model as model
+from tagger.model import DBSession, Category
 
 __all__ = ['BaseController']
-
 
 class BaseController(TGController):
     """
@@ -29,4 +28,13 @@ class BaseController(TGController):
 
         request.identity = request.environ.get('repoze.who.identity')
         tmpl_context.identity = request.identity
+
+        # set theme and title
+        tmpl_context.theme = config.get('theme', 'default')
+        tmpl_context.title = config.get(
+                                    'title', 'Welcome to Tagger!').strip('\"')
+
+        # add categories list to template context (used in the header)
+        tmpl_context.categories = DBSession.query(Category).all()
+
         return TGController.__call__(self, environ, start_response)
