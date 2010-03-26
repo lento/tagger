@@ -171,7 +171,8 @@ body {
 #side {
     float: right;
     width: 400px;
-	height: 160px;
+	height: 400px;
+	margin-bottom: 20px;
 	border: 1px solid black;
 }
 
@@ -180,9 +181,8 @@ body {
  * Content
  ****************************************/
 #content {
-	min-width: 500px;
-	height: 160px;
 	margin-right: 420px;
+	margin-bottom: 20px;
 	border: 1px solid black;
 }
 
@@ -191,7 +191,7 @@ body {
  * Footer
  ****************************************/
 #footer {
-	margin-top: 20px;
+    clear: right;
     padding-top: 5px;
     border-top: 1px solid #a40000; /* Scarlet Red 3 */
     color: #babdb6; /* Aluminium 3 */
