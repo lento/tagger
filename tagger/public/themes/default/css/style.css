@@ -97,7 +97,9 @@ body {
     background-color: #73d216; /* Chameleon 2 */
     color: white;
 	-moz-border-radius: 8px;
-	-webkit-border-bottom-left-radius: 8px;
+	-webkit-border-radius: 8px;
+    -moz-box-shadow: 4px 4px 10px #888a85; /* Aluminium 4 */
+    -webkit-box-shadow: 4px 4px 10px #f00; /* Aluminium 4 */
 }
 
 #header .login {
@@ -125,24 +127,28 @@ body {
 
 #header .menu_bottom {
     position: relative;
-    top: -23px;
-	height: 23px;
+    top: -2em;
+	height: 2em;
 	overflow: hidden;
 }
 
 #header .menu_bottom ul {
+    position: absolute;
+    bottom: 0;
     float: left;
 }
 
 #header .menu_bottom ul li {
     float: left;
+    position: relative;
+    bottom: 4px;
     margin-right: 2px;
     background-color: white;
 }
 
 #header .menu_bottom ul li:hover {
     position: relative;
-    bottom: -4px;
+    bottom: 0;
     color: #73d216; /* Chameleon 2 */
 }
 
