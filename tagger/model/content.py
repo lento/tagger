@@ -22,12 +22,13 @@
 
 from datetime import datetime
 
-from sqlalchemy import Table, ForeignKey, Column, DDL
+from sqlalchemy import Table, ForeignKey, Column, DDL, UniqueConstraint
 from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
 from sqlalchemy.orm import relation, backref
 
 from tagger.model import DeclarativeBase, metadata
 from tagger.model.auth import User
+from tagger.lib.utils import make_id
 
 import logging
 log = logging.getLogger(__name__)
@@ -129,14 +130,13 @@ class Article(DeclarativeBase):
     __tablename__ = 'articles'
 
     # Columns
-    id = Column(Integer, primary_key=True)
+    id = Column(Unicode(255), primary_key=True)
     associable_id = Column(Integer, ForeignKey('associables.id'))
     title = Column(Unicode(255), unique=True)
     created = Column(DateTime, default=datetime.now)
     modified = Column(DateTime, default=datetime.now)
     user_id = Column(Integer, ForeignKey('auth_users.user_id'))
     category_id = Column(Integer, ForeignKey('categories.id'))
-    text = Column(UnicodeText)
 
     # Relations
     associable = relation('Associable', backref=backref('associated_article',
@@ -150,15 +150,45 @@ class Article(DeclarativeBase):
         return self.associable.tags
 
     # Special methods
-    def __init__(self, title, category, user, text):
+    def __init__(self, title, category, user, text=None):
+        self.id = make_id(title)
         self.title = title
         self.category = category
         self.user = user
         self.text = text
         self.associable = Associable(u'article')
+        self.pages.append(Page(self, u'default', text=text))
 
     def __repr__(self):
-        return '<Article: %s "%s">' % (self.id or 0, self.title)
+        return '<Article: %s "%s">' % (self.id, self.title)
 
 DDL(orphaned_associable_trigger).execute_at('after-create', Article.__table__)
+
+
+class Page(DeclarativeBase):
+    """Article page"""
+    __tablename__ = 'pages'
+    __table_args__ = (UniqueConstraint('article_id', 'name'))
+
+    # Columns
+    id = Column(Unicode(255), primary_key=True)
+    name = Column(Unicode(255))
+    article_id = Column(Unicode(255), ForeignKey('articles.id',
+                                        onupdate='CASCADE', ondelete='CASCADE'))
+    created = Column(DateTime, default=datetime.now)
+    modified = Column(DateTime, default=datetime.now)
+    text = Column(UnicodeText)
+    
+    # Relations
+    article = relation('Article', backref='pages')
+    
+    # Special methods
+    def __init__(self, article, name, text=None):
+        self.id = make_id(name)
+        self.name = name
+        self.article = article
+        self.text = text
+    
+    def __repr__(self):
+        return '<Page: [%s] - %s>' % (self.article_id, self.name)
 
