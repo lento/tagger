@@ -29,10 +29,11 @@ class BaseController(TGController):
         request.identity = request.environ.get('repoze.who.identity')
         tmpl_context.identity = request.identity
 
-        # set theme and title
+        # set theme, title and copyright notice
         tmpl_context.theme = config.get('theme', 'default')
         tmpl_context.title = config.get(
                                     'title', 'Welcome to Tagger!').strip('\"')
+        tmpl_context.copyright = config.get('copyright', '').strip('\"')
 
         # add categories list to template context (used in the header)
         tmpl_context.categories = DBSession.query(Category).all()

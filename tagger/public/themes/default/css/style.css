@@ -26,7 +26,7 @@ common colors from the tango palette:
 #75507b; / * Plum 2 * /
 #5c3566; / * Plum 3 * /
 #ef2929; / * Scarlet Red 1 * /
-
+#a40000; / * Scarlet Red 3 * /
 */
 /**********************************************************************
  * Document
@@ -53,6 +53,7 @@ body {
 	max-width: 1200px;
 	margin: 0 auto;
 	font-family:"Lucida Grande","Lucida Sans Unicode",geneva,verdana,sans-serif;
+	text-align: left;
 }
 
 :focus {
@@ -72,7 +73,7 @@ body {
 #header {
     position: relative;
 	height: 160px;
-	padding: 0px 0 0 130px;
+	padding: 0px 0 0 120px;
 }
 
 #header .logo {
@@ -122,13 +123,15 @@ body {
 	height: 120px;
 	-moz-border-radius-bottomright: 10px;
 	-webkit-border-bottom-right-radius: 10px;
-    background: url(../images/banner.png);
+    background: url(../images/banner.png), -moz-linear-gradient(90deg,#a40000,#f57900);
+    background: url(../images/banner.png), -webkit-gradient(linear,center bottom,center top,from(#a40000),to(#f57900));
 }
 
 #header .menu_bottom {
     position: relative;
     top: -2em;
 	height: 2em;
+	margin-left: 15px;
 	overflow: hidden;
 }
 
@@ -161,4 +164,36 @@ body {
     padding: 0 10px;
 }
 
+
+/****************************************
+ * Side
+ ****************************************/
+#side {
+    float: right;
+    width: 400px;
+	height: 160px;
+	border: 1px solid black;
+}
+
+
+/****************************************
+ * Content
+ ****************************************/
+#content {
+	min-width: 500px;
+	height: 160px;
+	margin-right: 420px;
+	border: 1px solid black;
+}
+
+
+/****************************************
+ * Footer
+ ****************************************/
+#footer {
+	margin-top: 20px;
+    padding-top: 5px;
+    border-top: 1px solid #a40000; /* Scarlet Red 3 */
+    color: #babdb6; /* Aluminium 3 */
+}
 

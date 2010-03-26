@@ -8,6 +8,7 @@
 </head>
 <body>
     ${self.header()}
+    ${self.side()}
     ${self.content_wrapper()}
     ${self.footer()}
 </body>
@@ -49,8 +50,15 @@
     </div>
 </%def>
 
+<%def name="side()">
+    <div id="side">
+        side
+    </div>
+</%def>
+
 <%def name="footer()">
     <div id="footer">
+        <div class="copyright">${c.copyright}</div>
     </div>
 </%def>
 
