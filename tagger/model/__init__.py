@@ -59,5 +59,7 @@ def init_model(engine):
     #mapper(Reflected, t_reflected)
 
 # Import your model modules here.
+from tagger.model.utils import mapped_list, mapped_scalar, dict_property
 from tagger.model.auth import User, Group, Permission
-from tagger.model.content import Tag, Category, Article, Page
+from tagger.model.content import Tag, Language, Category, Article
+from tagger.model.content import Page, PageData

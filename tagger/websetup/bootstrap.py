@@ -39,32 +39,63 @@ def bootstrap(command, conf, vars):
         u.display_name = u'Admin'
         u.email_address = u''
         u.password = u'none'
-    
+
         model.DBSession.add(u)
-    
+
         g = model.Group()
         g.group_name = u'admins'
         g.display_name = u'Administrators Group'
-    
+
         g.users.append(u)
-    
+
         model.DBSession.add(g)
-    
+
         p = model.Permission()
         p.permission_name = u'manage'
         p.description = u'This permission give an administrative right to the bearer'
         p.groups.append(g)
-    
+
         model.DBSession.add(p)
-    
+
         model.DBSession.flush()
         transaction.commit()
     except IntegrityError:
-        print 'Warning, there was a problem adding your auth data, it may have already been added:'
+        log.debug('Warning, there was a problem adding your auth data, '
+                  'it may have already been added:')
         import traceback
-        print traceback.format_exc()
+        log.debug(traceback.format_exc())
         transaction.abort()
-        print 'Continuing with bootstrapping...'
-        
+        log.debug('Continuing with bootstrapping...')
 
     # <websetup.bootstrap.after.auth>
+
+    # languages
+    try:
+        en = model.Language(u'en', u'english')
+        model.DBSession.add(en)
+
+        model.DBSession.flush()
+        transaction.commit()
+    except IntegrityError:
+        log.debug('Warning, there was a problem adding your Category data, '
+                  'it may have already been added:')
+        import traceback
+        log.debug(traceback.format_exc())
+        transaction.abort()
+        log.debug('Continuing with bootstrapping...')
+
+    # categories
+    try:
+        blog = model.Category(u'blog', u'Web log')
+        model.DBSession.add(blog)
+
+        model.DBSession.flush()
+        transaction.commit()
+    except IntegrityError:
+        log.debug('Warning, there was a problem adding your Category data, '
+                  'it may have already been added:')
+        import traceback
+        log.debug(traceback.format_exc())
+        transaction.abort()
+        log.debug('Continuing with bootstrapping...')
+

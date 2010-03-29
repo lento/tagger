@@ -20,7 +20,7 @@
 #
 """Test suite for the TG app's models"""
 
-from nose.tools import eq_, assert_true
+from nose.tools import eq_, assert_true, assert_equals
 
 from tagger.model import DBSession, auth, content
 from tagger.tests.models import ModelTest
@@ -94,10 +94,7 @@ class TestArticle(ModelTest):
     """Unit test case for the ``Article`` model."""
     
     klass = content.Article
-    attrs = dict(
-        title = u"A test article",
-        text = u"random text",
-        )
+    attrs = dict()
 
     def do_get_dependencies(self):
         try:
@@ -105,8 +102,16 @@ class TestArticle(ModelTest):
             DBSession.add(self.user)
             self.category = content.Category(name=u'test_category')
             DBSession.add(self.category)
+            self.language = content.Language(id=u'xx', name=u'test_lang')
+            DBSession.add(self.language)
             DBSession.flush()
-            return dict(user=self.user, category=self.category)
+            return dict(title=u"A test article!",
+                        category=self.category,
+                        user=self.user,
+                        #language=self.language,
+                        lang=self.language.id,
+                        text = u"random text"
+                       )
         except:
             DBSession.rollback()
             raise
@@ -119,19 +124,13 @@ class TestArticle(ModelTest):
         """model.content.Article objects can be queried"""
         self._obj_query()
 
-    def test_obj_creation_id(self):
-        """model.content.Article constructor must set the id right"""
-        eq_(self.obj.id, u"a_test_article")
-
-    def test_obj_creation_title(self):
-        """model.content.Article constructor must set the title right"""
-        eq_(self.obj.title, u"A test article")
+    def test_obj_creation_string_id(self):
+        """model.content.Article constructor must set the string_id right"""
+        eq_(self.obj.string_id, u'a_test_article_')
 
     def test_obj_creation_default_page(self):
         """model.content.Article constructor must create a default page"""
         assert_true(len(self.obj.pages), 'Article.pages is empty')
-        eq_(self.obj.pages[0].id, u"default")
-        eq_(self.obj.pages[0].text, u"random text")
 
     def test_obj_creation_user(self):
         """model.content.Article constructor must set the user right"""
@@ -140,6 +139,20 @@ class TestArticle(ModelTest):
     def test_obj_creation_category(self):
         """model.content.Article constructor must set the category right"""
         eq_(self.obj.category, self.category)
+
+    def test_obj_property_languages(self):
+        """model.content.Article property "languages" works"""
+        eq_(self.obj.languages, set([u'xx']))
+
+    def test_obj_method_title_noargs(self):
+        """model.content.Article method "title" works"""
+        expected = u'A test article!'
+        assert_equals(self.obj.title[''], expected,
+                'Article.title[""] should be "%s", not "%s"' % 
+                (expected, self.obj.title['']))
+        assert_equals(self.obj.title[u'xx'], expected,
+                'Article.title["xx"] should be "%s", not "%s"' % 
+                (expected, self.obj.title[u'xx']))
 
     def test_is_taggable(self):
         """model.content.Article objects are taggable"""
@@ -153,21 +166,18 @@ class TestPage(ModelTest):
     """Unit test case for the ``Page`` model."""
 
     klass = content.Page
-    attrs = dict(
-        name = u"A test page!",
-        text = u"random text",
-        )
+    attrs = dict()
 
     def do_get_dependencies(self):
         try:
-            user = auth.User(user_name=u'test_user')
-            DBSession.add(user)
-            category = content.Category(name=u'test_category')
-            DBSession.add(category)
-            self.article = content.Article(u'test', category, user)
-            DBSession.add(self.article)
+            self.language = content.Language(id=u'xx', name=u'test_lang')
+            DBSession.add(self.language)
             DBSession.flush()
-            return dict(article=self.article)
+            return dict(name=u"A test page!",
+                        #language=self.language,
+                        lang=self.language.id,
+                        text=u"random text",
+                       )
         except:
             DBSession.rollback()
             raise
@@ -178,25 +188,78 @@ class TestPage(ModelTest):
 
     def test_obj_query(self):
         """model.content.Page objects can be queried"""
-        # this can't be done with the default self._obj_query() because there
-        # are two pages in the db, "default" and "a_test_page_"
-        obj = DBSession.query(self.klass).get(u"a_test_page_")
-        for key, value in self.attrs.iteritems():
-            eq_(getattr(obj, key), value)
+        self._obj_query()
 
-    def test_obj_creation_name(self):
-        """model.content.Page constructor must set the name right"""
-        eq_(self.obj.name, u"A test page!")
+    def test_obj_creation_string_id(self):
+        """model.content.Page constructor must set the string_id right"""
+        eq_(self.obj.string_id, u'a_test_page_')
 
-    def test_obj_creation_id(self):
-        """model.content.Page constructor must set the id right"""
-        eq_(self.obj.id, u"a_test_page_")
+    def test_obj_creation_page_data(self):
+        """model.content.Page constructor must create a PageData"""
+        assert_true(len(self.obj.data), 'Page.data is empty')
+
+    def test_obj_creation_page_data_title(self):
+        """model.content.PageData constructor must set the name right"""
+        eq_(self.obj.data[0].name, u'A test page!')
+
+    def test_obj_creation_page_data_language(self):
+        """model.content.PageData constructor must set the language right"""
+        eq_(self.obj.data[0].language, self.language)
 
     def test_obj_creation_text(self):
-        """model.content.Page constructor must set the text right"""
-        eq_(self.obj.text, u"random text")
+        """model.content.PageData constructor must set the text right"""
+        eq_(self.obj.data[0].text, u"random text")
 
-    def test_obj_creation_article(self):
-        """model.content.Article constructor must set the article right"""
-        eq_(self.obj.article, self.article)
+    def test_obj_property_languages(self):
+        """model.content.Page property "languages" works"""
+        eq_(self.obj.languages, set([u'xx']))
+
+    def test_obj_property_name_get(self):
+        """model.content.Page property "name" can get value"""
+        expected = u'A test page!'
+        assert_equals(self.obj.name[''], expected,
+                        'Page.name[""] should be "%s", not "%s"' %
+                        (expected, self.obj.name['']))
+        assert_equals(self.obj.name[u'xx'], expected,
+                        'Page.name[u"xx"] should be "%s", not "%s"' %
+                        (expected, self.obj.name[u'xx']))
+
+    def test_obj_property_name_set(self):
+        """model.content.Page property "name" can set value"""
+        expected = u'changed name (default lang)'
+        self.obj.name[''] = expected
+        assert_equals(self.obj.name[''], expected,
+                        'Page.name[""] should be "%s", not "%s"' %
+                        (expected, self.obj.name['']))
+
+        expected = u'changed name (specific lang)'
+        self.obj.name[u'xx'] = expected
+        assert_equals(self.obj.name[u'xx'], expected,
+                        'Page.name[u"xx"] should be "%s", not "%s"' %
+                        (expected, self.obj.name[u'xx']))
+
+    def test_obj_property_text_get(self):
+        """model.content.Page property "text" can get value"""
+        expected = u'random text'
+        assert_equals(self.obj.text[''], expected,
+                        'Page.text[""] should be "%s", not "%s"' %
+                        (expected, self.obj.text['']))
+        assert_equals(self.obj.text[u'xx'], expected,
+                        'Page.text[u"xx"] should be "%s", not "%s"' %
+                        (expected, self.obj.text[u'xx']))
+
+    def test_obj_property_text_set(self):
+        """model.content.Page property "text" can set value"""
+        expected = u'changed text (default lang)'
+        self.obj.text[''] = expected
+        assert_equals(self.obj.text[''], expected,
+                        'Page.text[""] should be "%s", not "%s"' %
+                        (expected, self.obj.text['']))
+
+        expected = u'changed text (specific lang)'
+        self.obj.text[u'xx'] = expected
+        assert_equals(self.obj.text[u'xx'], expected,
+                        'Page.text[u"xx"] should be "%s", not "%s"' %
+                        (expected, self.obj.text[u'xx']))
+
 
