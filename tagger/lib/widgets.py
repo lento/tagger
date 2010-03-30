@@ -26,28 +26,54 @@ from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tw.api import Widget, WidgetsList
 from tw.forms import TableForm, TextField, TextArea, HiddenField
 from tw.forms import MultipleSelectField
-from tw.forms.validators import Regex, NotEmpty
+from tw.forms.validators import All, Regex, NotEmpty, UnicodeString, MaxLength
+
+# Language
+class FormLanguageNew(TableForm):
+    """New language form"""
+    class fields(WidgetsList):
+        language_id = TextField(validator=All(UnicodeString, NotEmpty,
+                                                                MaxLength(3)))
+        name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
+
+
+class FormLanguageEdit(TableForm):
+    """Edit language form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='PUT', validator=None)
+        language_id = HiddenField(validator=NotEmpty)
+        id_ = TextField(validator=None, disabled=True)
+        name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
+
+
+class FormLanguageDelete(TableForm):
+    """Delete language confirmation form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='DELETE', validator=None)
+        language_id = HiddenField(validator=NotEmpty)
+        id_ = TextField(validator=None, disabled=True)
+        name_ = TextField(validator=None, disabled=True)
 
 # Category
 class FormCategoryNew(TableForm):
     """New category form"""
     class fields(WidgetsList):
-        name = TextField(validator=NotEmpty)
+        name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
         description = TextArea(rows=10)
 
 
 class FormCategoryEdit(TableForm):
-    """Edit tag form"""
+    """Edit category form"""
     class fields(WidgetsList):
         _method = HiddenField(default='PUT', validator=None)
         category_id = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        name = TextField(validator=NotEmpty)
+        name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
         description = TextArea(rows=10)
 
 
 class FormCategoryDelete(TableForm):
-    """Delete tag confirmation form"""
+    """Delete category confirmation form"""
     class fields(WidgetsList):
         _method = HiddenField(default='DELETE', validator=None)
         category_id = HiddenField(validator=NotEmpty)

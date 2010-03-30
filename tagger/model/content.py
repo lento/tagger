@@ -111,7 +111,7 @@ class Language(DeclarativeBase):
     __tablename__ = 'languages'
 
     # Columns
-    id = Column(Unicode(2), primary_key=True)
+    id = Column(Unicode(3), primary_key=True)
     name = Column(Unicode(50), unique=True)
 
     # Special methods
