@@ -31,15 +31,12 @@ class TestCategoryController(TestController):
 
     def test_get_all(self):
         """controllers.category.Controller.get_all is working properly"""
-        DBSession.add(Category(u'test_category', u'A Test Category'))
-        transaction.commit()
-        
         response = self.app.get('/category')
         
         expected = ('<tr>\n'
                     '<td>1</td>\n'
-                    '<td>test_category</td>\n'
-                    '<td>A Test Category</td>\n'
+                    '<td>blog</td>\n'
+                    '<td>Web log</td>\n'
                     '<td>\n'
                     '</td>\n'
                     '</tr>'
@@ -49,15 +46,12 @@ class TestCategoryController(TestController):
 
     def test_get_one(self):
         """controllers.category.Controller.get_one is working properly"""
-        DBSession.add(Category(u'test_category', u'A Test Category'))
-        transaction.commit()
-        
         response = self.app.get('/category/1')
         
         expected = ('<div id="content">\n'
                     '<div>1</div>\n'
-                    '<div>test_category</div>\n'
-                    '<div>A Test Category</div>\n'
+                    '<div>blog</div>\n'
+                    '<div>Web log</div>\n'
                     '</div>'
                    )
 
@@ -85,16 +79,12 @@ class TestCategoryController(TestController):
         assert_true(response.html.find('div', 'result success'),
                             'result div should have a "result success" class')
 
-        cat = DBSession().query(Category).get(1)
-        eq_(cat.name, 'test')
+        cat = DBSession().query(Category).filter_by(name=u'test').one()
         eq_(cat.description, 'Test')
 
     def test_edit(self):
         """controllers.category.Controller.edit is working properly"""
         environ = {'REMOTE_USER': 'admin'}
-        DBSession.add(Category(u'test_category', u'A Test Category'))
-        transaction.commit()
-        
         response = self.app.get('/category/1/edit', extra_environ=environ,
                                                                     status=200)
         
@@ -107,16 +97,13 @@ class TestCategoryController(TestController):
                                         {'name': 'category_id', 'value': '1'}),
                                         'wrong category_id')
         eq_(response.html.find('input', {'id': 'name'})['value'],
-                                                            u'test_category')
+                                                            u'blog')
         eq_(response.html.find('textarea', {'id': 'description'}).string,
-                                                            u'A Test Category')
+                                                            u'Web log')
 
     def test_put(self):
         """controllers.category.Controller.put is working properly"""
         environ = {'REMOTE_USER': 'admin'}
-        DBSession.add(Category(u'test_category', u'A Test Category'))
-        transaction.commit()
-        
         response = self.app.put('/category/1?name=test&description=Test',
                                             extra_environ=environ, status=200)
         
@@ -130,9 +117,6 @@ class TestCategoryController(TestController):
     def test_get_delete(self):
         """controllers.category.Controller.get_delete is working properly"""
         environ = {'REMOTE_USER': 'admin'}
-        DBSession.add(Category(u'test_category', u'A Test Category'))
-        transaction.commit()
-        
         response = self.app.get('/category/1/delete', extra_environ=environ,
                                                                     status=200)
         
@@ -148,13 +132,13 @@ class TestCategoryController(TestController):
     def test_post_delete(self):
         """controllers.category.Controller.post_delete is working properly"""
         environ = {'REMOTE_USER': 'admin'}
-        DBSession.add(Category(u'test_category', u'A Test Category'))
-        transaction.commit()
-        
         response = self.app.delete('/category?category_id=1',
                                             extra_environ=environ, status=200)
         
         assert_true(response.html.find('div', 'result success'),
                             'result div should have a "result success" class')
 
+        cat = DBSession.query(Category).get(1)
+        assert_true(cat is None,
+                            'Category "1" should have been deleted from the db')
 
