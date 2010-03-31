@@ -5,12 +5,12 @@
 </%def>
 
 <table>
-    <th>
-        <td>${_('ID')}</td>
-        <td>${_('Name')}</td>
-        <td>${_('Description')}</td>
-        <td>${_('Actions')}</td>
-    </th>
+    <tr>
+        <th>${_('ID')}</th>
+        <th>${_('Name')}</th>
+        <th>${_('Description')}</th>
+        <th>${_('Actions')}</th>
+    </tr>
     % for cat in categories:
     <tr>
         <td>${cat.id}</td>
