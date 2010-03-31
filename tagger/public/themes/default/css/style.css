@@ -66,6 +66,21 @@ body {
 
 .hidden {display: none;}
 
+/* Table */
+table {
+    width: 100%;
+    border-spacing: 2px;
+}
+
+table td {
+    vertical-align: top;
+    background-color: white;
+}
+
+table td.icon {
+    width: 18px;
+}
+
 
 /****************************************
  * Header
