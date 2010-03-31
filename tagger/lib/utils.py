@@ -24,6 +24,8 @@ import re
 
 def make_id(text):
     newid = text.lower()
-    newid = re.sub('[^a-z0-9]', '_', newid)
+    newid = re.sub('[^a-z0-9\s]', '', newid)
+    newid = newid.strip()
+    newid = re.sub('[\s]+', '_', newid)
     return newid
 
