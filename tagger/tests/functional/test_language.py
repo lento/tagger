@@ -41,7 +41,7 @@ class TestLanguageController(TestController):
                     '</tr>'
                    )
 
-        eq_(str(response.html.table.tr), expected)
+        eq_(str(response.html.table('tr')[1]), expected)
 
     def test_get_one(self):
         """controllers.language.Controller.get_one is working properly"""
