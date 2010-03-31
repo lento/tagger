@@ -88,6 +88,7 @@ table td.icon {
 #header {
     position: relative;
 	height: 160px;
+	margin-bottom: 20px;
 	padding: 0px 0 0 135px;
 }
 
@@ -176,7 +177,8 @@ table td.icon {
     width: 400px;
 	height: 400px;
 	margin-bottom: 20px;
-	border: 1px solid black;
+	padding-left: 10px;
+	border-left: 1px solid #babdb6; /* Aluminium 3 */
 }
 
 
@@ -186,12 +188,10 @@ table td.icon {
 #content_with_side {
 	margin-right: 420px;
 	margin-bottom: 20px;
-	border: 1px solid black;
 }
 
 #content_without_side {
 	margin-bottom: 20px;
-	border: 1px solid black;
 }
 
 

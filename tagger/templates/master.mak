@@ -70,7 +70,6 @@
 
 <%def name="side()">
     <div id="side">
-        side
     </div>
 </%def>
 
