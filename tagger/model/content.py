@@ -185,7 +185,7 @@ class Article(DeclarativeBase):
     title = dict_property(_title_get, _title_set)
 
     # Special methods
-    def __init__(self, title, category, user, lang, text=None):
+    def __init__(self, title, category, lang, user, text=None):
         self.string_id = make_id(title)
         self.category = category
         self.user = user

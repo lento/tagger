@@ -26,8 +26,10 @@ class BaseController(TGController):
         # the request is routed to. This routing information is
         # available in environ['pylons.routes_dict']
 
-        request.identity = request.environ.get('repoze.who.identity')
-        tmpl_context.identity = request.identity
+        identity = request.environ.get('repoze.who.identity')
+        request.identity = identity
+        tmpl_context.identity = identity
+        tmpl_context.user = identity and identity['user'] or False
 
         # set theme, title and copyright notice
         tmpl_context.theme = config.get('theme', 'default')
