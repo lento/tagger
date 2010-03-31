@@ -1,5 +1,9 @@
 <%inherit file="local:templates.master"/>
 
+<%!
+    show_side = False
+%>
+
 <div id="loginform">
 <form action="${tg.url('/login_handler')}" method="POST" class="loginfields">
     <h2><span>Login</span></h2>

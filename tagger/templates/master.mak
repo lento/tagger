@@ -1,5 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%!
+    show_side = True
+%>
+
 <html>
 <head>
     ${self.meta()}
@@ -8,15 +13,23 @@
 </head>
 <body>
     ${self.header()}
-    ${self.side()}
+    % if self.attr.show_side:
+        ${self.side()}
+    % endif
     ${self.content_wrapper()}
     ${self.footer()}
 </body>
 
 <%def name="content_wrapper()">
-    <div id="content">
-        ${self.body()}
-    </div>
+    % if self.attr.show_side:
+        <div id="content_with_side">
+            ${self.body()}
+        </div>
+    % else:
+        <div id="content_without_side">
+            ${self.body()}
+        </div>
+    % endif
 </%def>
 
 <%def name="meta()">
@@ -32,9 +45,11 @@
         <div class="logo"></div>
         <div class="menu_top">
             <div class="authbox">
-                <div class="login"><a href="">login</a></div>
-                <div class="logout"><a href="">logout</a></div>
-                <div class="username">lorenzo</div>
+                % if request.identity is None:
+                    <a class="login" href="${tg.url('/login')}">login</a>
+                % else:
+                    <a class="logout" href="${tg.url('/logout_handler')}">logout ${c.user.user_name}</a>
+                % endif
             </div>
         </div>
         <div class="banner"></div>
@@ -45,6 +60,9 @@
                 % endfor
                 <li><a href="${tg.url('/media')}">media</a></li>
                 <li><a href="${tg.url('/link')}">links</a></li>
+                % if tg.predicates.has_permission('manage'):
+                <li><a href="${tg.url('/admin')}">admin</a></li>
+                % endif
             </ul>
         </div>
     </div>
