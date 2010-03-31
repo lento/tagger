@@ -40,6 +40,7 @@ f_delete = FormCategoryDelete(action=url('/category/'))
 class Controller(RestController):
     """REST controller for managing categories"""
     
+    @require(has_permission('manage'))
     @expose('json')
     @expose('tagger.templates.category.get_all')
     def get_all(self):

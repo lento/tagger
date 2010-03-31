@@ -14,7 +14,9 @@
 <body>
     ${self.header()}
     % if self.attr.show_side:
-        ${self.side()}
+        <div id="side">
+            ${self.side()}
+        </div>
     % endif
     ${self.content_wrapper()}
     ${self.footer()}
@@ -69,8 +71,6 @@
 </%def>
 
 <%def name="side()">
-    <div id="side">
-    </div>
 </%def>
 
 <%def name="footer()">

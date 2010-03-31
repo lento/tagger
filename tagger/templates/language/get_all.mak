@@ -1,8 +1,10 @@
-<%inherit file="local:templates.master"/>
+<%inherit file="local:templates.admin"/>
 
 <%def name="title()">
   tagger - ${_('Languages')}
 </%def>
+
+<h1>${_('Languages')}</h1>
 
 <table>
     <tr>

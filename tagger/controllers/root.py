@@ -22,14 +22,12 @@
 
 from tg import expose, flash, require, url, request, redirect
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
-from tgext.admin.tgadminconfig import TGAdminConfig
-from tgext.admin.controller import AdminController
 from repoze.what import predicates
 
 from tagger.lib.base import BaseController
 from tagger.model import DBSession, metadata
 from tagger.controllers.error import ErrorController
-from tagger.controllers import language, category, article
+from tagger.controllers import admin, language, category, article
 from tagger import model
 
 __all__ = ['RootController']
@@ -37,7 +35,7 @@ __all__ = ['RootController']
 
 class RootController(BaseController):
     """The root controller for the tagger application."""
-    #admin = AdminController(model, DBSession, config_type=TGAdminConfig)
+    admin = admin.Controller()
     error = ErrorController()
     category = category.Controller()
     language = language.Controller()
@@ -71,7 +69,7 @@ class RootController(BaseController):
 
     @expose()
     def post_logout(self, came_from=url('/')):
-        """Redirect the user to the initially requested page on logout and say
+        """Redirect the user to the root page on logout and say
         goodbye as well."""
         flash(_('We hope to see you soon!'))
-        redirect(came_from)
+        redirect(url('/'))

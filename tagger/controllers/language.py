@@ -40,6 +40,7 @@ f_delete = FormLanguageDelete(action=url('/language/'))
 class Controller(RestController):
     """REST controller for managing languages"""
 
+    @require(has_permission('manage'))
     @expose('json')
     @expose('tagger.templates.language.get_all')
     def get_all(self):
