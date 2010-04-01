@@ -36,6 +36,13 @@ tagger.overlays_activate = function(select) {
  ****************************************/
 $(function() {
     tagger.overlays_activate();
-    console.log('start up');
+
+    /* make #flash slide in and out */
+    $("#flash div").hide().slideDown(function() {
+        setTimeout(function() {
+            $("#flash div").slideUp();
+        }, 2500);
+    });
+
 });
 

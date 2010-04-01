@@ -179,6 +179,7 @@ table td.icon {
     height: 160px;
     width: 160px;
     background-image: url(../images/logo.png);
+    z-index: 5;
 }
 
 #header .menu_top {
@@ -239,6 +240,42 @@ table td.icon {
 
 #header .menu_bottom ul a {
     padding: 0 10px;
+}
+
+
+/****************************************
+ * Flash
+ ****************************************/
+#flash {
+    position: relative;
+    top: -2em;
+    /*font-size: 1.2em;*/
+    color: white;
+}
+
+#flash div {
+    position: absolute;
+    padding:10px 60px 10px 45px;
+    z-index: 4;
+    opacity: .8;
+	-moz-border-radius: 0 0 10px 10px;
+	-webkit-border-radius: 0 0 10px 10px;
+}
+
+#flash .ok {
+    background: #73d216 url(../images/ok.png) no-repeat scroll 10px center; /* Chameleon 2 */
+}
+
+#flash .alert, #flash .warning {
+    background: #edd400 url(../images/warning.png) no-repeat scroll 10px center; /* Butter 1 */
+}
+
+#flash .error {
+    background: #a40000 url(../images/error.png) no-repeat scroll 10px center; /* Scarlet Red 3 */
+}
+
+#flash .info, .notice {
+    background: #3465a4 url(../images/info.png) no-repeat scroll 10px center; /* Sky Blue 2 */
 }
 
 

@@ -74,7 +74,17 @@
                 % endif
             </ul>
         </div>
+        ${self.flash_wrapper()}
     </div>
+</%def>
+
+<%def name="flash_wrapper()">
+    <%
+    flash = tg.flash_obj.render('flash', use_js=False)
+    %>
+    % if flash:
+        ${flash | n}
+    % endif
 </%def>
 
 <%def name="side()">

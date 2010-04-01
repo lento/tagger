@@ -20,7 +20,7 @@
 #
 """Category controller"""
 
-from tg import expose, url, tmpl_context, redirect, validate, require
+from tg import expose, url, tmpl_context, redirect, validate, require, flash
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Category
@@ -73,7 +73,7 @@ class Controller(RestController):
     def post(self, name, description):
         """create a new Category"""
         DBSession.add(Category(name, description))
-        #return dict(msg=_('Created Category "%s"') % name, result='success')
+        flash(_('Created Category "%s"') % name, 'ok')
         redirect(url('/category/'))
     
     @require(has_permission('manage'))
@@ -102,15 +102,14 @@ class Controller(RestController):
             category.name = name
             modified = True
         
-        if description:
+        if category.description != description:
             category.description = description
             modified = True
         
-        #if modified:
-        #    return dict(msg='updated category "%s"' %
-        #                                        category_id, result='success')
-        #return dict(msg='category "%s" unchanged' %
-        #                                        category_id, result='success')
+        if modified:
+            flash(_('updated category "%s"') % category.name, 'ok')
+        else:
+            flash(_('category "%s" unchanged') % category.name, 'info')
         redirect(url('/category/'))
 
     @require(has_permission('manage'))
@@ -139,6 +138,6 @@ class Controller(RestController):
         category = DBSession.query(Category).get(category_id)
         
         DBSession.delete(category)
-        #return dict(msg='Deleted Category "%s"' % category.id, result='success')
+        flash(_('Deleted Category "%s"') % category.name, 'ok')
         redirect(url('/category/'))
 
