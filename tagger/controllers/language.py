@@ -20,7 +20,7 @@
 #
 """Language controller"""
 
-from tg import expose, url, tmpl_context, redirect, validate, require
+from tg import expose, url, tmpl_context, redirect, validate, require, flash
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Language
@@ -73,7 +73,8 @@ class Controller(RestController):
     def post(self, language_id, name):
         """create a new Language"""
         DBSession.add(Language(language_id, name))
-        return dict(msg=_('Created Language "%s"') % name, result='success')
+        flash(_('Created Language "%s"') % name, 'ok')
+        redirect(url('/language/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -101,10 +102,10 @@ class Controller(RestController):
             modified = True
 
         if modified:
-            return dict(msg='updated language "%s"' %
-                                                language_id, result='success')
-        return dict(msg='language "%s" unchanged' %
-                                                language_id, result='success')
+            flash(_('updated language "%s"') % language_id, 'ok')
+        else:
+            flash(_('language "%s" unchanged') % language_id, 'info')
+        redirect(url('/language/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -132,5 +133,6 @@ class Controller(RestController):
         language = DBSession.query(Language).get(language_id.decode())
 
         DBSession.delete(language)
-        return dict(msg='Deleted Language "%s"' % language.id, result='success')
+        flash(_('Deleted Language "%s"') % language.id, 'ok')
+        redirect(url('/language/'))
 

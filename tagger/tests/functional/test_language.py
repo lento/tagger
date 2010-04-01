@@ -31,29 +31,27 @@ class TestLanguageController(TestController):
 
     def test_get_all(self):
         """controllers.language.Controller.get_all is working properly"""
-        response = self.app.get('/language')
+        environ = {'REMOTE_USER': 'admin'}
+        response = self.app.get('/language', extra_environ=environ, status=200)
         
-        expected = ('<tr>\n'
-                    '<td>en</td>\n'
-                    '<td>english</td>\n'
-                    '<td>\n'
-                    '</td>\n'
-                    '</tr>'
-                   )
-
-        eq_(str(response.html.table('tr')[1]), expected)
+        tr = response.html.table('tr')[1]
+        eq_(str(tr('td')[0]), '<td>en</td>')
+        eq_(str(tr('td')[1]), '<td>english</td>')
+        actions = tr('td')[2]
+        eq_(str(actions('a')[0]['class']), 'icon edit overlay')
+        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
     def test_get_one(self):
         """controllers.language.Controller.get_one is working properly"""
         response = self.app.get('/language/en')
         
-        expected = ('<div id="content">\n'
+        expected = ('<div id="content_with_side">\n'
                     '<div>en</div>\n'
                     '<div>english</div>\n'
                     '</div>'
                    )
 
-        eq_(str(response.html.find(id='content')), expected)
+        eq_(str(response.html.find(id='content_with_side')), expected)
 
     def test_new(self):
         """controllers.language.Controller.new is working properly"""
@@ -72,10 +70,12 @@ class TestLanguageController(TestController):
         """controllers.language.Controller.post is working properly"""
         environ = {'REMOTE_USER': 'admin'}
         response = self.app.post('/language?language_id=xx&name=test_language&',
+                                            extra_environ=environ, status=302)
+        redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
-        
-        assert_true(response.html.find('div', 'result success'),
-                            'result div should have a "result success" class')
+
+        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
+                                'result should have a "ok" flash notification')
 
         cat = DBSession().query(Language).get(u'xx')
         eq_(cat.name, 'test_language')
@@ -101,10 +101,12 @@ class TestLanguageController(TestController):
         """controllers.language.Controller.put is working properly"""
         environ = {'REMOTE_USER': 'admin'}
         response = self.app.put('/language/en?name=test_language',
+                                            extra_environ=environ, status=302)
+        redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
-        
-        assert_true(response.html.find('div', 'result success'),
-                            'result div should have a "result success" class')
+
+        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
+                                'result should have a "ok" flash notification')
 
         cat = DBSession.query(Language).get(u'en')
         eq_(cat.name, 'test_language')
@@ -128,10 +130,12 @@ class TestLanguageController(TestController):
         """controllers.language.Controller.post_delete is working properly"""
         environ = {'REMOTE_USER': 'admin'}
         response = self.app.delete('/language?language_id=en',
+                                            extra_environ=environ, status=302)
+        redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
-        
-        assert_true(response.html.find('div', 'result success'),
-                            'result div should have a "result success" class')
+
+        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
+                                'result should have a "ok" flash notification')
 
         result = DBSession.query(Language).get(u'en')
         assert_true(result is None,
