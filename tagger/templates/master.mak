@@ -51,7 +51,7 @@
 
 <%def name="header()">
     <div id="header">
-        <div class="logo"></div>
+        <a href="${tg.url('/')}" class="logo"></a>
         <div class="menu_top">
             <div class="authbox">
                 % if request.identity is None:
