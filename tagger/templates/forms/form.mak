@@ -10,7 +10,7 @@
     });
 </script>
 
-<h1>${title}</h1>
+<h2>${title}</h2>
     % if msg:
         <div class="msg">${msg}</div>
     % endif

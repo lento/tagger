@@ -4,7 +4,10 @@
   tagger - ${_('Article Categories')}
 </%def>
 
-<h1>${_('Article Categories')}</h1>
+<div class="content_title">
+    <h1>${_('Article Categories')}</h1>
+    <a class="button overlay" href="${tg.url('/category/new')}" rel="#overlay">${_('add new')}</a>
+</div>
 
 <table>
     <tr>
@@ -19,6 +22,8 @@
         <td>${cat.name}</td>
         <td>${cat.description}</td>
         <td>
+            <a class="icon edit overlay" title="${_('edit')}" href="${tg.url('/category/%s/edit' % cat.id)}" rel="#overlay"></a>
+            <a class="icon delete overlay" title="${_('delete')}" href="${tg.url('/category/%s/delete' % cat.id)}" rel="#overlay"></a>
         </td>
     </tr>
     % endfor

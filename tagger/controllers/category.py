@@ -73,7 +73,8 @@ class Controller(RestController):
     def post(self, name, description):
         """create a new Category"""
         DBSession.add(Category(name, description))
-        return dict(msg=_('Created Category "%s"') % name, result='success')
+        #return dict(msg=_('Created Category "%s"') % name, result='success')
+        redirect(url('/category/'))
     
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -105,11 +106,12 @@ class Controller(RestController):
             category.description = description
             modified = True
         
-        if modified:
-            return dict(msg='updated category "%s"' %
-                                                category_id, result='success')
-        return dict(msg='category "%s" unchanged' %
-                                                category_id, result='success')
+        #if modified:
+        #    return dict(msg='updated category "%s"' %
+        #                                        category_id, result='success')
+        #return dict(msg='category "%s" unchanged' %
+        #                                        category_id, result='success')
+        redirect(url('/category/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -137,5 +139,6 @@ class Controller(RestController):
         category = DBSession.query(Category).get(category_id)
         
         DBSession.delete(category)
-        return dict(msg='Deleted Category "%s"' % category.id, result='success')
+        #return dict(msg='Deleted Category "%s"' % category.id, result='success')
+        redirect(url('/category/'))
 

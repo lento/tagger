@@ -10,8 +10,15 @@
     ${self.meta()}
     <title>${self.title()}</title>
     <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/themes/%s/css/style.css' % c.theme)}" />
+    <script type="text/javascript" src="${tg.url('/js/jquery.js')}"></script>
+    <script type="text/javascript" src="${tg.url('/js/jquery.tools.js')}"></script>
+    <script type="text/javascript" src="${tg.url('/js/tagger.js')}"></script>
 </head>
 <body>
+    <div id="overlay">
+        <div class="wrap"></div>
+    </div>
+
     ${self.header()}
     % if self.attr.show_side:
         <div id="side">
@@ -48,9 +55,9 @@
         <div class="menu_top">
             <div class="authbox">
                 % if request.identity is None:
-                    <a class="login" href="${tg.url('/login')}">login</a>
+                    <a class="login button" href="${tg.url('/login')}">login</a>
                 % else:
-                    <a class="logout" href="${tg.url('/logout_handler')}">logout ${c.user.user_name}</a>
+                    <a class="logout button" href="${tg.url('/logout_handler')}">logout ${c.user.user_name}</a>
                 % endif
             </div>
         </div>
