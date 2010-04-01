@@ -46,7 +46,7 @@ class Controller(RestController):
     def get_all(self):
         """Return a list of languages"""
         languages = DBSession.query(Language).all()
-        return dict(languages=languages)
+        return dict(languages=languages, page=('admin', 'languages'))
 
     @expose('json')
     @expose('tagger.templates.language.get_one')

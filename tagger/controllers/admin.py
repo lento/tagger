@@ -38,5 +38,5 @@ class Controller(BaseController):
     @expose('tagger.templates.admin')
     def index(self):
         """Handle the front-page."""
-        return dict(page='admin')
+        return dict(page=('admin', ''))
 

@@ -228,7 +228,7 @@ table td.icon {
     background-color: white;
 }
 
-#header .menu_bottom ul li:hover {
+#header .menu_bottom ul li:hover, #header .menu_bottom ul li.active {
     position: relative;
     bottom: 0;
     color: #73d216; /* Chameleon 2 */
@@ -292,15 +292,19 @@ table td.icon {
 	border-left: 1px solid #babdb6; /* Aluminium 3 */
 }
 
-#side a {
-    display: block;
+#side li {
+    margin-bottom: 2px;
 	-moz-border-radius: 0 5px 5px 0;
 	-webkit-border-radius: 0 5px 5px 0;
 }
 
-#side a:hover {
+#side li:hover, #side li.active {
     background-color: #a40000; /* Scarlet Red 3 */
     color: white;
+}
+
+#side a {
+    display: block;
 }
 
 /****************************************

@@ -13,6 +13,15 @@
     <script type="text/javascript" src="${tg.url('/js/jquery.js')}"></script>
     <script type="text/javascript" src="${tg.url('/js/jquery.tools.js')}"></script>
     <script type="text/javascript" src="${tg.url('/js/tagger.js')}"></script>
+
+    % if page:
+    <script type="text/javascript">
+    $(function() {
+        $("#header .menu_bottom .${page[0]}").addClass('active');
+        $("#side .${page[1]}").addClass('active');
+    });
+    </script>
+    % endif
 </head>
 <body>
     <div id="overlay">
@@ -65,12 +74,12 @@
         <div class="menu_bottom">
             <ul>
                 % for cat in c.categories:
-                <li><a href="${tg.url('/article/%s' % cat.name)}">${cat.name}</a></li>
+                <li class="${cat.name}"><a href="${tg.url('/article/%s' % cat.name)}">${cat.name}</a></li>
                 % endfor
-                <li><a href="${tg.url('/media')}">media</a></li>
-                <li><a href="${tg.url('/link')}">links</a></li>
+                <li class="media"><a href="${tg.url('/media')}">media</a></li>
+                <li class="links"><a href="${tg.url('/link')}">links</a></li>
                 % if tg.predicates.has_permission('manage'):
-                <li><a href="${tg.url('/admin')}">admin</a></li>
+                <li class="admin"><a href="${tg.url('/admin')}">admin</a></li>
                 % endif
             </ul>
         </div>

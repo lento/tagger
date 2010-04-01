@@ -46,7 +46,7 @@ class Controller(RestController):
     def get_all(self):
         """Return list of categories"""
         categories = DBSession.query(Category).all()
-        return dict(categories=categories)
+        return dict(categories=categories, page=('admin', 'categories'))
 
     @expose('json')
     @expose('tagger.templates.category.get_one')
