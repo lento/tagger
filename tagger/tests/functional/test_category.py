@@ -31,7 +31,8 @@ class TestCategoryController(TestController):
 
     def test_get_all(self):
         """controllers.category.Controller.get_all is working properly"""
-        response = self.app.get('/category')
+        environ = {'REMOTE_USER': 'admin'}
+        response = self.app.get('/category', extra_environ=environ, status=200)
         
         expected = ('<tr>\n'
                     '<td>1</td>\n'
@@ -42,20 +43,26 @@ class TestCategoryController(TestController):
                     '</tr>'
                    )
 
-        eq_(str(response.html.table('tr')[1]), expected)
+        tr = response.html.table('tr')[1]
+        eq_(str(tr('td')[0]), '<td>1</td>')
+        eq_(str(tr('td')[1]), '<td>blog</td>')
+        eq_(str(tr('td')[2]), '<td>Web log</td>')
+        actions = tr('td')[3]
+        eq_(str(actions('a')[0]['class']), 'icon edit overlay')
+        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
     def test_get_one(self):
         """controllers.category.Controller.get_one is working properly"""
         response = self.app.get('/category/1')
         
-        expected = ('<div id="content">\n'
+        expected = ('<div id="content_with_side">\n'
                     '<div>1</div>\n'
                     '<div>blog</div>\n'
                     '<div>Web log</div>\n'
                     '</div>'
                    )
 
-        eq_(str(response.html.find(id='content')), expected)
+        eq_(str(response.html.find(id='content_with_side')), expected)
 
     def test_new(self):
         """controllers.category.Controller.new is working properly"""
@@ -74,10 +81,12 @@ class TestCategoryController(TestController):
         """controllers.category.Controller.post is working properly"""
         environ = {'REMOTE_USER': 'admin'}
         response = self.app.post('/category?name=test&description=Test',
+                                            extra_environ=environ, status=302)
+        redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
         
-        assert_true(response.html.find('div', 'result success'),
-                            'result div should have a "result success" class')
+        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
+                                'result should have a "ok" flash notification')
 
         cat = DBSession().query(Category).filter_by(name=u'test').one()
         eq_(cat.description, 'Test')
@@ -105,10 +114,12 @@ class TestCategoryController(TestController):
         """controllers.category.Controller.put is working properly"""
         environ = {'REMOTE_USER': 'admin'}
         response = self.app.put('/category/1?name=test&description=Test',
+                                            extra_environ=environ, status=302)
+        redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
         
-        assert_true(response.html.find('div', 'result success'),
-                            'result div should have a "result success" class')
+        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
+                                'result should have a "ok" flash notification')
 
         cat = DBSession.query(Category).get(1)
         eq_(cat.name, 'test')
@@ -133,10 +144,12 @@ class TestCategoryController(TestController):
         """controllers.category.Controller.post_delete is working properly"""
         environ = {'REMOTE_USER': 'admin'}
         response = self.app.delete('/category?category_id=1',
+                                            extra_environ=environ, status=302)
+        redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
         
-        assert_true(response.html.find('div', 'result success'),
-                            'result div should have a "result success" class')
+        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
+                                'result should have a "ok" flash notification')
 
         cat = DBSession.query(Category).get(1)
         assert_true(cat is None,

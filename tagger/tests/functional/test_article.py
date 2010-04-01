@@ -61,7 +61,7 @@ class TestCategoryController(TestController):
 
         response = self.app.get('/article/1')
         
-        expected = ('<div id="content">\n'
+        expected = ('<div id="content_with_side">\n'
                     '<div>1</div>\n'
                     '<div>A Test Article!</div>\n'
                     '<div>blog</div>\n'
@@ -69,7 +69,7 @@ class TestCategoryController(TestController):
                     '</div>'
                    )
 
-        eq_(str(response.html.find(id='content')), expected)
+        eq_(str(response.html.find(id='content_with_side')), expected)
 
     def test_get_one_string_id(self):
         """controllers.article.Controller.get_one is working with string_id"""
@@ -81,7 +81,7 @@ class TestCategoryController(TestController):
 
         response = self.app.get('/article/a_test_article')
         
-        expected = ('<div id="content">\n'
+        expected = ('<div id="content_with_side">\n'
                     '<div>1</div>\n'
                     '<div>A Test Article!</div>\n'
                     '<div>blog</div>\n'
@@ -89,7 +89,7 @@ class TestCategoryController(TestController):
                     '</div>'
                    )
 
-        eq_(str(response.html.find(id='content')), expected)
+        eq_(str(response.html.find(id='content_with_side')), expected)
 
     def test_new(self):
         """controllers.article.Controller.new is working properly"""
