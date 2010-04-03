@@ -14,14 +14,18 @@
     <script type="text/javascript" src="${tg.url('/js/jquery.tools.js')}"></script>
     <script type="text/javascript" src="${tg.url('/js/tagger.js')}"></script>
 
-    % if page:
     <script type="text/javascript">
     $(function() {
-        $("#header .menu_bottom .${page[0]}").addClass('active');
-        $("#side .${page[1]}").addClass('active');
+        % if page:
+            % if page[0]:
+                $("#header .menu_bottom .${page[0]}").addClass('active');
+            % endif
+            % if page[1]:
+                $("#side .${page[1]}").addClass('active');
+            % endif
+        % endif
     });
     </script>
-    % endif
 </head>
 <body>
     <div id="overlay">
