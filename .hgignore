@@ -10,3 +10,4 @@ syntax: regexp
 ^docs/build/
 ^deployment_.*\.ini
 ^paster.log
+^tagger.egg-info
