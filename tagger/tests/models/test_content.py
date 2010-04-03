@@ -140,12 +140,12 @@ class TestArticle(ModelTest):
         """model.content.Article constructor must set the category right"""
         eq_(self.obj.category, self.category)
 
-    def test_obj_property_languages(self):
-        """model.content.Article property "languages" works"""
+    def test_obj_property_languages_get(self):
+        """model.content.Article property "languages" can get value"""
         eq_(self.obj.languages, set([u'xx']))
 
-    def test_obj_method_title_noargs(self):
-        """model.content.Article method "title" works"""
+    def test_obj_property_title_get(self):
+        """model.content.Article property "title" can get value"""
         expected = u'A test article!'
         assert_equals(self.obj.title[''], expected,
                 'Article.title[""] should be "%s", not "%s"' % 
@@ -153,6 +153,38 @@ class TestArticle(ModelTest):
         assert_equals(self.obj.title[u'xx'], expected,
                 'Article.title["xx"] should be "%s", not "%s"' % 
                 (expected, self.obj.title[u'xx']))
+
+    def test_obj_property_title_set(self):
+        """model.content.Article property "title" can set value"""
+        expected = u'changed title'
+        self.obj.title[''] = expected
+        assert_equals(self.obj.pages['default'].name[''], expected,
+                'Article.pages["default"].name[""] should be "%s", not "%s"' % 
+                (expected, self.obj.pages['default'].name['']))
+        assert_equals(self.obj.pages['default'].name[u'xx'], expected,
+                'Article.pages["default"].name["xx"] should be "%s", not "%s"' % 
+                (expected, self.obj.pages['default'].name[u'xx']))
+
+    def test_obj_property_text_get(self):
+        """model.content.Article property "text" can get value"""
+        expected = u'random text'
+        assert_equals(self.obj.text[''], expected,
+                'Article.text[""] should be "%s", not "%s"' % 
+                (expected, self.obj.text['']))
+        assert_equals(self.obj.text[u'xx'], expected,
+                'Article.text["xx"] should be "%s", not "%s"' % 
+                (expected, self.obj.text[u'xx']))
+
+    def test_obj_property_text_set(self):
+        """model.content.Article property "text" can set value"""
+        expected = u'changed text'
+        self.obj.text[''] = expected
+        assert_equals(self.obj.pages['default'].text[''], expected,
+                'Article.pages["default"].text[""] should be "%s", not "%s"' % 
+                (expected, self.obj.pages['default'].text['']))
+        assert_equals(self.obj.pages['default'].text[u'xx'], expected,
+                'Article.pages["default"].text["xx"] should be "%s", not "%s"' % 
+                (expected, self.obj.pages['default'].text[u'xx']))
 
     def test_is_taggable(self):
         """model.content.Article objects are taggable"""

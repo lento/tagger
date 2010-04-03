@@ -184,6 +184,14 @@ class Article(DeclarativeBase):
 
     title = dict_property(_title_get, _title_set)
 
+    def _text_get(self, lang):
+        return self.pages['default'].text[lang]
+
+    def _text_set(self, lang, value):
+        self.pages['default'].text[lang] = value
+
+    text = dict_property(_text_get, _text_set)
+
     # Special methods
     def __init__(self, title, category, lang, user, text=None):
         self.string_id = make_id(title)
