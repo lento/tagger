@@ -25,10 +25,9 @@ from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what import predicates
 
 from tagger.lib.base import BaseController
-from tagger.model import DBSession, metadata
 from tagger.controllers.error import ErrorController
 from tagger.controllers import admin, language, category, article
-from tagger import model
+from tagger.model import DBSession, Category, Article
 
 __all__ = ['RootController']
 
@@ -73,3 +72,12 @@ class RootController(BaseController):
         goodbye as well."""
         flash(_('We hope to see you soon!'))
         redirect(url('/'))
+
+    @expose('tagger.templates.article.get_one')
+    def default(self, categoryname, stringid):
+        category = DBSession.query(Category).filter_by(
+                                            name=categoryname.decode()).one()
+        article = DBSession.query(Article).filter_by(
+                    category_id=category.id, string_id=stringid.decode()).one()
+        return self.article.get_one(article.id)
+

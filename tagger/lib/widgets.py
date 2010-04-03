@@ -26,6 +26,7 @@ from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tw.api import Widget, WidgetsList
 from tw.forms import TableForm, TextField, TextArea, HiddenField
 from tw.forms import SingleSelectField
+from tw.dynforms import CascadingSingleSelectField
 from tw.forms.validators import All, Regex, NotEmpty, UnicodeString, MaxLength
 
 # Language
@@ -81,25 +82,29 @@ class FormCategoryDelete(TableForm):
         name_ = TextField(validator=None, disabled=True)
 
 
-# Category
+# Article
 class FormArticleNew(TableForm):
     """New article form"""
     class fields(WidgetsList):
-        category_id = SingleSelectField(label_text='category', size=10)
-        language_id = SingleSelectField(label_text='language', size=10)
-        title = TextField(size=44, validator=All(UnicodeString, NotEmpty, MaxLength(50)))
-        text = TextArea(rows=20)
+        categoryid = SingleSelectField(label_text=_('Category'), size=10)
+        languageid = SingleSelectField(label_text=_('Language'), size=10)
+        title = TextField(size=44, validator=All(UnicodeString, NotEmpty,
+                                                                MaxLength(50)))
+        text = TextArea(id='text', rows=20)
 
 
 class FormArticleEdit(TableForm):
     """Edit article form"""
     class fields(WidgetsList):
         _method = HiddenField(default='PUT', validator=None)
-        article_id = HiddenField(validator=NotEmpty)
+        articleid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        title = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
-        category_id = SingleSelectField(label_text='category', size=10)
-        language_id = SingleSelectField(label_text='language', size=10)
+        stringid_ = TextField(size=44, validator=None, disabled=True)
+        categoryid = SingleSelectField(label_text=_('Category'), size=10)
+        languageid = CascadingSingleSelectField(label_text=_('Language'),
+                    size=10, cascadeurl=url('/article/translation'), extra=['articleid'])
+        title = TextField(size=44, validator=All(UnicodeString, NotEmpty,
+                                                                MaxLength(50)))
         text = TextArea(rows=30)
 
 
@@ -107,7 +112,7 @@ class FormArticleDelete(TableForm):
     """Delete article confirmation form"""
     class fields(WidgetsList):
         _method = HiddenField(default='DELETE', validator=None)
-        article_id = HiddenField(validator=NotEmpty)
+        articleid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
         title_ = TextField(validator=None, disabled=True)
 

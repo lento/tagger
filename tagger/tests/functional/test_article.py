@@ -37,22 +37,21 @@ class TestCategoryController(TestController):
         DBSession.add(article)
         transaction.commit()
 
-        response = self.app.get('/article')
-        
-        expected = ('<tr>\n'
-                    '<td>1</td>\n'
-                    '<td>A Test Article!</td>\n'
-                    '<td>blog</td>\n'
-                    '<td>en</td>\n'
-                    '<td>\n'
-                    '</td>\n'
-                    '</tr>'
-                   )
+        environ = {'REMOTE_USER': 'admin'}
+        response = self.app.get('/article/', extra_environ=environ,
+                                                                    status=200)
 
-        eq_(str(response.html.table('tr')[1]), expected)
+        tr = response.html.table('tr')[1]
+        eq_(str(tr('td')[0]), '<td>1</td>')
+        eq_(str(tr('td')[1]), '<td>A Test Article!</td>')
+        eq_(str(tr('td')[2]), '<td>blog</td>')
+        eq_(str(tr('td')[3]), '<td>en</td>')
+        actions = tr('td')[4]
+        eq_(str(actions('a')[0]['class']), 'icon edit')
+        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
-    def test_get_one_id(self):
-        """controllers.article.Controller.get_one is working with id"""
+    def test_get_one(self):
+        """controllers.article.Controller.get_one is working"""
         cat = DBSession.query(Category).get(1)
         user = DBSession.query(User).get(1)
         article = Article(u'A Test Article!', cat, u'en', user, u'random text')
@@ -60,27 +59,7 @@ class TestCategoryController(TestController):
         transaction.commit()
 
         response = self.app.get('/article/1')
-        
-        expected = ('<div id="content_with_side">\n'
-                    '<div>1</div>\n'
-                    '<div>A Test Article!</div>\n'
-                    '<div>blog</div>\n'
-                    '<div>en</div>\n'
-                    '</div>'
-                   )
 
-        eq_(str(response.html.find(id='content_with_side')), expected)
-
-    def test_get_one_string_id(self):
-        """controllers.article.Controller.get_one is working with string_id"""
-        cat = DBSession.query(Category).get(1)
-        user = DBSession.query(User).get(1)
-        article = Article(u'A Test Article!', cat, u'en', user, u'random text')
-        DBSession.add(article)
-        transaction.commit()
-
-        response = self.app.get('/article/a_test_article')
-        
         expected = ('<div id="content_with_side">\n'
                     '<div>1</div>\n'
                     '<div>A Test Article!</div>\n'
@@ -96,25 +75,29 @@ class TestCategoryController(TestController):
         environ = {'REMOTE_USER': 'admin'}
         response = self.app.get('/article/new', extra_environ=environ,
                                                                     status=200)
-        
+
         eq_(response.html.form['action'], u'/article/')
         eq_(response.html.form['method'], u'post')
-        # TODO: check category element
-        # TODO: check language element
+        assert_true(response.html.find('select', {'id': 'categoryid'}),
+                                        '"categoryid" input element not found')
+        assert_true(response.html.find('select', {'id': 'languageid'}),
+                                        '"languageid" input element not found')
         assert_true(response.html.find('input', {'id': 'title'}),
-                                            '"title" input element not found')
+                                        '"title" input element not found')
         assert_true(response.html.find('textarea', {'id': 'text'}),
-                                            '"text" textarea element not found')
+                                        '"text" textarea element not found')
 
     def test_post(self):
         """controllers.article.Controller.post is working properly"""
         environ = {'REMOTE_USER': 'admin'}
-        response = self.app.post('/article?title=test&category_id=1&'
-                                            'language_id=en&text=RandomText',
+        response = self.app.post('/article?title=test&categoryid=1&'
+                                            'languageid=en&text=RandomText',
+                                            extra_environ=environ, status=302)
+        redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
-        
-        assert_true(response.html.find('div', 'result success'),
-                            'result div should have a "result success" class')
+
+        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
+                                'result should have a "ok" flash notification')
 
         article = DBSession().query(Article).get(1)
         eq_(article.string_id, 'test')
@@ -122,10 +105,8 @@ class TestCategoryController(TestController):
         eq_(article.languages, set([u'en']))
         eq_(article.user.user_name, 'admin')
 
-    # TODO: fix test
-    '''
-    def test_edit_id(self):
-        """controllers.article.Controller.edit is working with id"""
+    def test_edit(self):
+        """controllers.article.Controller.edit is working"""
         cat = DBSession.query(Category).get(1)
         user = DBSession.query(User).get(1)
         article = Article(u'A Test Article!', cat, u'en', user, u'random text')
@@ -135,74 +116,106 @@ class TestCategoryController(TestController):
         environ = {'REMOTE_USER': 'admin'}
         response = self.app.get('/article/1/edit', extra_environ=environ,
                                                                     status=200)
-        
+
         eq_(response.html.form['action'], u'/article/')
         eq_(response.html.form['method'], u'post')
         assert_true(response.html.find('input',
                                         {'name': '_method', 'value': 'PUT'}),
                                         '"_method" should be "PUT"')
         assert_true(response.html.find('input',
-                                        {'name': 'article_id', 'value': '1'}),
+                                        {'name': 'articleid', 'value': '1'}),
                                         'wrong article_id')
-        eq_(response.html.find('input', {'id': 'category'})['value'],
-                                                            u'blog')
-        eq_(response.html.find('input', {'id': 'language'})['value'],
+        categoryid = response.html.find('select', {'id': 'categoryid'})
+        assert_true(categoryid, '"categoryid" input element not found')
+        eq_(categoryid.find('option', {'selected': 'selected'})['value'],
+                                                            u'1')
+        languageid = response.html.find('select', {'id': 'languageid'})
+        assert_true(languageid, '"languageid" input element not found')
+        eq_(languageid.find('option', {'selected': 'selected'})['value'],
                                                             u'en')
-        eq_(response.html.find('input', {'id': 'user'})['value'],
-                                                            u'admin')
+        eq_(response.html.find('input', {'id': 'title'})['value'],
+                                                            u'A Test Article!')
         eq_(response.html.find('textarea', {'id': 'text'}).string,
                                                             u'random text')
-    '''
 
-    # TODO: add test_edit_string_id
-
-    # TODO: fix test
-    '''
     def test_put(self):
         """controllers.article.Controller.put is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.put('/article/1?title=test&description=Test',
-                                            extra_environ=environ, status=200)
-        
-        assert_true(response.html.find('div', 'result success'),
-                            'result div should have a "result success" class')
-
         cat = DBSession.query(Category).get(1)
-        eq_(cat.name, 'test')
-        eq_(cat.description, 'Test')
-    '''
+        user = DBSession.query(User).get(1)
+        article = Article(u'A Test Article!', cat, u'en', user, u'random text')
+        DBSession.add(article)
+        transaction.commit()
 
-    # TODO: fix test
-    '''
-    def test_get_delete(self):
-        """controllers.category.Controller.get_delete is working properly"""
         environ = {'REMOTE_USER': 'admin'}
-        response = self.app.get('/category/1/delete', extra_environ=environ,
+        response = self.app.put(
+                '/article/1?title=test&categoryid=1&languageid=en&text=Test',
+                extra_environ=environ, status=302)
+        redirected = self.app.get(response.location,
+                                            extra_environ=environ, status=200)
+
+        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
+                                'result should have a "ok" flash notification')
+
+        article = DBSession.query(Article).get(1)
+        eq_(article.title[''], 'test')
+        eq_(article.text[''], 'Test')
+
+    def test_get_delete(self):
+        """controllers.article.Controller.get_delete is working properly"""
+        cat = DBSession.query(Category).get(1)
+        user = DBSession.query(User).get(1)
+        article = Article(u'A Test Article!', cat, u'en', user, u'random text')
+        DBSession.add(article)
+        transaction.commit()
+
+        environ = {'REMOTE_USER': 'admin'}
+        response = self.app.get('/article/1/delete', extra_environ=environ,
                                                                     status=200)
-        
-        eq_(response.html.form['action'], u'/category/')
+
+        eq_(response.html.form['action'], u'/article/')
         eq_(response.html.form['method'], u'post')
         assert_true(response.html.find('input',
                                         {'name': '_method', 'value': 'DELETE'}),
                                         '"_method" should be "DELETE"')
         assert_true(response.html.find('input',
-                                        {'name': 'category_id', 'value': '1'}),
-                                        'wrong category_id')
-    '''
+                                        {'name': 'articleid', 'value': '1'}),
+                                        'wrong article_id')
 
-    # TODO: fix test
-    '''
     def test_post_delete(self):
         """controllers.category.Controller.post_delete is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.delete('/category?category_id=1',
-                                            extra_environ=environ, status=200)
-        
-        assert_true(response.html.find('div', 'result success'),
-                            'result div should have a "result success" class')
-
         cat = DBSession.query(Category).get(1)
-        assert_true(cat is None,
-                            'Category "1" should have been deleted from the db')
-    '''
+        user = DBSession.query(User).get(1)
+        article = Article(u'A Test Article!', cat, u'en', user, u'random text')
+        DBSession.add(article)
+        transaction.commit()
+
+        environ = {'REMOTE_USER': 'admin'}
+        response = self.app.delete('/article?articleid=1',
+                                            extra_environ=environ, status=302)
+        redirected = self.app.get(response.location,
+                                            extra_environ=environ, status=200)
+
+        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
+                                'result should have a "ok" flash notification')
+
+        article = DBSession.query(Article).get(1)
+        assert_true(article is None,
+                            'Article "1" should have been deleted from the db')
+
+    def test_translation(self):
+        """controllers.category.Controller.translation is working properly"""
+        cat = DBSession.query(Category).get(1)
+        user = DBSession.query(User).get(1)
+        article = Article(u'A Test Article!', cat, u'en', user, u'random text')
+        DBSession.add(article)
+        transaction.commit()
+
+        response = self.app.post('/article', dict(articleid=1,
+                                                  value='en',
+                                                  _method='TRANSLATION',
+                                                 )
+                                )
+
+        expected = '{"text": "random text", "title": "A Test Article!"}'
+        eq_(response.body, expected)
 

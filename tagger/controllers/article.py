@@ -20,7 +20,7 @@
 #
 """Article controller"""
 
-from tg import expose, url, tmpl_context, redirect, validate, require
+from tg import expose, url, tmpl_context, redirect, validate, require, flash
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Language, Category, Article
@@ -40,22 +40,19 @@ f_delete = FormArticleDelete(action=url('/article/'))
 class Controller(RestController):
     """REST controller for managing articles"""
 
+    @require(has_permission('manage'))
     @expose('json')
     @expose('tagger.templates.article.get_all')
     def get_all(self):
         """Return a list of articles"""
         articles = DBSession.query(Article).all()
-        return dict(articles=articles)
+        return dict(articles=articles, page=('admin', 'articles'))
 
     @expose('json')
     @expose('tagger.templates.article.get_one')
-    def get_one(self, article_id):
+    def get_one(self, articleid):
         """Return a single article"""
-        query = DBSession.query(Article)
-        if article_id.isdigit():
-            article = query.get(int(article_id))
-        else:
-            article = query.filter_by(string_id=article_id.decode()).one()
+        article = DBSession.query(Article).get(articleid)
 
         return dict(article=article)
 
@@ -69,8 +66,8 @@ class Controller(RestController):
         
         cat_list = [(c.id, c.name) for c in DBSession.query(Category).all()]
         lang_list = [(l.id, l.name) for l in DBSession.query(Language).all()]
-        fcargs = dict(category_id=dict(options=cat_list),
-                                            language_id=dict(options=lang_list))
+        fcargs = dict(categoryid=dict(options=cat_list),
+                                            languageid=dict(options=lang_list))
         return dict(title=_('Create a new Article'),
                                                 args=fargs, child_args=fcargs)
 
@@ -78,59 +75,72 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.forms.result')
     @validate(f_new, error_handler=new)
-    def post(self, title, category_id, language_id, text):
+    def post(self, title, categoryid, languageid, text):
         """create a new Article"""
         user = tmpl_context.user
-        category = DBSession.query(Category).get(category_id)
-        DBSession.add(Article(title, category, language_id, user, text))
-        return dict(msg=_('Created Article "%s"') % title, result='success')
+        category = DBSession.query(Category).get(categoryid)
+        DBSession.add(Article(title, category, languageid, user, text))
+        flash(_('Created Article "%s"') % title, 'ok')
+        redirect(url('/article/'))
 
-    # TODO: how do we edit articles and pages?
-    '''
     @require(has_permission('manage'))
-    @expose('tagger.templates.forms.form')
-    def edit(self, article_id, **kwargs):
-        """Display a EDIT form."""
-        tmpl_context.form = f_edit
-        article = DBSession.query(Article).get(article_id)
-        fargs = dict(article_id=article.id, id_=article.id,
-                     name=article.name)
-        fcargs = dict()
-        return dict(title='Edit category "%s"' % article.id, args=fargs,
+    @expose('tagger.templates.article.edit')
+    def edit(self, articleid, **kwargs):
+        """Return a page to edit an article and all its pages"""
+        tmpl_context.f_edit = f_edit
+        article = DBSession.query(Article).get(articleid)
+
+        categories = [(c.id, c.name) for c in DBSession.query(Category)]
+        languages = [(l.id, l.name) for l in DBSession.query(Language)]
+        fargs = dict(articleid=article.id,
+                     id_=article.id,
+                     stringid_=article.string_id,
+                     categoryid=article.category_id,
+                     languageid=article.language_id,
+                     title=article.title[''],
+                     text=article.text[''],
+                    )
+        fcargs = dict(categoryid=dict(options=categories),
+                      languageid=dict(options=languages),
+                     )
+        return dict(article=article, page=('admin', None), args=fargs,
                                                             child_args=fcargs)
 
     @require(has_permission('manage'))
     @expose('json')
     @expose('tagger.templates.forms.result')
     @validate(f_edit, error_handler=edit)
-    def put(self, article_id, name):
+    def put(self, articleid, title, categoryid, languageid, text=None):
         """Edit a article"""
-        article = DBSession.query(Article).get(article_id.decode())
+        article = DBSession.query(Article).get(articleid)
 
         modified = False
-        if article.name != name:
-            article.name = name
+        if article.title[languageid] != title:
+            article.title[languageid] = title
+            modified = True
+
+        if article.category_id != categoryid:
+            article.category_id = categoryid
+            modified = True
+
+        if article.text[languageid] != text:
+            article.text[languageid] = text
             modified = True
 
         if modified:
-            return dict(msg='updated article "%s"' %
-                                                article_id, result='success')
-        return dict(msg='article "%s" unchanged' %
-                                                article_id, result='success')
-    '''
+            flash(_('updated article "%s"') % articleid, 'ok')
+        else:
+            flash(_('article "%s" unchanged') % articleid, 'info')
+        redirect('')
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
-    def get_delete(self, article_id, **kwargs):
+    def get_delete(self, articleid, **kwargs):
         """Display a DELETE confirmation form."""
         tmpl_context.form = f_delete
-        query = DBSession.query(Article)
-        if article_id.isdigit():
-            article = query.get(int(article_id))
-        else:
-            article = query.filter_by(string_id=article_id.decode()).one()
+        article = DBSession.query(Article).get(articleid)
 
-        fargs = dict(article_id=article.id,
+        fargs = dict(articleid=article.id,
                      id_=article.id,
                      title_=article.title[''],
                     )
@@ -145,14 +155,27 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.forms.result')
     @validate(f_delete, error_handler=get_delete)
-    def post_delete(self, article_id):
+    def post_delete(self, articleid):
         """Delete a Article"""
-        query = DBSession.query(Article)
-        if article_id.isdigit():
-            article = query.get(int(article_id))
-        else:
-            article = query.filter_by(string_id=article_id.decode()).one()
+        article = DBSession.query(Article).get(articleid)
 
         DBSession.delete(article)
-        return dict(msg='Deleted Article "%s"' % article.id, result='success')
+        flash(_('Deleted Article "%s"') % article.id, 'ok')
+        redirect(url('/article/'))
+
+
+    # REST-like methods
+    _custom_actions = ['translation']
+    
+    @expose('json')
+    def translation(self, articleid, value):
+        """Return a article translation"""
+        log.debug('article.translation: %s %s' % (articleid, value))
+        article = DBSession.query(Article).get(articleid)
+
+        title = article.title[value]
+        text = article.text[value]
+        
+        return dict(title=title, text=text)
+
 

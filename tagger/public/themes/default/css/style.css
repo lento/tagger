@@ -159,6 +159,7 @@ table td.icon {
     -moz-box-shadow: 0 0 25px 5px #333;
     -webkit-box-shadow: 0 0 25px 5px #333;
     background-color: white;
+    overflow: auto;
 }
 
 

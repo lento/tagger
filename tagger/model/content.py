@@ -176,6 +176,10 @@ class Article(DeclarativeBase):
             langs |= p.languages
         return langs
 
+    @property
+    def language_id(self):
+        return self.pages['default'].language_id
+
     def _title_get(self, lang):
         return self.pages['default'].name[lang]
 
@@ -231,6 +235,10 @@ class Page(DeclarativeBase):
     @property
     def languages(self):
         return set([data.language_id for data in self.data])
+
+    @property
+    def language_id(self):
+        return self.data[0].language_id
 
     def _name_get(self, lang):
         if lang and lang in self.languages:
