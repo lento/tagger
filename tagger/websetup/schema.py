@@ -22,6 +22,7 @@
 
 import transaction
 from tg import config
+from paste.deploy.converters import asbool
 
 import logging
 log = logging.getLogger(__name__)
@@ -37,6 +38,12 @@ def setup_schema(command, conf, vars):
     
     # <websetup.websetup.schema.before.metadata.create_all>
     log.debug('Creating tables')
+    create_triggers = asbool(config.get('sql_create_triggers', 'true'))
+    log.debug('create_triggers: %s' % create_triggers)
+    if create_triggers:
+        for create_trigger in model.triggers:
+            create_trigger()
+
     model.metadata.create_all(bind=config['pylons.app_globals'].sa_engine)
     # <websetup.websetup.schema.after.metadata.create_all>
     transaction.commit()

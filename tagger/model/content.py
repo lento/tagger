@@ -27,11 +27,13 @@ from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
 from sqlalchemy.orm import relation, backref
 
 from tagger.model import DeclarativeBase, metadata, mapped_scalar, dict_property
+from tagger.model import triggers
 from tagger.model.auth import User
 from tagger.lib.utils import make_id
 
 import logging
 log = logging.getLogger(__name__)
+
 
 ############################################################
 # Associations
@@ -215,7 +217,10 @@ class Article(DeclarativeBase):
     def __repr__(self):
         return '<Article: %s %s>' % (self.id, self.string_id)
 
-DDL(orphaned_associable_trigger).execute_at('after-create', Article.__table__)
+def create_article_trigger():
+    DDL(orphaned_associable_trigger).execute_at('after-create', Article.__table__)
+
+triggers.append(create_article_trigger)
 
 
 ############################################################

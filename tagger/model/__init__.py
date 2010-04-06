@@ -31,6 +31,10 @@ metadata = DeclarativeBase.metadata
 # metadata for each database. Feel free to rename 'metadata2'.
 #metadata2 = MetaData()
 
+# a list of function wrappers for sqlalchemy DDLs that will be executed at
+# database creation if the config option "sql_create_triggers" is true
+triggers = []
+
 #####
 # Generally you will not want to define your table's mappers, and data objects
 # here in __init__ but will want to create modules them in the model directory
