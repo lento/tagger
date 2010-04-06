@@ -350,3 +350,34 @@ table td.icon {
     width: 100px;
 }
 
+
+/****************************************
+ * Article
+ ****************************************/
+.article_title {
+	margin-bottom: 40px;
+}
+
+.article_title h1 {
+	border-bottom: 1px solid #babdb6; /* Aluminium 3 */
+}
+
+.article_title .date, .article_title .user, .article_title .language {
+    font-size: smaller;
+}
+
+.article_title .user {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.article_title .language {
+    margin-right: 2px;
+    padding: 0 4px;
+    background-color: #babdb6; /* Aluminium 3 */
+    color: white;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+

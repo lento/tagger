@@ -21,6 +21,7 @@
 """Tagger utilities"""
 
 import re
+from docutils.core import publish_parts
 
 def make_id(text):
     newid = text.lower()
@@ -28,4 +29,7 @@ def make_id(text):
     newid = newid.strip()
     newid = re.sub('[\s]+', '_', newid)
     return newid
+
+def render_text(text):
+    return publish_parts(text, writer_name='html')['html_body']
 

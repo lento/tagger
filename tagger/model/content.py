@@ -170,15 +170,22 @@ class Article(DeclarativeBase):
         return self.associable.tags
 
     @property
+    def language_id(self):
+        return self.pages['default'].language_id
+
+    @property
+    def language_ids(self):
+        langs = set()
+        for p in self.pages:
+            langs |= p.language_ids
+        return langs
+
+    @property
     def languages(self):
         langs = set()
         for p in self.pages:
             langs |= p.languages
         return langs
-
-    @property
-    def language_id(self):
-        return self.pages['default'].language_id
 
     def _title_get(self, lang):
         return self.pages['default'].name[lang]
@@ -233,22 +240,26 @@ class Page(DeclarativeBase):
 
     # Properties
     @property
-    def languages(self):
-        return set([data.language_id for data in self.data])
-
-    @property
     def language_id(self):
         return self.data[0].language_id
 
+    @property
+    def language_ids(self):
+        return set([data.language_id for data in self.data])
+
+    @property
+    def languages(self):
+        return set([data.language for data in self.data])
+
     def _name_get(self, lang):
-        if lang and lang in self.languages:
+        if lang and lang in self.language_ids:
             return self.data[lang].name
         return self.data[0].name
 
     def _name_set(self, lang, value):
         if not lang:
             self.data[0].name = value
-        elif lang in self.languages:
+        elif lang in self.language_ids:
             self.data[lang].name = value
         else:
             self.data.append(PageData(value, lang, None))
@@ -256,14 +267,14 @@ class Page(DeclarativeBase):
     name = dict_property(_name_get, _name_set)
 
     def _text_get(self, lang):
-        if lang and lang in self.languages:
+        if lang and lang in self.language_ids:
             return self.data[lang].text
         return self.data[0].text
 
     def _text_set(self, lang, value):
         if not lang:
             self.data[0].text = value
-        elif lang in self.languages:
+        elif lang in self.language_ids:
             self.data[lang].text = value
         else:
             self.data.append(PageData(self.name[''], lang, value))

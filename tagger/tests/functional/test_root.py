@@ -37,14 +37,10 @@ class TestRootController(TestController):
 
         response = self.app.get('/blog/a_test_article')
 
-        expected = ('<div id="content_with_side">\n'
-                    '<div>1</div>\n'
-                    '<div>A Test Article!</div>\n'
-                    '<div>blog</div>\n'
-                    '<div>en</div>\n'
-                    '</div>'
-                   )
-
-        eq_(str(response.html.find(id='content_with_side')), expected)
+        assert_true(str(response.html.find(id='content_with_side')),
+                                'content should have class "content_with_side"')
+        title = response.html.find('div', 'article_title')
+        eq_(str(title.h1), '<h1>A Test Article!</h1>')
+        eq_(str(title.find('span', 'user')), '<span class="user">admin</span>')
 
 

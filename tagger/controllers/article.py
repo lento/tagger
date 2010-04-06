@@ -50,11 +50,11 @@ class Controller(RestController):
 
     @expose('json')
     @expose('tagger.templates.article.get_one')
-    def get_one(self, articleid):
+    def get_one(self, articleid, language_id=None):
         """Return a single article"""
         article = DBSession.query(Article).get(articleid)
 
-        return dict(article=article)
+        return dict(article=article, lang=language_id)
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -118,20 +118,23 @@ class Controller(RestController):
         if article.title[languageid] != title:
             article.title[languageid] = title
             modified = True
+            log.debug('article.put title: %s - %s' % (article.title[languageid], title))
 
-        if article.category_id != categoryid:
-            article.category_id = categoryid
+        if article.category_id != int(categoryid):
+            article.category_id = int(categoryid)
             modified = True
+            log.debug('article.put category: %s - %s' % (article.category_id, categoryid))
 
         if article.text[languageid] != text:
             article.text[languageid] = text
             modified = True
+            log.debug('article.put text: %s - %s' % (article.text[languageid], text))
 
         if modified:
             flash(_('updated article "%s"') % articleid, 'ok')
         else:
             flash(_('article "%s" unchanged') % articleid, 'info')
-        redirect('')
+        redirect(url('/article/%s/edit' % article.id))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')

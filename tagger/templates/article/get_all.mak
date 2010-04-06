@@ -22,7 +22,7 @@
         <td>${article.id}</td>
         <td>${article.title['']}</td>
         <td>${article.category.name}</td>
-        <td>${', '.join(article.languages)}</td>
+        <td>${', '.join(article.language_ids)}</td>
         <td>
             <a class="icon edit" title="${_('edit')}" href="${tg.url('/article/%s/edit' % article.id)}"></a>
             <a class="icon delete overlay" title="${_('delete')}" href="${tg.url('/article/%s/delete' % article.id)}" rel="#overlay"></a>

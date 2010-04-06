@@ -74,10 +74,10 @@ class RootController(BaseController):
         redirect(url('/'))
 
     @expose('tagger.templates.article.get_one')
-    def default(self, categoryname, stringid):
+    def _default(self, categoryname, stringid, language_id=None):
         category = DBSession.query(Category).filter_by(
                                             name=categoryname.decode()).one()
         article = DBSession.query(Article).filter_by(
                     category_id=category.id, string_id=stringid.decode()).one()
-        return self.article.get_one(article.id)
+        return self.article.get_one(article.id, language_id)
 

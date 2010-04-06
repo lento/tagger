@@ -142,7 +142,7 @@ class TestArticle(ModelTest):
 
     def test_obj_property_languages_get(self):
         """model.content.Article property "languages" can get value"""
-        eq_(self.obj.languages, set([u'xx']))
+        eq_(self.obj.languages, set([self.language]))
 
     def test_obj_property_title_get(self):
         """model.content.Article property "title" can get value"""
@@ -244,7 +244,7 @@ class TestPage(ModelTest):
 
     def test_obj_property_languages(self):
         """model.content.Page property "languages" works"""
-        eq_(self.obj.languages, set([u'xx']))
+        eq_(self.obj.languages, set([self.language]))
 
     def test_obj_property_name_get(self):
         """model.content.Page property "name" can get value"""
