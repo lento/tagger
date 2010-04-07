@@ -26,7 +26,7 @@ from repoze.what import predicates
 
 from tagger.lib.base import BaseController
 from tagger.controllers.error import ErrorController
-from tagger.controllers import admin, language, category, article
+from tagger.controllers import admin, language, category, article, link
 from tagger.model import DBSession, Category, Article
 
 __all__ = ['RootController']
@@ -39,6 +39,7 @@ class RootController(BaseController):
     category = category.Controller()
     language = language.Controller()
     article = article.Controller()
+    link = link.Controller()
 
     @expose('tagger.templates.index')
     def index(self):

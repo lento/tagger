@@ -21,6 +21,7 @@
 """Custom widgets for tagger"""
 
 import re
+import tg
 from tg import config, url
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tw.api import Widget, WidgetsList
@@ -54,6 +55,7 @@ class FormLanguageDelete(TableForm):
         language_id = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
         name_ = TextField(validator=None, disabled=True)
+
 
 # Category
 class FormCategoryNew(TableForm):
@@ -116,5 +118,35 @@ class FormArticleDelete(TableForm):
         id_ = TextField(validator=None, disabled=True)
         title_ = TextField(validator=None, disabled=True)
 
+
+# Link
+class FormLinkNew(TableForm):
+    """New link form"""
+    class fields(WidgetsList):
+        url = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        languageid = SingleSelectField(label_text=_('Language'), size=10)
+        description = TextArea(rows=10)
+
+
+class FormLinkEdit(TableForm):
+    """Edit link form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='PUT', validator=None)
+        linkid = HiddenField(validator=NotEmpty)
+        id_ = TextField(validator=None, disabled=True)
+        url = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        languageid = CascadingSingleSelectField(label_text=_('Language'),
+                            size=10, cascadeurl=tg.url('/link/translation'),
+                            extra=['linkid'])
+        description = TextArea(rows=10)
+
+
+class FormLinkDelete(TableForm):
+    """Delete link confirmation form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='DELETE', validator=None)
+        linkid = HiddenField(validator=NotEmpty)
+        id_ = TextField(validator=None, disabled=True)
+        url_ = TextField(validator=None, disabled=True)
 
 

@@ -322,3 +322,92 @@ class PageData(DeclarativeBase):
                                                                     self.name)
 
 
+############################################################
+# Link
+############################################################
+class Link(DeclarativeBase):
+    """Link definition"""
+    __tablename__ = 'links'
+
+    # Columns
+    id = Column(Integer, primary_key=True)
+    associable_id = Column(Integer, ForeignKey('associables.id'))
+    user_id = Column(Integer, ForeignKey('auth_users.user_id'))
+    created = Column(DateTime, default=datetime.now)
+    modified = Column(DateTime, default=datetime.now)
+    url = Column(Unicode(255))
+
+    # Relations
+    associable = relation('Associable', backref=backref('associated_link',
+                                                                uselist=False))
+    user = relation('User', backref='links')
+
+    # Properties
+    @property
+    def tags(self):
+        return self.associable.tags
+
+    @property
+    def language_id(self):
+        return self.data[0].language_id
+
+    @property
+    def language_ids(self):
+        return set([data.language_id for data in self.data])
+
+    @property
+    def languages(self):
+        return set([data.language for data in self.data])
+
+    def _description_get(self, lang):
+        if lang and lang in self.language_ids:
+            return self.data[lang].description
+        return self.data[0].description
+
+    def _description_set(self, lang, value):
+        if not lang:
+            self.data[0].description = value
+        elif lang in self.language_ids:
+            self.data[lang].description = value
+        else:
+            self.data.append(LinkData(lang, value))
+
+    description = dict_property(_description_get, _description_set)
+
+    # Special methods
+    def __init__(self, url, user, lang, description=None):
+        self.url = url
+        self.user = user
+        self.data.append(LinkData(lang, description))
+
+    def __repr__(self):
+        return '<Link: %s %s>' % (self.id, self.url)
+
+DDL(orphaned_associable_trigger).execute_at('after-create', Link.__table__)
+
+class LinkData(DeclarativeBase):
+    """Language specific Link data"""
+    __tablename__ = 'links_data'
+
+    # Columns
+    id = Column(Integer, primary_key=True)
+    link_id = Column(Integer, ForeignKey('links.id',
+                                        onupdate='CASCADE', ondelete='CASCADE'))
+    language_id = Column(Unicode(50), ForeignKey('languages.id',
+                                        onupdate='CASCADE', ondelete='CASCADE'))
+    description = Column(Unicode(255))
+
+    # Relations
+    link = relation('Link', backref=backref('data',
+                                cascade='all, delete, delete-orphan',
+                                collection_class=mapped_scalar('language_id')))
+    language = relation('Language', backref=backref('links_data'))
+
+    # Special methods
+    def __init__(self, lang, description=None):
+        self.language_id = lang
+        self.description = description
+
+    def __repr__(self):
+        return '<linkData: %s (%s)>' % (self.link_id, self.language_id)
+
