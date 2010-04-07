@@ -20,6 +20,8 @@
 #
 """Model utilities"""
 
+from sqlalchemy.schema import SchemaVisitor
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -127,4 +129,20 @@ def dict_property(fget=None, fset=None, fdel=None, doc=None):
             return fdel(self._obj, key)
 
     return property(DictProperty, doc=doc)
+
+
+class TriggerRemover(SchemaVisitor):
+    def _is_trigger(self, x):
+        return x.statement and 'create trigger' in x.statement.lower()
+
+    def visit_metadata(self, metadata):
+        for table in metadata.sorted_tables:
+            self.traverse_single(table)
+
+    def visit_table(self, table):
+        for event in table.ddl_events:
+            for listener in table.ddl_listeners[event]:
+                if self._is_trigger(listener):
+                    table.ddl_listeners[event].remove(listener)
+                    log.debug('removed %s from %s (%s)' % (listener, table.name, event))
 

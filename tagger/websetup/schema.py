@@ -37,13 +37,14 @@ def setup_schema(command, conf, vars):
 
     
     # <websetup.websetup.schema.before.metadata.create_all>
-    log.debug('Creating tables')
-    create_triggers = asbool(config.get('sql_create_triggers', 'true'))
-    log.debug('create_triggers: %s' % create_triggers)
-    if create_triggers:
-        for create_trigger in model.triggers:
-            create_trigger()
+    engine = config['pylons.app_globals'].sa_engine
 
-    model.metadata.create_all(bind=config['pylons.app_globals'].sa_engine)
+    create_triggers = asbool(config.get('sql_create_triggers', 'true'))
+    if not create_triggers:
+        log.debug('removing triggers creation from metadata')
+        model.TriggerRemover().traverse(model.metadata)
+
+    log.debug('Creating tables')
+    model.metadata.create_all(bind=engine)
     # <websetup.websetup.schema.after.metadata.create_all>
     transaction.commit()

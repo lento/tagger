@@ -27,7 +27,6 @@ from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
 from sqlalchemy.orm import relation, backref
 
 from tagger.model import DeclarativeBase, metadata, mapped_scalar, dict_property
-from tagger.model import triggers
 from tagger.model.auth import User
 from tagger.lib.utils import make_id
 
@@ -64,6 +63,7 @@ class Associable(DeclarativeBase):
         return '<Associable: %s (%s)>' % (self.id or 0, self.association_type)
 
 orphaned_associable_trigger = (
+    #'DROP TRIGGER IF EXISTS delete_orphaned_%(table)s_associable; '
     'CREATE TRIGGER delete_orphaned_%(table)s_associable '
     'AFTER DELETE '
     'ON %(table)s '
@@ -217,10 +217,7 @@ class Article(DeclarativeBase):
     def __repr__(self):
         return '<Article: %s %s>' % (self.id, self.string_id)
 
-def create_article_trigger():
-    DDL(orphaned_associable_trigger).execute_at('after-create', Article.__table__)
-
-triggers.append(create_article_trigger)
+DDL(orphaned_associable_trigger).execute_at('after-create', Article.__table__)
 
 
 ############################################################
