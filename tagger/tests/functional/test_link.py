@@ -23,29 +23,35 @@
 import transaction
 from nose.tools import assert_true, assert_false, eq_
 from tagger.tests import TestController
-from tagger.model import DBSession, User, Link, LinkData
+from tagger.model import DBSession, User, Language, Link, LinkData
 
 
 class TestLinkController(TestController):
     """Tests for the methods in the link controller."""
 
     def _fill_db(self):
-        user = DBSession.query(User).get(1)
-        link = Link(u'http://example.com', user, u'en', u'random text')
+        tadm = DBSession.query(User).filter_by(user_name=u'test_admin').one()
+        language = Language(u'xx', u'test_langugage')
+        DBSession.add(language)
+        link = Link(u'http://example.com', tadm, u'xx', u'random text')
         DBSession.add(link)
+        DBSession.flush()
+        languageid = language.id
+        linkid = link.id
         transaction.commit()
+        return languageid, linkid
 
     def test_get_all(self):
         """controllers.link.Controller.get_all is working properly"""
-        self._fill_db()
+        languageid, linkid = self._fill_db()
         
-        environ = {'REMOTE_USER': 'admin'}
+        environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/link/', extra_environ=environ, status=200)
 
         tr = response.html.table('tr')[1]
-        eq_(str(tr('td')[0]), '<td>1</td>')
+        eq_(str(tr('td')[0]), '<td>%s</td>' % linkid)
         eq_(str(tr('td')[1]), '<td>http://example.com</td>')
-        eq_(str(tr('td')[2]), '<td>en</td>')
+        eq_(str(tr('td')[2]), '<td>%s</td>' % languageid)
         eq_(str(tr('td')[3]), '<td>random text</td>')
         actions = tr('td')[4]
         eq_(str(actions('a')[0]['class']), 'icon edit overlay')
@@ -53,22 +59,22 @@ class TestLinkController(TestController):
 
     def test_get_one(self):
         """controllers.link.Controller.get_one is working"""
-        self._fill_db()
+        languageid, linkid = self._fill_db()
 
-        response = self.app.get('/link/1')
+        response = self.app.get('/link/%s' % linkid)
 
         expected = ('<div id="content_with_side">\n'
-                    '<div>1</div>\n'
+                    '<div>%s</div>\n'
                     '<div>http://example.com</div>\n'
                     '<div>random text</div>\n'
-                    '</div>'
+                    '</div>' % linkid
                    )
 
         eq_(str(response.html.find(id='content_with_side')), expected)
 
     def test_new(self):
         """controllers.link.Controller.new is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
+        environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/link/new', extra_environ=environ,
                                                                     status=200)
 
@@ -83,9 +89,11 @@ class TestLinkController(TestController):
 
     def test_post(self):
         """controllers.link.Controller.post is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
+        languageid, linkid = self._fill_db()
+
+        environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.post('/link/', dict(url='http://example.com',
-                                                languageid='en',
+                                                languageid=languageid,
                                                 description='random text',
                                                ),
                                             extra_environ=environ, status=302)
@@ -95,19 +103,19 @@ class TestLinkController(TestController):
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
 
-        link = DBSession().query(Link).get(1)
-        eq_(link.url, u'http://example.com')
+        query = DBSession().query(Link)
+        link = query.filter_by(url=u'http://example.com').first()
         eq_(link.description[''], u'random text')
-        eq_(link.language_ids, set([u'en']))
-        eq_(link.user.user_name, 'admin')
+        eq_(link.language_ids, set([languageid]))
+        eq_(link.user.user_name, 'test_admin')
 
     def test_edit(self):
         """controllers.link.Controller.edit is working"""
-        self._fill_db()
+        languageid, linkid = self._fill_db()
 
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.get('/link/1/edit', extra_environ=environ,
-                                                                    status=200)
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.get('/link/%s/edit' % linkid,
+                                            extra_environ=environ, status=200)
 
         eq_(response.html.form['action'], u'/link/')
         eq_(response.html.form['method'], u'post')
@@ -115,12 +123,12 @@ class TestLinkController(TestController):
                                         {'name': '_method', 'value': 'PUT'}),
                                         '"_method" should be "PUT"')
         assert_true(response.html.find('input',
-                                        {'name': 'linkid', 'value': '1'}),
-                                        'wrong link_id')
-        languageid = response.html.find('select', {'id': 'languageid'})
-        assert_true(languageid, '"languageid" input element not found')
-        eq_(languageid.find('option', {'selected': 'selected'})['value'],
-                                                            u'en')
+                                {'name': 'linkid', 'value': str(linkid)}),
+                                'wrong link_id')
+        elem_languageid = response.html.find('select', {'id': 'languageid'})
+        assert_true(elem_languageid, '"languageid" input element not found')
+        eq_(elem_languageid.find('option', {'selected': 'selected'})['value'],
+                                                            languageid)
         eq_(response.html.find('input', {'id': 'url'})['value'],
                                                         u'http://example.com')
         eq_(response.html.find('textarea', {'id': 'description'}).string,
@@ -128,13 +136,14 @@ class TestLinkController(TestController):
 
     def test_put(self):
         """controllers.link.Controller.put is working properly"""
-        self._fill_db()
+        languageid, linkid = self._fill_db()
 
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.put('/link/1', dict(url='changed',
-                                                languageid='en',
-                                                description='Changed',
-                                               ),
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.put('/link/%s' % linkid,
+                                            dict(url='changed',
+                                                 languageid=languageid,
+                                                 description='Changed',
+                                                ),
                                             extra_environ=environ, status=302)
         redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
@@ -142,33 +151,33 @@ class TestLinkController(TestController):
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
 
-        link = DBSession.query(Link).get(1)
+        link = DBSession.query(Link).get(linkid)
         eq_(link.url, 'changed')
-        eq_(link.description['en'], 'Changed')
+        eq_(link.description[languageid], 'Changed')
 
     def test_get_delete(self):
         """controllers.link.Controller.get_delete is working properly"""
-        self._fill_db()
+        languageid, linkid = self._fill_db()
 
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.get('/link/1/delete', extra_environ=environ,
-                                                                    status=200)
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.get('/link/%s/delete' % linkid,
+                                           extra_environ=environ, status=200)
 
         eq_(response.html.form['action'], u'/link/')
         eq_(response.html.form['method'], u'post')
         assert_true(response.html.find('input',
-                                        {'name': '_method', 'value': 'DELETE'}),
-                                        '"_method" should be "DELETE"')
+                                {'name': '_method', 'value': 'DELETE'}),
+                                '"_method" should be "DELETE"')
         assert_true(response.html.find('input',
-                                        {'name': 'linkid', 'value': '1'}),
-                                        'wrong link_id')
+                                {'name': 'linkid', 'value': str(linkid)}),
+                                'wrong link_id')
 
     def test_post_delete(self):
         """controllers.link.Controller.post_delete is working properly"""
-        self._fill_db()
+        languageid, linkid = self._fill_db()
 
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.delete('/link?linkid=1',
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.delete('/link?linkid=%s' % linkid,
                                             extra_environ=environ, status=302)
         redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
@@ -176,7 +185,7 @@ class TestLinkController(TestController):
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
 
-        link = DBSession.query(Link).get(1)
+        link = DBSession.query(Link).get(linkid)
         assert_true(link is None,
                             'Link "1" should have been deleted from the db')
         linkdata = DBSession.query(LinkData).all()
@@ -185,10 +194,10 @@ class TestLinkController(TestController):
 
     def test_translation(self):
         """controllers.link.Controller.translation is working properly"""
-        self._fill_db()
+        languageid, linkid = self._fill_db()
 
-        response = self.app.post('/link/', dict(linkid='1',
-                                               value='en',
+        response = self.app.post('/link/', dict(linkid=linkid,
+                                               value=languageid,
                                                _method='TRANSLATION',
                                               )
                                 )
