@@ -238,6 +238,7 @@ class Page(DeclarativeBase):
 
     # Relations
     article = relation('Article', backref=backref('pages',
+                                cascade='all, delete, delete-orphan',
                                 collection_class=mapped_scalar('string_id')))
 
     # Properties
@@ -308,6 +309,7 @@ class PageData(DeclarativeBase):
 
     # Relations
     page = relation('Page', backref=backref('data',
+                                cascade='all, delete, delete-orphan',
                                 collection_class=mapped_scalar('language_id')))
     language = relation('Language', backref=backref('pages_data'))
 

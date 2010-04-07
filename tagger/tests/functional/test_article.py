@@ -21,9 +21,10 @@
 """Functional test suite for the article controller"""
 
 import transaction
-from nose.tools import assert_true, eq_
+from nose.tools import assert_true, assert_false, eq_
 from tagger.tests import TestController
 from tagger.model import DBSession, User, Language, Category, Article
+from tagger.model import Page, PageData
 
 
 class TestCategoryController(TestController):
@@ -200,6 +201,12 @@ class TestCategoryController(TestController):
         article = query.filter_by(string_id=u'test').first()
         assert_true(article is None,
                             'the article should have been deleted from the db')
+        pages = DBSession.query(Page).all()
+        assert_false(pages,
+                    'orphaned Pages should have been deleted from the db')
+        pagedata = DBSession.query(PageData).all()
+        assert_false(pagedata,
+                    'orphaned PageData should have been deleted from the db')
 
     def test_translation(self):
         """controllers.category.Controller.translation is working properly"""
