@@ -24,7 +24,7 @@ from datetime import datetime
 
 from sqlalchemy import Table, ForeignKey, Column, DDL, UniqueConstraint
 from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
-from sqlalchemy.orm import relation, backref
+from sqlalchemy.orm import relation, backref, synonym
 
 from tagger.model import DeclarativeBase, metadata, mapped_scalar, dict_property
 from tagger.model.auth import User
@@ -301,7 +301,7 @@ class PageData(DeclarativeBase):
                     onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
     language_id = Column(Unicode(50), ForeignKey('languages.id',
                     onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
-    name = Column(Unicode(255))
+    _name = Column('name', Unicode(255))
     created = Column(DateTime, default=datetime.now)
     modified = Column(DateTime, default=datetime.now)
     text = Column(UnicodeText)
@@ -311,9 +311,23 @@ class PageData(DeclarativeBase):
                                 collection_class=mapped_scalar('language_id')))
     language = relation('Language', backref=backref('pages_data'))
 
+    # Properties
+    def _get_name(self):
+        return self._name
+
+    def _set_name(self, value):
+        if self.page.language_id == self.language_id:
+            if self.page.string_id == 'default':
+                self.page.article.string_id = make_id(value)
+            else:
+                self.page.string_id = make_id(value)
+        self._name = value
+
+    name = synonym('_name', descriptor=property(_get_name, _set_name))
+
     # Special methods
     def __init__(self, name, lang, text=None):
-        self.name = name
+        self._name = name
         self.language_id = lang
         self.text = text
 

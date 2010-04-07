@@ -42,11 +42,32 @@ def bootstrap(command, conf, vars):
 
         model.DBSession.add(u)
 
+        # admin for automated tests with a password that can't be matched to
+        # prevent interactive login
+        tadm = model.User()
+        tadm.user_name = u'test_admin'
+        tadm.display_name = u'Test Admin'
+        tadm.email_address = u''
+        tadm._password = u'*'
+
+        model.DBSession.add(tadm)
+
+        # user for automated tests with a password that can't be matched to
+        # prevent interactive login
+        tuser = model.User()
+        tuser.user_name = u'test_user'
+        tuser.display_name = u'Test User'
+        tuser.email_address = u''
+        tuser._password = u'*'
+
+        model.DBSession.add(tuser)
+
         g = model.Group()
         g.group_name = u'admins'
         g.display_name = u'Administrators Group'
 
         g.users.append(u)
+        g.users.append(tadm)
 
         model.DBSession.add(g)
 
