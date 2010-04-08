@@ -30,6 +30,11 @@ from tw.forms import SingleSelectField
 from tw.dynforms import CascadingSingleSelectField
 from tw.forms.validators import All, Regex, NotEmpty, UnicodeString, MaxLength
 
+
+############################################################
+# Forms
+############################################################
+
 # Language
 class FormLanguageNew(TableForm):
     """New language form"""
@@ -149,4 +154,16 @@ class FormLinkDelete(TableForm):
         id_ = TextField(validator=None, disabled=True)
         url_ = TextField(validator=None, disabled=True)
 
+
+############################################################
+# Custom Render Widgets
+############################################################
+
+class LinkWidget(Widget):
+    """Render a Link object"""
+    params = ['linkid', 'languageid', 'label']
+    template = 'mako:tagger.templates.widgets.link'
+
+    languageid = None
+    label = None
 

@@ -30,6 +30,3 @@ def make_id(text):
     newid = re.sub('[\s]+', '_', newid)
     return newid
 
-def render_text(text):
-    return publish_parts(text, writer_name='html')['html_body']
-
