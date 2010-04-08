@@ -97,8 +97,7 @@ class TestLinkController(TestController):
                                                 description='random text',
                                                ),
                                             extra_environ=environ, status=302)
-        redirected = self.app.get(response.location,
-                                            extra_environ=environ, status=200)
+        redirected = response.follow(extra_environ=environ, status=200)
 
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
@@ -145,8 +144,7 @@ class TestLinkController(TestController):
                                                  description='Changed',
                                                 ),
                                             extra_environ=environ, status=302)
-        redirected = self.app.get(response.location,
-                                            extra_environ=environ, status=200)
+        redirected = response.follow(extra_environ=environ, status=200)
 
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
@@ -179,8 +177,7 @@ class TestLinkController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/link?linkid=%s' % linkid,
                                             extra_environ=environ, status=302)
-        redirected = self.app.get(response.location,
-                                            extra_environ=environ, status=200)
+        redirected = response.follow(extra_environ=environ, status=200)
 
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')

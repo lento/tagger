@@ -30,7 +30,7 @@ class TestAdminController(TestController):
 
     def test_index(self):
         """controllers.admin.Controller.index is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
+        environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/admin', extra_environ=environ, status=200)
 
         msg = 'admin'

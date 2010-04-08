@@ -13,12 +13,27 @@ Please read http://pythonpaste.org/webtest/ for more information.
 from nose.tools import assert_true, eq_
 
 from tagger.tests import TestController
-from tagger.model import DBSession, User, Category, Article
+from tagger.model import DBSession, User, Language, Category, Article
 import transaction
 
 
 class TestRootController(TestController):
     """Tests for the method in the root controller."""
+
+    def _fill_db(self):
+        tadm = DBSession.query(User).filter_by(user_name=u'test_admin').one()
+        language = Language(u'xx', u'test_langugage')
+        DBSession.add(language)
+        cat = Category(u'test_category')
+        DBSession.add(cat)
+        article = Article(u'A Test Article!', cat, u'xx', tadm, u'random text')
+        DBSession.add(article)
+        DBSession.flush()
+        categoryid = cat.id
+        articleid = article.id
+        languageid = language.id
+        transaction.commit()
+        return languageid, categoryid, articleid
 
     def test_index(self):
         """The front page is working properly"""
@@ -29,18 +44,15 @@ class TestRootController(TestController):
 
     def test_default(self):
         """articles can be retrived with url: /category/string_id"""
-        cat = DBSession.query(Category).get(1)
-        user = DBSession.query(User).get(1)
-        article = Article(u'A Test Article!', cat, u'en', user, u'random text')
-        DBSession.add(article)
-        transaction.commit()
+        languageid, categoryid, articleid = self._fill_db()
 
-        response = self.app.get('/blog/a_test_article')
+        response = self.app.get('/test_category/a_test_article')
 
         assert_true(str(response.html.find(id='content_with_side')),
                                 'content should have class "content_with_side"')
         title = response.html.find('div', 'article_title')
         eq_(str(title.h1), '<h1>A Test Article!</h1>')
-        eq_(str(title.find('span', 'user')), '<span class="user">admin</span>')
+        eq_(str(title.find('span', 'user')),
+                                        '<span class="user">test_admin</span>')
 
 

@@ -103,8 +103,7 @@ class TestCategoryController(TestController):
                                                    text='random text',
                                                   ),
                                             extra_environ=environ, status=302)
-        redirected = self.app.get(response.location,
-                                            extra_environ=environ, status=200)
+        redirected = response.follow(extra_environ=environ, status=200)
 
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
@@ -156,8 +155,7 @@ class TestCategoryController(TestController):
                                                  text='Test',
                                                 ),
                                             extra_environ=environ, status=302)
-        redirected = self.app.get(response.location,
-                                            extra_environ=environ, status=200)
+        redirected = response.follow(extra_environ=environ, status=200)
 
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
@@ -191,8 +189,7 @@ class TestCategoryController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/article?articleid=%s' % articleid,
                                             extra_environ=environ, status=302)
-        redirected = self.app.get(response.location,
-                                            extra_environ=environ, status=200)
+        redirected = response.follow(extra_environ=environ, status=200)
 
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')

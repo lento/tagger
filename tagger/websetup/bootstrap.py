@@ -52,13 +52,12 @@ def bootstrap(command, conf, vars):
 
         model.DBSession.add(tadm)
 
-        # user for automated tests with a password that can't be matched to
-        # prevent interactive login
+        # user with no permissions for automated tests
         tuser = model.User()
         tuser.user_name = u'test_user'
         tuser.display_name = u'Test User'
         tuser.email_address = u''
-        tuser._password = u'*'
+        tuser.password = u'none'
 
         model.DBSession.add(tuser)
 

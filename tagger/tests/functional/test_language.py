@@ -86,8 +86,7 @@ class TestLanguageController(TestController):
                                                  name='test language',
                                                 ),
                                             extra_environ=environ, status=302)
-        redirected = self.app.get(response.location,
-                                            extra_environ=environ, status=200)
+        redirected = response.follow(extra_environ=environ, status=200)
 
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
@@ -122,8 +121,7 @@ class TestLanguageController(TestController):
         response = self.app.put('/language/%s' % languageid,
                                             dict(name='changed'),
                                             extra_environ=environ, status=302)
-        redirected = self.app.get(response.location,
-                                            extra_environ=environ, status=200)
+        redirected = response.follow(extra_environ=environ, status=200)
 
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
@@ -155,8 +153,7 @@ class TestLanguageController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/language?languageid=%s' % languageid,
                                             extra_environ=environ, status=302)
-        redirected = self.app.get(response.location,
-                                            extra_environ=environ, status=200)
+        redirected = response.follow(extra_environ=environ, status=200)
 
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
