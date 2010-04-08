@@ -16,7 +16,7 @@
         <th>${_('Actions')}</th>
     </tr>
     % for language in languages:
-    <tr>
+    <tr class="${language.id}">
         <td>${language.id}</td>
         <td>${language.name}</td>
         <td>

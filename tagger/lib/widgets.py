@@ -34,7 +34,7 @@ from tw.forms.validators import All, Regex, NotEmpty, UnicodeString, MaxLength
 class FormLanguageNew(TableForm):
     """New language form"""
     class fields(WidgetsList):
-        language_id = TextField(validator=All(UnicodeString, NotEmpty,
+        languageid = TextField(validator=All(UnicodeString, NotEmpty,
                                                                 MaxLength(3)))
         name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
 
@@ -43,7 +43,7 @@ class FormLanguageEdit(TableForm):
     """Edit language form"""
     class fields(WidgetsList):
         _method = HiddenField(default='PUT', validator=None)
-        language_id = HiddenField(validator=NotEmpty)
+        languageid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
         name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
 
@@ -52,7 +52,7 @@ class FormLanguageDelete(TableForm):
     """Delete language confirmation form"""
     class fields(WidgetsList):
         _method = HiddenField(default='DELETE', validator=None)
-        language_id = HiddenField(validator=NotEmpty)
+        languageid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
         name_ = TextField(validator=None, disabled=True)
 

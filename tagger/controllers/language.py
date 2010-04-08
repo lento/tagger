@@ -50,9 +50,9 @@ class Controller(RestController):
 
     @expose('json')
     @expose('tagger.templates.language.get_one')
-    def get_one(self, language_id):
+    def get_one(self, languageid):
         """Return a single language"""
-        language = DBSession.query(Language).get(language_id.decode())
+        language = DBSession.query(Language).get(languageid.decode())
         return dict(language=language)
 
     @require(has_permission('manage'))
@@ -70,19 +70,19 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.forms.result')
     @validate(f_new, error_handler=new)
-    def post(self, language_id, name):
+    def post(self, languageid, name):
         """create a new Language"""
-        DBSession.add(Language(language_id, name))
+        DBSession.add(Language(languageid, name))
         flash(_('Created Language "%s"') % name, 'ok')
         redirect(url('/language/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
-    def edit(self, language_id, **kwargs):
+    def edit(self, languageid, **kwargs):
         """Display a EDIT form."""
         tmpl_context.form = f_edit
-        language = DBSession.query(Language).get(language_id.decode())
-        fargs = dict(language_id=language.id, id_=language.id,
+        language = DBSession.query(Language).get(languageid.decode())
+        fargs = dict(languageid=language.id, id_=language.id,
                      name=language.name)
         fcargs = dict()
         return dict(title='Edit category "%s"' % language.id, args=fargs,
@@ -92,9 +92,9 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.forms.result')
     @validate(f_edit, error_handler=edit)
-    def put(self, language_id, name):
+    def put(self, languageid, name):
         """Edit a language"""
-        language = DBSession.query(Language).get(language_id.decode())
+        language = DBSession.query(Language).get(languageid.decode())
 
         modified = False
         if language.name != name:
@@ -102,18 +102,18 @@ class Controller(RestController):
             modified = True
 
         if modified:
-            flash(_('updated language "%s"') % language_id, 'ok')
+            flash(_('updated language "%s"') % languageid, 'ok')
         else:
-            flash(_('language "%s" unchanged') % language_id, 'info')
+            flash(_('language "%s" unchanged') % languageid, 'info')
         redirect(url('/language/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
-    def get_delete(self, language_id, **kwargs):
+    def get_delete(self, languageid, **kwargs):
         """Display a DELETE confirmation form."""
         tmpl_context.form = f_delete
-        language = DBSession.query(Language).get(language_id.decode())
-        fargs = dict(language_id=language.id,
+        language = DBSession.query(Language).get(languageid.decode())
+        fargs = dict(languageid=language.id,
                      id_=language.id,
                      name_=language.name,
                     )
@@ -128,9 +128,9 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.forms.result')
     @validate(f_delete, error_handler=get_delete)
-    def post_delete(self, language_id):
+    def post_delete(self, languageid):
         """Delete a Language"""
-        language = DBSession.query(Language).get(language_id.decode())
+        language = DBSession.query(Language).get(languageid.decode())
 
         DBSession.delete(language)
         flash(_('Deleted Language "%s"') % language.id, 'ok')
