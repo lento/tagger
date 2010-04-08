@@ -29,44 +29,47 @@ from tagger.model import DBSession, Category
 class TestCategoryController(TestController):
     """Tests for the methods in the category controller."""
 
+    def _fill_db(self):
+        cat = Category(u'test_category', u'a test category')
+        DBSession.add(cat)
+        DBSession.flush()
+        categoryid = cat.id
+        transaction.commit()
+        return categoryid
+
     def test_get_all(self):
         """controllers.category.Controller.get_all is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
+        categoryid = self._fill_db()
+
+        environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/category', extra_environ=environ, status=200)
         
-        expected = ('<tr>\n'
-                    '<td>1</td>\n'
-                    '<td>blog</td>\n'
-                    '<td>Web log</td>\n'
-                    '<td>\n'
-                    '</td>\n'
-                    '</tr>'
-                   )
-
-        tr = response.html.table('tr')[1]
-        eq_(str(tr('td')[0]), '<td>1</td>')
-        eq_(str(tr('td')[1]), '<td>blog</td>')
-        eq_(str(tr('td')[2]), '<td>Web log</td>')
+        tr = response.html.table.find('tr', str(categoryid))
+        eq_(str(tr('td')[0]), '<td>%s</td>' % categoryid)
+        eq_(str(tr('td')[1]), '<td>test_category</td>')
+        eq_(str(tr('td')[2]), '<td>a test category</td>')
         actions = tr('td')[3]
         eq_(str(actions('a')[0]['class']), 'icon edit overlay')
         eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
     def test_get_one(self):
         """controllers.category.Controller.get_one is working properly"""
-        response = self.app.get('/category/1')
+        categoryid = self._fill_db()
+
+        response = self.app.get('/category/%s' % categoryid)
         
         expected = ('<div id="content_with_side">\n'
-                    '<div>1</div>\n'
-                    '<div>blog</div>\n'
-                    '<div>Web log</div>\n'
-                    '</div>'
+                    '<div>%s</div>\n'
+                    '<div>test_category</div>\n'
+                    '<div>a test category</div>\n'
+                    '</div>' % categoryid
                    )
 
         eq_(str(response.html.find(id='content_with_side')), expected)
 
     def test_new(self):
         """controllers.category.Controller.new is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
+        environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/category/new', extra_environ=environ,
                                                                     status=200)
         
@@ -79,8 +82,11 @@ class TestCategoryController(TestController):
 
     def test_post(self):
         """controllers.category.Controller.post is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.post('/category?name=test&description=Test',
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.post('/category/',
+                                            dict(name='test',
+                                                 description='Test',
+                                                ),
                                             extra_environ=environ, status=302)
         redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
@@ -93,9 +99,11 @@ class TestCategoryController(TestController):
 
     def test_edit(self):
         """controllers.category.Controller.edit is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.get('/category/1/edit', extra_environ=environ,
-                                                                    status=200)
+        categoryid = self._fill_db()
+
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.get('/category/%s/edit' % categoryid,
+                                            extra_environ=environ, status=200)
         
         eq_(response.html.form['action'], u'/category/')
         eq_(response.html.form['method'], u'post')
@@ -103,17 +111,22 @@ class TestCategoryController(TestController):
                                         {'name': '_method', 'value': 'PUT'}),
                                         '"_method" should be "PUT"')
         assert_true(response.html.find('input',
-                                        {'name': 'category_id', 'value': '1'}),
-                                        'wrong category_id')
+                            {'name': 'category_id', 'value': str(categoryid)}),
+                            'wrong category_id')
         eq_(response.html.find('input', {'id': 'name'})['value'],
-                                                            u'blog')
+                                                            u'test_category')
         eq_(response.html.find('textarea', {'id': 'description'}).string,
-                                                            u'Web log')
+                                                            u'a test category')
 
     def test_put(self):
         """controllers.category.Controller.put is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.put('/category/1?name=test&description=Test',
+        categoryid = self._fill_db()
+
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.put('/category/%s' % categoryid,
+                                            dict(name='changed',
+                                                 description='Changed',
+                                                ),
                                             extra_environ=environ, status=302)
         redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
@@ -121,15 +134,17 @@ class TestCategoryController(TestController):
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
 
-        cat = DBSession.query(Category).get(1)
-        eq_(cat.name, 'test')
-        eq_(cat.description, 'Test')
+        cat = DBSession.query(Category).get(categoryid)
+        eq_(cat.name, 'changed')
+        eq_(cat.description, 'Changed')
 
     def test_get_delete(self):
         """controllers.category.Controller.get_delete is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.get('/category/1/delete', extra_environ=environ,
-                                                                    status=200)
+        categoryid = self._fill_db()
+
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.get('/category/%s/delete' % categoryid,
+                                            extra_environ=environ, status=200)
         
         eq_(response.html.form['action'], u'/category/')
         eq_(response.html.form['method'], u'post')
@@ -137,13 +152,15 @@ class TestCategoryController(TestController):
                                         {'name': '_method', 'value': 'DELETE'}),
                                         '"_method" should be "DELETE"')
         assert_true(response.html.find('input',
-                                        {'name': 'category_id', 'value': '1'}),
-                                        'wrong category_id')
+                            {'name': 'category_id', 'value': str(categoryid)}),
+                            'wrong category_id')
 
     def test_post_delete(self):
         """controllers.category.Controller.post_delete is working properly"""
-        environ = {'REMOTE_USER': 'admin'}
-        response = self.app.delete('/category?category_id=1',
+        categoryid = self._fill_db()
+
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.delete('/category?category_id=%s' % categoryid,
                                             extra_environ=environ, status=302)
         redirected = self.app.get(response.location,
                                             extra_environ=environ, status=200)
@@ -151,7 +168,7 @@ class TestCategoryController(TestController):
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
 
-        cat = DBSession.query(Category).get(1)
+        cat = DBSession.query(Category).get(categoryid)
         assert_true(cat is None,
-                            'Category "1" should have been deleted from the db')
+                            'Category should have been deleted from the db')
 

@@ -17,7 +17,7 @@
         <th>${_('Actions')}</th>
     </tr>
     % for cat in categories:
-    <tr>
+    <tr class="${cat.id}">
         <td>${cat.id}</td>
         <td>${cat.name}</td>
         <td>${cat.description}</td>
