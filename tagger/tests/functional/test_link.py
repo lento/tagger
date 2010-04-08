@@ -188,7 +188,7 @@ class TestLinkController(TestController):
         link = DBSession.query(Link).get(linkid)
         assert_true(link is None,
                             'Link "1" should have been deleted from the db')
-        linkdata = DBSession.query(LinkData).all()
+        linkdata = DBSession.query(LinkData).filter_by(link_id=None).all()
         assert_false(linkdata,
                     'orphaned LinkData should have been deleted from the db')
 

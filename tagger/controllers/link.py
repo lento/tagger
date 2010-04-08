@@ -141,6 +141,8 @@ class Controller(RestController):
         """Delete a Link"""
         link = DBSession.query(Link).get(linkid.decode())
 
+        for linkdata in link.data:
+            DBSession.delete(linkdata)
         DBSession.delete(link)
         flash(_('Deleted Link "%s"') % link.id, 'ok')
         redirect(tg.url('/link/'))

@@ -201,10 +201,10 @@ class TestCategoryController(TestController):
         article = query.filter_by(string_id=u'test').first()
         assert_true(article is None,
                             'the article should have been deleted from the db')
-        pages = DBSession.query(Page).all()
+        pages = DBSession.query(Page).filter_by(article_id=None).all()
         assert_false(pages,
                     'orphaned Pages should have been deleted from the db')
-        pagedata = DBSession.query(PageData).all()
+        pagedata = DBSession.query(PageData).filter_by(page_id=None).all()
         assert_false(pagedata,
                     'orphaned PageData should have been deleted from the db')
 

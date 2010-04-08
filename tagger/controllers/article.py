@@ -148,7 +148,7 @@ class Controller(RestController):
                      title_=article.title[''],
                     )
         fcargs = dict()
-        warning = _('This will delete the article entry in the database')
+        warning = _('This will delete the article and all its pages')
         return dict(
                 title=_('Are you sure you want to delete Article "%s"?') %
                                                             article.title[''],
@@ -162,6 +162,10 @@ class Controller(RestController):
         """Delete a Article"""
         article = DBSession.query(Article).get(articleid)
 
+        for page in article.pages:
+            for pagedata in page.data:
+                DBSession.delete(pagedata)
+            DBSession.delete(page)
         DBSession.delete(article)
         flash(_('Deleted Article "%s"') % article.id, 'ok')
         redirect(url('/article/'))

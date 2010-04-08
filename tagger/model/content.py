@@ -238,7 +238,6 @@ class Page(DeclarativeBase):
 
     # Relations
     article = relation('Article', backref=backref('pages',
-                                cascade='all, delete, delete-orphan',
                                 collection_class=mapped_scalar('string_id')))
 
     # Properties
@@ -296,12 +295,15 @@ class Page(DeclarativeBase):
 class PageData(DeclarativeBase):
     """Language specific Page data"""
     __tablename__ = 'pages_data'
+    __table_args__ = (UniqueConstraint('page_id', 'language_id'),
+                      {})
 
     # Columns
+    id = Column(Integer, primary_key=True)
     page_id = Column(Integer, ForeignKey('pages.id',
-                    onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
+                                        onupdate='CASCADE', ondelete='CASCADE'))
     language_id = Column(Unicode(50), ForeignKey('languages.id',
-                    onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
+                                        onupdate='CASCADE', ondelete='CASCADE'))
     _name = Column('name', Unicode(255))
     created = Column(DateTime, default=datetime.now)
     modified = Column(DateTime, default=datetime.now)
@@ -309,7 +311,6 @@ class PageData(DeclarativeBase):
 
     # Relations
     page = relation('Page', backref=backref('data',
-                                cascade='all, delete, delete-orphan',
                                 collection_class=mapped_scalar('language_id')))
     language = relation('Language', backref=backref('pages_data'))
 
@@ -404,6 +405,8 @@ DDL(orphaned_associable_trigger).execute_at('after-create', Link.__table__)
 class LinkData(DeclarativeBase):
     """Language specific Link data"""
     __tablename__ = 'links_data'
+    __table_args__ = (UniqueConstraint('link_id', 'language_id'),
+                      {})
 
     # Columns
     id = Column(Integer, primary_key=True)
@@ -415,7 +418,6 @@ class LinkData(DeclarativeBase):
 
     # Relations
     link = relation('Link', backref=backref('data',
-                                cascade='all, delete, delete-orphan',
                                 collection_class=mapped_scalar('language_id')))
     language = relation('Language', backref=backref('links_data'))
 
