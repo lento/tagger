@@ -18,7 +18,7 @@
         <th>${_('Actions')}</th>
     </tr>
     % for article in articles:
-    <tr>
+    <tr class="${article.id}">
         <td>${article.id}</td>
         <td>${article.title['']}</td>
         <td>${article.category.name}</td>

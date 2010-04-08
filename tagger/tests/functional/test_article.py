@@ -53,7 +53,7 @@ class TestCategoryController(TestController):
         response = self.app.get('/article/', extra_environ=environ,
                                                                     status=200)
 
-        tr = response.html.table('tr')[1]
+        tr = response.html.table.find('tr', str(articleid))
         eq_(str(tr('td')[0]), '<td>%s</td>' % articleid)
         eq_(str(tr('td')[1]), '<td>A Test Article!</td>')
         eq_(str(tr('td')[2]), '<td>test_category</td>')
