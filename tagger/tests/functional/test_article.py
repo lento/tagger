@@ -185,7 +185,7 @@ class TestCategoryController(TestController):
                                 'wrong article_id')
 
     def test_post_delete(self):
-        """controllers.category.Controller.post_delete is working properly"""
+        """controllers.article.Controller.post_delete is working properly"""
         languageid, categoryid, articleid = self._fill_db()
 
         environ = {'REMOTE_USER': 'test_admin'}
@@ -209,7 +209,7 @@ class TestCategoryController(TestController):
                     'orphaned PageData should have been deleted from the db')
 
     def test_translation(self):
-        """controllers.category.Controller.translation is working properly"""
+        """controllers.article.Controller.translation is working properly"""
         languageid, categoryid, articleid = self._fill_db()
 
         response = self.app.post('/article', dict(articleid=articleid,
