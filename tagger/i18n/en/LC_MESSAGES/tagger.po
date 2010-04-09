@@ -1,0 +1,173 @@
+# English translations for tagger.
+# Copyright (C) 2010 ORGANIZATION
+# This file is distributed under the same license as the tagger project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tagger 0.1\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2010-04-09 11:30+0200\n"
+"PO-Revision-Date: 2010-04-09 11:49+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
+
+#: tagger/controllers/article.py:71
+msgid "Create a new Article"
+msgstr ""
+
+#: tagger/controllers/article.py:83
+#, python-format
+msgid "Created Article \"%s\""
+msgstr ""
+
+#: tagger/controllers/article.py:134
+#, python-format
+msgid "updated article \"%s\""
+msgstr ""
+
+#: tagger/controllers/article.py:136
+#, python-format
+msgid "article \"%s\" unchanged"
+msgstr ""
+
+#: tagger/controllers/article.py:151
+msgid "This will delete the article and all its pages"
+msgstr ""
+
+#: tagger/controllers/article.py:153
+#, python-format
+msgid "Are you sure you want to delete Article \"%s\"?"
+msgstr ""
+
+#: tagger/controllers/article.py:170
+#, python-format
+msgid "Deleted Article \"%s\""
+msgstr ""
+
+#: tagger/controllers/category.py:66
+msgid "Create a new Category"
+msgstr ""
+
+#: tagger/controllers/category.py:76
+#, python-format
+msgid "Created Category \"%s\""
+msgstr ""
+
+#: tagger/controllers/category.py:110
+#, python-format
+msgid "updated category \"%s\""
+msgstr ""
+
+#: tagger/controllers/category.py:112
+#, python-format
+msgid "category \"%s\" unchanged"
+msgstr ""
+
+#: tagger/controllers/category.py:126
+msgid "This will delete the category entry in the database"
+msgstr ""
+
+#: tagger/controllers/category.py:128
+#, python-format
+msgid "Are you sure you want to delete Category \"%s\"?"
+msgstr ""
+
+#: tagger/controllers/category.py:141
+#, python-format
+msgid "Deleted Category \"%s\""
+msgstr ""
+
+#: tagger/controllers/language.py:66
+msgid "Create a new Language"
+msgstr ""
+
+#: tagger/controllers/language.py:76
+#, python-format
+msgid "Created Language \"%s\""
+msgstr ""
+
+#: tagger/controllers/language.py:105
+#, python-format
+msgid "updated language \"%s\""
+msgstr ""
+
+#: tagger/controllers/language.py:107
+#, python-format
+msgid "language \"%s\" unchanged"
+msgstr ""
+
+#: tagger/controllers/language.py:121
+msgid "This will delete the language entry in the database"
+msgstr ""
+
+#: tagger/controllers/language.py:123
+#, python-format
+msgid "Are you sure you want to delete Language \"%s\"?"
+msgstr ""
+
+#: tagger/controllers/language.py:136
+#, python-format
+msgid "Deleted Language \"%s\""
+msgstr ""
+
+#: tagger/controllers/link.py:67
+msgid "Create a new Link"
+msgstr ""
+
+#: tagger/controllers/link.py:78
+#, python-format
+msgid "Created Link \"%s\""
+msgstr ""
+
+#: tagger/controllers/link.py:114
+#, python-format
+msgid "updated link \"%s\""
+msgstr ""
+
+#: tagger/controllers/link.py:116
+#, python-format
+msgid "link \"%s\" unchanged"
+msgstr ""
+
+#: tagger/controllers/link.py:130
+msgid "This will delete the link entry in the database"
+msgstr ""
+
+#: tagger/controllers/link.py:132
+#, python-format
+msgid "Are you sure you want to delete Link \"%s\"?"
+msgstr ""
+
+#: tagger/controllers/link.py:147
+#, python-format
+msgid "Deleted Link \"%s\""
+msgstr ""
+
+#: tagger/controllers/root.py:54
+msgid "Wrong credentials"
+msgstr ""
+
+#: tagger/controllers/root.py:67
+#, python-format
+msgid "Welcome back, %s!"
+msgstr ""
+
+#: tagger/controllers/root.py:74
+msgid "We hope to see you soon!"
+msgstr ""
+
+#: tagger/lib/widgets.py:96 tagger/lib/widgets.py:110
+msgid "Category"
+msgstr ""
+
+#: tagger/lib/widgets.py:97 tagger/lib/widgets.py:111 tagger/lib/widgets.py:132
+#: tagger/lib/widgets.py:143
+msgid "Language"
+msgstr ""
+

@@ -28,6 +28,7 @@
     </script>
 </head>
 <body>
+    ${c.lang}
     <div id="overlay">
         <div class="wrap"></div>
     </div>

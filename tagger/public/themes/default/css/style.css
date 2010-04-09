@@ -380,4 +380,7 @@ table td.icon {
 	-webkit-border-radius: 4px;
 }
 
+.article_title .language.active {
+    background-color: #f57900; /* Orange 2 */
+}
 

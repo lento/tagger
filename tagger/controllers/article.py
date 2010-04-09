@@ -50,11 +50,17 @@ class Controller(RestController):
 
     @expose('json')
     @expose('tagger.templates.article.get_one')
-    def get_one(self, articleid, language_id=None):
+    def get_one(self, articleid, languageid=None):
         """Return a single article"""
         article = DBSession.query(Article).get(articleid)
+        if languageid:
+            lang = languageid
+        elif tmpl_context.lang:
+            lang = tmpl_context.lang
+        else:
+            lang = article.language_id
 
-        return dict(article=article, lang=language_id)
+        return dict(article=article, lang=lang)
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')

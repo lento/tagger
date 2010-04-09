@@ -16,7 +16,7 @@
     </div>
     <div>
         % for language in article.languages:
-            <a class="language" title="${language.name}"
+            <a class="language ${language.id == lang and 'active' or ''}" title="${language.name}"
                href="${tg.url('/%s/%s/%s' % (article.category.name, article.string_id, language.id))}">
                 ${language.name}
             </a>

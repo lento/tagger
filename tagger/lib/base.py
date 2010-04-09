@@ -2,7 +2,7 @@
 
 """The base Controller API."""
 
-from tg import TGController, tmpl_context, config
+from tg import TGController, tmpl_context, config, i18n
 from tg.render import render
 from tg import request
 from pylons.i18n import _, ungettext, N_
@@ -36,6 +36,13 @@ class BaseController(TGController):
         tmpl_context.title = config.get(
                                     'title', 'Welcome to Tagger!').strip('\"')
         tmpl_context.copyright = config.get('copyright', '').strip('\"')
+
+        # set language
+        if 'lang' in request.cookies:
+            tmpl_context.lang = request.cookies['lang']
+            i18n.set_lang(tmpl_context.lang)
+        else:
+            tmpl_context.lang = config.get('lang', None)
 
         # add categories list to template context (used in the header)
         tmpl_context.categories = DBSession.query(Category).all()
