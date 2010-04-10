@@ -20,14 +20,14 @@
 #
 """Main Controller"""
 
-from tg import expose, flash, require, url, request, redirect
+from tg import expose, flash, require, url, request, redirect, response
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what import predicates
 
 from tagger.lib.base import BaseController
 from tagger.controllers.error import ErrorController
 from tagger.controllers import admin, language, category, article, link
-from tagger.model import DBSession, Category, Article
+from tagger.model import DBSession, Language, Category, Article
 
 __all__ = ['RootController']
 
@@ -81,4 +81,20 @@ class RootController(BaseController):
         article = DBSession.query(Article).filter_by(
                     category_id=category.id, string_id=stringid.decode()).one()
         return self.article.get_one(article.id, language_id)
+
+    @expose()
+    def set_language(self, languageid, came_from=url('/')):
+        """Set language cookie"""
+        language = DBSession.query(Language).get(languageid.decode())
+        response.set_cookie('lang', language.id)
+        flash('%s %s' % (_('Preferred language set to'), language.name))
+        redirect(came_from)
+
+    @expose()
+    def unset_language(self, came_from=url('/')):
+        """Delete language cookie"""
+        response.delete_cookie('lang')
+        flash(_('No preferred language'))
+        redirect(came_from)
+
 

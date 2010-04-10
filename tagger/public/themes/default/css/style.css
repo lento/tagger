@@ -39,7 +39,7 @@ html {
 
 body {
 	margin: 0 20px;
-	padding: 0 20px;
+	padding: 10px 20px;
 	max-width: 1200px;
 	margin: 0 auto;
 	font-family:"Lucida Grande","Lucida Sans Unicode",geneva,verdana,sans-serif;
@@ -188,15 +188,40 @@ table td.icon {
 	height: 20px;
 }
 
-#header .authbox {
+#header .menu_top ul {
+    /*position: absolute;
+    bottom: 0;*/
     float: right;
     position: relative;
-    bottom: -8px;
+    bottom: -4px;
     right: -8px;
+    font-size: smaller;
 }
 
-#header .login, #header .logout {
+#header .menu_top li {
     float: right;
+    margin-left: 2px;
+    padding: 2px 6px;
+    background-color: #73d216; /* Chameleon 2 */
+    color: white;
+}
+
+#header .menu_top li:first-child {
+	-moz-border-radius: 0 8px 8px 0;
+	-webkit-border-radius: 0 0 0 10px;
+}
+
+#header .menu_top li:last-child {
+	-moz-border-radius: 8px 0 0 8px;
+	-webkit-border-radius: 10px;
+}
+
+#header .menu_top .language {
+    padding-left: 4px;
+}
+
+#header .menu_top .language:hover {
+    color: #4e9a06; /* Chameleon 3 */
 }
 
 #header .banner {
@@ -332,6 +357,7 @@ table td.icon {
     padding-top: 5px;
     border-top: 1px solid #a40000; /* Scarlet Red 3 */
     color: #babdb6; /* Aluminium 3 */
+    font-size: smaller;
 }
 
 /****************************************

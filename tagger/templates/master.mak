@@ -28,7 +28,6 @@
     </script>
 </head>
 <body>
-    ${c.lang}
     <div id="overlay">
         <div class="wrap"></div>
     </div>
@@ -64,16 +63,36 @@
 </%def>
 
 <%def name="header()">
+    <script type="text/javascript">
+        $(function() {
+            $(".menu_top .languages").addClass("hidden");
+            $(".menu_top .language_chooser").hover(
+                function(event){$(".menu_top .languages").show("fast");},
+                function(event){$(".menu_top .languages").hide("fast");}
+            );
+        });
+    </script>
     <div id="header">
         <a href="${tg.url('/')}" class="logo"></a>
         <div class="menu_top">
-            <div class="authbox">
-                % if request.identity is None:
-                    <a class="login button" href="${tg.url('/login')}">login</a>
-                % else:
-                    <a class="logout button" href="${tg.url('/logout_handler')}">logout ${c.user.user_name}</a>
-                % endif
-            </div>
+            <ul>
+                <li class="language_chooser">
+                    <div class="" href="">${c.lang and '%s: %s' % (_('preferred language'), c.lang) or _('choose a language')}</div>
+                    <div class="languages">
+                        % for language in [l for l in c.languages if l.id != c.lang]:
+                            <div class="language"><a href="${tg.url('/set_language/%s?came_from=%s' % (language.id, c.current_url))}">${language.name}</a></div>
+                        % endfor
+                        <div class="language"><a href="${tg.url('/unset_language/?came_from=%s' % c.current_url)}">${_('(none)')}</a></div>
+                    </div>
+                </li>
+                <li class="authbox">
+                    % if request.identity is None:
+                        <a class="login" href="${tg.url('/login')}">login</a>
+                    % else:
+                        <a class="logout" href="${tg.url('/logout_handler')}">logout ${c.user.user_name}</a>
+                    % endif
+                </li>
+            </ul>
         </div>
         <div class="banner"></div>
         <div class="menu_bottom">
