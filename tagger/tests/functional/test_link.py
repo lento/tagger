@@ -82,8 +82,8 @@ class TestLinkController(TestController):
         eq_(response.html.form['method'], u'post')
         assert_true(response.html.find('select', {'id': 'languageid'}),
                                         '"languageid" input element not found')
-        assert_true(response.html.find('input', {'id': 'url'}),
-                                    '"url" input element not found')
+        assert_true(response.html.find('input', {'id': 'uri'}),
+                                    '"uri" input element not found')
         assert_true(response.html.find('textarea', {'id': 'description'}),
                                     '"description" textarea element not found')
 
@@ -92,7 +92,7 @@ class TestLinkController(TestController):
         languageid, linkid = self._fill_db()
 
         environ = {'REMOTE_USER': 'test_admin'}
-        response = self.app.post('/link/', dict(url='http://example.com',
+        response = self.app.post('/link/', dict(uri='http://example.com',
                                                 languageid=languageid,
                                                 description='random text',
                                                ),
@@ -103,7 +103,7 @@ class TestLinkController(TestController):
                                 'result should have a "ok" flash notification')
 
         query = DBSession().query(Link)
-        link = query.filter_by(url=u'http://example.com').first()
+        link = query.filter_by(uri=u'http://example.com').first()
         eq_(link.description[''], u'random text')
         eq_(link.language_ids, set([languageid]))
         eq_(link.user.user_name, 'test_admin')
@@ -128,7 +128,7 @@ class TestLinkController(TestController):
         assert_true(elem_languageid, '"languageid" input element not found')
         eq_(elem_languageid.find('option', {'selected': 'selected'})['value'],
                                                             languageid)
-        eq_(response.html.find('input', {'id': 'url'})['value'],
+        eq_(response.html.find('input', {'id': 'uri'})['value'],
                                                         u'http://example.com')
         eq_(response.html.find('textarea', {'id': 'description'}).string,
                                                         u'random text')
@@ -139,7 +139,7 @@ class TestLinkController(TestController):
 
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.put('/link/%s' % linkid,
-                                            dict(url='changed',
+                                            dict(uri='changed',
                                                  languageid=languageid,
                                                  description='Changed',
                                                 ),
@@ -150,7 +150,7 @@ class TestLinkController(TestController):
                                 'result should have a "ok" flash notification')
 
         link = DBSession.query(Link).get(linkid)
-        eq_(link.url, 'changed')
+        eq_(link.uri, 'changed')
         eq_(link.description[languageid], 'Changed')
 
     def test_get_delete(self):

@@ -19,7 +19,7 @@
     % for link in links:
     <tr>
         <td>${link.id}</td>
-        <td>${link.url}</td>
+        <td>${link.uri}</td>
         <td>${link.description['']}</td>
         <td>${', '.join(link.language_ids)}</td>
         <td>

@@ -132,7 +132,7 @@ class FormArticleDelete(TableForm):
 class FormLinkNew(TableForm):
     """New link form"""
     class fields(WidgetsList):
-        url = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        uri = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         languageid = SingleSelectField(label_text=_('Language'), size=10)
         description = TextArea(rows=10)
 
@@ -143,7 +143,7 @@ class FormLinkEdit(TableForm):
         _method = HiddenField(default='PUT', validator=None)
         linkid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        url = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        uri = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         languageid = CascadingSingleSelectField(label_text=_('Language'),
                             size=10, cascadeurl=tg.url('/link/translation'),
                             extra=['linkid'])
@@ -156,7 +156,7 @@ class FormLinkDelete(TableForm):
         _method = HiddenField(default='DELETE', validator=None)
         linkid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        url_ = TextField(validator=None, disabled=True)
+        uri_ = TextField(validator=None, disabled=True)
 
 
 ############################################################

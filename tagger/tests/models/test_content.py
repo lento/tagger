@@ -101,6 +101,18 @@ class TestCategory(ModelTest):
         """model.content.Category constructor must set the description right"""
         eq_(self.obj.description[''], u"Test Category")
 
+    def test_obj_property_language_id_get(self):
+        """model.content.Category property "language_id" can get value"""
+        eq_(self.obj.language_id, self.language.id)
+
+    def test_obj_property_language_ids_get(self):
+        """model.content.Category property "language_ids" can get value"""
+        eq_(self.obj.language_ids, set([self.language.id]))
+
+    def test_obj_property_languages_get(self):
+        """model.content.Category property "languages" can get value"""
+        eq_(self.obj.languages, set([self.language]))
+
     def test_obj_property_name_get(self):
         """model.content.Category property "name" can get value"""
         expected = u'test category'
@@ -187,6 +199,14 @@ class TestArticle(ModelTest):
     def test_obj_creation_category(self):
         """model.content.Article constructor must set the category right"""
         eq_(self.obj.category, self.category)
+
+    def test_obj_property_language_id_get(self):
+        """model.content.Article property "language_id" can get value"""
+        eq_(self.obj.language_id, self.language.id)
+
+    def test_obj_property_language_ids_get(self):
+        """model.content.Article property "language_ids" can get value"""
+        eq_(self.obj.language_ids, set([self.language.id]))
 
     def test_obj_property_languages_get(self):
         """model.content.Article property "languages" can get value"""
@@ -290,8 +310,16 @@ class TestPage(ModelTest):
         """model.content.PageData constructor must set the text right"""
         eq_(self.obj.data[0].text, u"random text")
 
-    def test_obj_property_languages(self):
-        """model.content.Page property "languages" works"""
+    def test_obj_property_language_id_get(self):
+        """model.content.Page property "language_id" can get value"""
+        eq_(self.obj.language_id, self.language.id)
+
+    def test_obj_property_language_ids_get(self):
+        """model.content.Page property "language_ids" can get value"""
+        eq_(self.obj.language_ids, set([self.language.id]))
+
+    def test_obj_property_languages_get(self):
+        """model.content.Page property "languages" can get value"""
         eq_(self.obj.languages, set([self.language]))
 
     def test_obj_property_name_get(self):
@@ -341,5 +369,80 @@ class TestPage(ModelTest):
         assert_equals(self.obj.text[u'xx'], expected,
                         'Page.text[u"xx"] should be "%s", not "%s"' %
                         (expected, self.obj.text[u'xx']))
+
+
+class TestLink(ModelTest):
+    """Unit test case for the ``Link`` model."""
+    klass = content.Link
+    attrs = dict(
+        uri = u"http://example.com",
+        description = u"Test Link"
+        )
+
+    def do_get_dependencies(self):
+        try:
+            self.user = auth.User(user_name=u'test_user')
+            DBSession.add(self.user)
+            self.language = content.Language(id=u'xx', name=u'test_lang')
+            DBSession.add(self.language)
+            DBSession.flush()
+            return dict(lang=self.language.id,
+                        user=self.user,
+                       )
+        except:
+            DBSession.rollback()
+            raise
+
+    def test_obj_creation(self):
+        """model.content.Link objects can be created"""
+        self._obj_creation()
+
+    def test_obj_query(self):
+        """model.content.Link objects can be queried"""
+        obj = DBSession.query(self.klass).one()
+        assert_true(obj, 'Link not found')
+        eq_(obj.uri, self.attrs['uri'])
+
+    def test_obj_creation_uri(self):
+        """model.content.Link constructor must set the uri right"""
+        eq_(self.obj.uri, u"http://example.com")
+
+    def test_obj_creation_user(self):
+        """model.content.Link constructor must set the user right"""
+        eq_(self.obj.user, self.user)
+
+    def test_obj_creation_description(self):
+        """model.content.Link constructor must set the description right"""
+        eq_(self.obj.description[''], u"Test Link")
+
+    def test_obj_property_language_id_get(self):
+        """model.content.Link property "language_id" can get value"""
+        eq_(self.obj.language_id, self.language.id)
+
+    def test_obj_property_language_ids_get(self):
+        """model.content.Link property "language_ids" can get value"""
+        eq_(self.obj.language_ids, set([self.language.id]))
+
+    def test_obj_property_languages_get(self):
+        """model.content.Link property "languages" can get value"""
+        eq_(self.obj.languages, set([self.language]))
+
+    def test_obj_property_description_get(self):
+        """model.content.Link property "description" can get value"""
+        expected = u'Test Link'
+        assert_equals(self.obj.description[''], expected,
+                'Link.description[""] should be "%s", not "%s"' % 
+                (expected, self.obj.description['']))
+        assert_equals(self.obj.description[u'xx'], expected,
+                'Link.description["xx"] should be "%s", not "%s"' % 
+                (expected, self.obj.description[u'xx']))
+
+    def test_obj_property_description_set(self):
+        """model.content.Link property "description" can set value"""
+        expected = u'changed text'
+        self.obj.description[''] = expected
+        assert_equals(self.obj.data[0].description, expected,
+                'Link.data[0].description should be "%s", not "%s"' % 
+                (expected, self.obj.data[0].description))
 
 

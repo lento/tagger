@@ -5,6 +5,6 @@
 </%def>
 
 <div>${link.id}</div>
-<div>${link.url}</div>
+<div>${link.uri}</div>
 <div>${link.description[lang]}</div>
 

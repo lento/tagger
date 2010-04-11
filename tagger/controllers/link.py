@@ -20,8 +20,7 @@
 #
 """Link controller"""
 
-import tg
-from tg import expose, tmpl_context, redirect, validate, require, flash
+from tg import expose, tmpl_context, redirect, validate, require, flash, url
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Link, Language
@@ -32,9 +31,9 @@ import logging
 log = logging.getLogger(__name__)
 
 # form widgets
-f_new = FormLinkNew(action=tg.url('/link/'))
-f_edit = FormLinkEdit(action=tg.url('/link/'))
-f_delete = FormLinkDelete(action=tg.url('/link/'))
+f_new = FormLinkNew(action=url('/link/'))
+f_edit = FormLinkEdit(action=url('/link/'))
+f_delete = FormLinkDelete(action=url('/link/'))
 
 
 class Controller(RestController):
@@ -71,12 +70,12 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.forms.result')
     @validate(f_new, error_handler=new)
-    def post(self, url, languageid, description):
+    def post(self, uri, languageid, description):
         """create a new Link"""
         user = tmpl_context.user
-        DBSession.add(Link(url, user, languageid, description))
-        flash(_('Created Link "%s"') % url, 'ok')
-        redirect(tg.url('/link/'))
+        DBSession.add(Link(uri, user, languageid, description))
+        flash(_('Created Link "%s"') % uri, 'ok')
+        redirect(url('/link/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -85,7 +84,7 @@ class Controller(RestController):
         tmpl_context.form = f_edit
         link = DBSession.query(Link).get(linkid.decode())
         fargs = dict(linkid=link.id, id_=link.id,
-                     url=link.url,
+                     uri=link.uri,
                      languageid=link.language_id,
                      description=link.description[''])
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
@@ -97,13 +96,13 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.forms.result')
     @validate(f_edit, error_handler=edit)
-    def put(self, linkid, url, languageid, description=None):
+    def put(self, linkid, uri, languageid, description=None):
         """Edit a link"""
         link = DBSession.query(Link).get(linkid.decode())
 
         modified = False
-        if link.url != url:
-            link.url = url
+        if link.uri != uri:
+            link.uri = uri
             modified = True
 
         if link.description[languageid] != description:
@@ -114,7 +113,7 @@ class Controller(RestController):
             flash(_('updated link "%s"') % linkid, 'ok')
         else:
             flash(_('link "%s" unchanged') % linkid, 'info')
-        redirect(tg.url('/link/'))
+        redirect(url('/link/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -124,7 +123,7 @@ class Controller(RestController):
         link = DBSession.query(Link).get(linkid.decode())
         fargs = dict(linkid=link.id,
                      id_=link.id,
-                     url_=link.url,
+                     uri_=link.uri,
                     )
         fcargs = dict()
         warning = _('This will delete the link entry in the database')
@@ -145,7 +144,7 @@ class Controller(RestController):
             DBSession.delete(linkdata)
         DBSession.delete(link)
         flash(_('Deleted Link "%s"') % link.id, 'ok')
-        redirect(tg.url('/link/'))
+        redirect(url('/link/'))
 
     # REST-like methods
     _custom_actions = ['translation']

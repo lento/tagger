@@ -438,7 +438,7 @@ class Link(DeclarativeBase):
     user_id = Column(Integer, ForeignKey('auth_users.user_id'))
     created = Column(DateTime, default=datetime.now)
     modified = Column(DateTime, default=datetime.now)
-    url = Column(Unicode(255))
+    uri = Column(Unicode(255))
 
     # Relations
     associable = relation('Associable', backref=backref('associated_link',
@@ -478,13 +478,13 @@ class Link(DeclarativeBase):
     description = dict_property(_description_get, _description_set)
 
     # Special methods
-    def __init__(self, url, user, lang, description=None):
-        self.url = url
+    def __init__(self, uri, user, lang, description=None):
+        self.uri = uri
         self.user = user
         self.data.append(LinkData(lang, description))
 
     def __repr__(self):
-        return '<Link: %s %s>' % (self.id, self.url)
+        return '<Link: %s %s>' % (self.id, self.uri)
 
 DDL(orphaned_associable_trigger).execute_at('after-create', Link.__table__)
 
