@@ -126,26 +126,112 @@ class Language(DeclarativeBase):
 
 
 ############################################################
-# Article
+# Category
 ############################################################
 class Category(DeclarativeBase):
     """Article categories"""
     __tablename__ = 'categories'
 
     # Columns
-    id = Column(Integer, primary_key=True)
-    name = Column(Unicode(50), unique=True)
-    description = Column(Unicode(255))
+    id = Column(Unicode(50), primary_key=True)
+
+    # Properties
+    @property
+    def language_id(self):
+        return self.data[0].language_id
+
+    @property
+    def language_ids(self):
+        return set([data.language_id for data in self.data])
+
+    @property
+    def languages(self):
+        return set([data.language for data in self.data])
+
+    def _name_get(self, lang):
+        if lang and lang in self.language_ids:
+            return self.data[lang].name
+        return self.data[0].name
+
+    def _name_set(self, lang, value):
+        if not lang:
+            self.data[0].name = value
+        elif lang in self.language_ids:
+            self.data[lang].name = value
+        else:
+            self.data.append(CategoryData(value, lang, None))
+
+    name = dict_property(_name_get, _name_set)
+
+    def _description_get(self, lang):
+        if lang and lang in self.language_ids:
+            return self.data[lang].description
+        return self.data[0].description
+
+    def _description_set(self, lang, value):
+        if not lang:
+            self.data[0].description = value
+        elif lang in self.language_ids:
+            self.data[lang].description = value
+        else:
+            self.data.append(CategoryData(self.name[''], lang, value))
+
+    description = dict_property(_description_get, _description_set)
 
     # Special methods
-    def __init__(self, name, description=None):
-        self.name = name
-        self.description = description
+    def __init__(self, name, lang, description=None):
+        self.id = make_id(name)
+        self.data.append(CategoryData(name, lang, description))
 
     def __repr__(self):
         return '<Category: %s %s>' % (self.id or 0, self.name)
 
 
+class CategoryData(DeclarativeBase):
+    """Language specific Category data"""
+    __tablename__ = 'categories_data'
+    __table_args__ = (UniqueConstraint('category_id', 'language_id'),
+                      {})
+
+    # Columns
+    id = Column(Integer, primary_key=True)
+    category_id = Column(Unicode(50), ForeignKey('categories.id',
+                                        onupdate='CASCADE', ondelete='CASCADE'))
+    language_id = Column(Unicode(50), ForeignKey('languages.id',
+                                        onupdate='CASCADE', ondelete='CASCADE'))
+    _name = Column('name', Unicode(255))
+    description = Column(Unicode(255))
+
+    # Relations
+    parent = relation('Category', backref=backref('data',
+                                collection_class=mapped_scalar('language_id')))
+    language = relation('Language', backref=backref('categories_data'))
+
+    # Properties
+    def _get_name(self):
+        return self._name
+
+    def _set_name(self, value):
+        if self.parent.language_id == self.language_id:
+            self.parent.id = make_id(value)
+        self._name = value
+
+    name = synonym('_name', descriptor=property(_get_name, _set_name))
+
+    # Special methods
+    def __init__(self, name, lang, description=None):
+        self._name = name
+        self.language_id = lang
+        self.description = description
+
+    def __repr__(self):
+        return '<CategoryData: %s (%s) %s>' % (self.category_id,
+                                                    self.language_id, self.name)
+
+
+############################################################
+# Article
+############################################################
 class Article(DeclarativeBase):
     """Article definition"""
     __tablename__ = 'articles'
@@ -155,7 +241,7 @@ class Article(DeclarativeBase):
     string_id = Column(Unicode(255))
     associable_id = Column(Integer, ForeignKey('associables.id'))
     user_id = Column(Integer, ForeignKey('auth_users.user_id'))
-    category_id = Column(Integer, ForeignKey('categories.id',
+    category_id = Column(Unicode(50), ForeignKey('categories.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
     created = Column(DateTime, default=datetime.now)
     modified = Column(DateTime, default=datetime.now)

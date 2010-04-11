@@ -66,6 +66,7 @@ class FormLanguageDelete(TableForm):
 class FormCategoryNew(TableForm):
     """New category form"""
     class fields(WidgetsList):
+        languageid = SingleSelectField(label_text=_('Language'), size=10)
         name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
         description = TextArea(rows=10)
 
@@ -74,8 +75,11 @@ class FormCategoryEdit(TableForm):
     """Edit category form"""
     class fields(WidgetsList):
         _method = HiddenField(default='PUT', validator=None)
-        category_id = HiddenField(validator=NotEmpty)
+        categoryid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
+        languageid = CascadingSingleSelectField(label_text=_('Language'),
+                            size=10, cascadeurl=tg.url('/category/translation'),
+                            extra=['categoryid'])
         name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
         description = TextArea(rows=10)
 
@@ -84,7 +88,7 @@ class FormCategoryDelete(TableForm):
     """Delete category confirmation form"""
     class fields(WidgetsList):
         _method = HiddenField(default='DELETE', validator=None)
-        category_id = HiddenField(validator=NotEmpty)
+        categoryid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
         name_ = TextField(validator=None, disabled=True)
 

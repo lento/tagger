@@ -106,7 +106,7 @@ def bootstrap(command, conf, vars):
 
     # categories
     try:
-        blog = model.Category(u'blog', u'Web log')
+        blog = model.Category(u'blog', u'en', u'Web log')
         model.DBSession.add(blog)
 
         model.DBSession.flush()

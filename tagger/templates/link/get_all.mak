@@ -13,15 +13,15 @@
     <tr>
         <th>${_('ID')}</th>
         <th>${_('URL')}</th>
-        <th>${_('languages')}</th>
+        <th>${_('Languages')}</th>
         <th>${_('Description')}</th>
     </tr>
     % for link in links:
     <tr>
         <td>${link.id}</td>
         <td>${link.url}</td>
-        <td>${', '.join(link.language_ids)}</td>
         <td>${link.description['']}</td>
+        <td>${', '.join(link.language_ids)}</td>
         <td>
             <a class="icon edit overlay" title="${_('edit')}" href="${tg.url('/link/%s/edit' % link.id)}" rel="#overlay"></a>
             <a class="icon delete overlay" title="${_('delete')}" href="${tg.url('/link/%s/delete' % link.id)}" rel="#overlay"></a>

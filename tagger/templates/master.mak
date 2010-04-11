@@ -98,7 +98,7 @@
         <div class="menu_bottom">
             <ul>
                 % for cat in c.categories:
-                <li class="${cat.name}"><a href="${tg.url('/article/%s' % cat.name)}">${cat.name}</a></li>
+                <li class="${cat.name[c.lang]}"><a href="${tg.url('/article/%s' % cat.name[c.lang])}">${cat.name[c.lang]}</a></li>
                 % endfor
                 <li class="media"><a href="${tg.url('/media')}">media</a></li>
                 <li class="links"><a href="${tg.url('/link')}">links</a></li>

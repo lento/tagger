@@ -69,9 +69,20 @@ class TestCategory(ModelTest):
     """Unit test case for the ``Category`` model."""
     klass = content.Category
     attrs = dict(
-        name = u"test_category",
+        name = u"test category",
         description = u"Test Category"
         )
+
+    def do_get_dependencies(self):
+        try:
+            self.language = content.Language(id=u'xx', name=u'test_lang')
+            DBSession.add(self.language)
+            DBSession.flush()
+            return dict(lang=self.language.id,
+                       )
+        except:
+            DBSession.rollback()
+            raise
 
     def test_obj_creation(self):
         """model.content.Category objects can be created"""
@@ -79,15 +90,52 @@ class TestCategory(ModelTest):
 
     def test_obj_query(self):
         """model.content.Category objects can be queried"""
-        self._obj_query()
+        obj = DBSession.query(self.klass).get(u"test_category")
+        assert_true(obj, 'Category not found')
 
-    def test_obj_creation_name(self):
+    def test_obj_creation_id(self):
         """model.content.Category constructor must set the name right"""
-        eq_(self.obj.name, u"test_category")
+        eq_(self.obj.id, u"test_category")
 
     def test_obj_creation_description(self):
         """model.content.Category constructor must set the description right"""
-        eq_(self.obj.description, u"Test Category")
+        eq_(self.obj.description[''], u"Test Category")
+
+    def test_obj_property_name_get(self):
+        """model.content.Category property "name" can get value"""
+        expected = u'test category'
+        assert_equals(self.obj.name[''], expected,
+                'Category.name[""] should be "%s", not "%s"' % 
+                (expected, self.obj.name['']))
+        assert_equals(self.obj.name[u'xx'], expected,
+                'Category.name["xx"] should be "%s", not "%s"' % 
+                (expected, self.obj.name[u'xx']))
+
+    def test_obj_property_name_set(self):
+        """model.content.Category property "name" can set value"""
+        expected = u'changed name'
+        self.obj.name[''] = expected
+        assert_equals(self.obj.data[0].name, expected,
+                'Category.data[0].name should be "%s", not "%s"' % 
+                (expected, self.obj.data[0].name))
+
+    def test_obj_property_description_get(self):
+        """model.content.Category property "description" can get value"""
+        expected = u'Test Category'
+        assert_equals(self.obj.description[''], expected,
+                'Category.description[""] should be "%s", not "%s"' % 
+                (expected, self.obj.description['']))
+        assert_equals(self.obj.description[u'xx'], expected,
+                'Category.description["xx"] should be "%s", not "%s"' % 
+                (expected, self.obj.description[u'xx']))
+
+    def test_obj_property_description_set(self):
+        """model.content.Category property "description" can set value"""
+        expected = u'changed text'
+        self.obj.description[''] = expected
+        assert_equals(self.obj.data[0].description, expected,
+                'Category.data[0].description should be "%s", not "%s"' % 
+                (expected, self.obj.data[0].description))
 
 
 class TestArticle(ModelTest):
@@ -100,10 +148,10 @@ class TestArticle(ModelTest):
         try:
             self.user = auth.User(user_name=u'test_user')
             DBSession.add(self.user)
-            self.category = content.Category(name=u'test_category')
-            DBSession.add(self.category)
             self.language = content.Language(id=u'xx', name=u'test_lang')
             DBSession.add(self.language)
+            self.category = content.Category(u'test category', u'xx')
+            DBSession.add(self.category)
             DBSession.flush()
             return dict(title=u"A test article!",
                         category=self.category,

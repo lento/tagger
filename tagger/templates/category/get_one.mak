@@ -5,6 +5,6 @@
 </%def>
 
 <div>${category.id}</div>
-<div>${category.name}</div>
-<div>${category.description}</div>
+<div>${category.name[c.lang]}</div>
+<div>${category.description[c.lang]}</div>
 

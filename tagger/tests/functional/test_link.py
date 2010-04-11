@@ -51,8 +51,8 @@ class TestLinkController(TestController):
         tr = response.html.table('tr')[1]
         eq_(str(tr('td')[0]), '<td>%s</td>' % linkid)
         eq_(str(tr('td')[1]), '<td>http://example.com</td>')
-        eq_(str(tr('td')[2]), '<td>%s</td>' % languageid)
-        eq_(str(tr('td')[3]), '<td>random text</td>')
+        eq_(str(tr('td')[2]), '<td>random text</td>')
+        eq_(str(tr('td')[3]), '<td>%s</td>' % languageid)
         actions = tr('td')[4]
         eq_(str(actions('a')[0]['class']), 'icon edit overlay')
         eq_(str(actions('a')[1]['class']), 'icon delete overlay')
