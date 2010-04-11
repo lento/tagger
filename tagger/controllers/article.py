@@ -67,11 +67,12 @@ class Controller(RestController):
     def new(self, **kwargs):
         """Display a NEW form."""
         tmpl_context.form = f_new
+        lang = tmpl_context.lang
 
         fargs = dict()
         
-        cat_list = [(c.id, c.name) for c in DBSession.query(Category).all()]
-        lang_list = [(l.id, l.name) for l in DBSession.query(Language).all()]
+        cat_list = [(c.id, c.name[lang]) for c in DBSession.query(Category)]
+        lang_list = [(l.id, l.name) for l in DBSession.query(Language)]
         fcargs = dict(categoryid=dict(options=cat_list),
                                             languageid=dict(options=lang_list))
         return dict(title=_('Create a new Article'),
@@ -94,9 +95,10 @@ class Controller(RestController):
     def edit(self, articleid, **kwargs):
         """Return a page to edit an article and all its pages"""
         tmpl_context.f_edit = f_edit
+        lang = tmpl_context.lang
         article = DBSession.query(Article).get(articleid)
 
-        categories = [(c.id, c.name) for c in DBSession.query(Category)]
+        categories = [(c.id, c.name[lang]) for c in DBSession.query(Category)]
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
         fargs = dict(articleid=article.id,
                      id_=article.id,
@@ -126,8 +128,8 @@ class Controller(RestController):
             modified = True
             log.debug('article.put title: %s - %s' % (article.title[languageid], title))
 
-        if article.category_id != int(categoryid):
-            article.category_id = int(categoryid)
+        if article.category_id != categoryid:
+            article.category_id = categoryid
             modified = True
             log.debug('article.put category: %s - %s' % (article.category_id, categoryid))
 

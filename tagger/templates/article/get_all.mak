@@ -20,8 +20,8 @@
     % for article in articles:
     <tr class="${article.id}">
         <td>${article.id}</td>
-        <td>${article.title['']}</td>
-        <td>${article.category.name}</td>
+        <td>${article.title[c.lang]}</td>
+        <td>${article.category.name[c.lang]}</td>
         <td>${', '.join(article.language_ids)}</td>
         <td>
             <a class="icon edit" title="${_('edit')}" href="${tg.url('/article/%s/edit' % article.id)}"></a>

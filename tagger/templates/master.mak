@@ -82,7 +82,9 @@
                         % for language in [l for l in c.languages if l.id != c.lang]:
                             <div class="language"><a href="${tg.url('/set_language/%s?came_from=%s' % (language.id, c.current_url))}">${language.name}</a></div>
                         % endfor
-                        <div class="language"><a href="${tg.url('/unset_language/?came_from=%s' % c.current_url)}">${_('(none)')}</a></div>
+                        % if c.lang:
+                            <div class="language"><a href="${tg.url('/unset_language/?came_from=%s' % c.current_url)}">${_('(none)')}</a></div>
+                        % endif
                     </div>
                 </li>
                 <li class="authbox">

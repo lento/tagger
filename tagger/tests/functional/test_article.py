@@ -34,7 +34,7 @@ class TestCategoryController(TestController):
         tadm = DBSession.query(User).filter_by(user_name=u'test_admin').one()
         language = Language(u'xx', u'test_langugage')
         DBSession.add(language)
-        cat = Category(u'test_category')
+        cat = Category(u'test category', u'xx')
         DBSession.add(cat)
         article = Article(u'A Test Article!', cat, u'xx', tadm, u'random text')
         DBSession.add(article)
@@ -56,7 +56,7 @@ class TestCategoryController(TestController):
         tr = response.html.table.find('tr', str(articleid))
         eq_(str(tr('td')[0]), '<td>%s</td>' % articleid)
         eq_(str(tr('td')[1]), '<td>A Test Article!</td>')
-        eq_(str(tr('td')[2]), '<td>test_category</td>')
+        eq_(str(tr('td')[2]), '<td>test category</td>')
         eq_(str(tr('td')[3]), '<td>%s</td>' % languageid)
         actions = tr('td')[4]
         eq_(str(actions('a')[0]['class']), 'icon edit')
@@ -110,7 +110,7 @@ class TestCategoryController(TestController):
 
         query = DBSession().query(Article)
         article = query.filter_by(string_id=u'test').first()
-        eq_(article.category.name, 'test_category')
+        eq_(article.category.id, 'test_category')
         eq_(article.language_ids, set([u'%s' % languageid]))
         eq_(article.user.user_name, 'test_admin')
 

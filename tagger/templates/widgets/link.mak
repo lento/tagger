@@ -6,4 +6,4 @@
     link = DBSession.query(Link).get(linkid)
 %>
 
-<a href="${link.url}" title="${link.description[languageid]}">${label or link.url}</a>
+<a href="${link.uri}" title="${link.description[languageid]}">${label or link.uri}</a>

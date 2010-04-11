@@ -24,7 +24,7 @@ class TestRootController(TestController):
         tadm = DBSession.query(User).filter_by(user_name=u'test_admin').one()
         language = Language(u'xx', u'test_langugage')
         DBSession.add(language)
-        cat = Category(u'test_category')
+        cat = Category(u'test category', u'xx')
         DBSession.add(cat)
         article = Article(u'A Test Article!', cat, u'xx', tadm, u'random text')
         DBSession.add(article)

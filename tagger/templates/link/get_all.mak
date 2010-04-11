@@ -20,7 +20,7 @@
     <tr>
         <td>${link.id}</td>
         <td>${link.uri}</td>
-        <td>${link.description['']}</td>
+        <td>${link.description[c.lang]}</td>
         <td>${', '.join(link.language_ids)}</td>
         <td>
             <a class="icon edit overlay" title="${_('edit')}" href="${tg.url('/link/%s/edit' % link.id)}" rel="#overlay"></a>
