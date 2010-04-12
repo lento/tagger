@@ -23,6 +23,8 @@
 from tg import expose, flash, require, url, request, redirect, response
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what import predicates
+from tg.exceptions import HTTPNotFound
+from sqlalchemy.orm.exc import NoResultFound
 
 from tagger.lib.base import BaseController
 from tagger.controllers.error import ErrorController
@@ -74,14 +76,6 @@ class RootController(BaseController):
         flash(_('We hope to see you soon!'))
         redirect(url('/'))
 
-    @expose('tagger.templates.article.get_one')
-    def _default(self, categoryid, stringid, languageid=None):
-        category = DBSession.query(Category).filter_by(
-                                            id=categoryid.decode()).one()
-        article = DBSession.query(Article).filter_by( category_id=category.id,
-                                            string_id=stringid.decode()).one()
-        return self.article.get_one(article.id, languageid)
-
     @expose()
     def set_language(self, languageid, came_from=url('/')):
         """Set language cookie"""
@@ -96,5 +90,33 @@ class RootController(BaseController):
         response.delete_cookie('lang')
         flash(_('No preferred language'))
         redirect(came_from)
+
+    @expose('tagger.templates.article.get_one')
+    def _default(self, *args, **kwargs):
+        if 'categoryid' in kwargs and 'stringid' in kwargs:
+            categoryid = kwargs['categoryid']
+            stringid = kwargs['stringid']
+        elif len(args) >= 2:
+            categoryid = args[0]
+            stringid = args[1]
+        else:
+            raise HTTPNotFound
+
+        if 'languageid' in kwargs:
+            languageid = kwargs['languageid']
+        elif len(args) >= 3:
+            languageid = args[2]
+        else:
+            languageid = None
+
+        try:
+            category = DBSession.query(Category).filter_by(
+                                            id=categoryid.decode()).one()
+            article = DBSession.query(Article).filter_by(
+                    category_id=category.id, string_id=stringid.decode()).one()
+        except NoResultFound:
+            raise HTTPNotFound
+
+        return self.article.get_one(article.id, languageid)
 
 
