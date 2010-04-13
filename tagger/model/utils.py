@@ -155,7 +155,6 @@ def add_language_props(cls, props=[]):
         return _prop_set
 
     for prop, append in props:
-        print('add_language_props', cls, prop, prop.__class__)
         super(cls.__class__, cls).__setattr__(
             prop, dict_property(prop_getter(prop), prop_setter(prop, append)))
 
