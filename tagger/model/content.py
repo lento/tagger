@@ -24,6 +24,7 @@ from datetime import datetime
 
 from sqlalchemy import Table, ForeignKey, Column, DDL, UniqueConstraint
 from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
+from sqlalchemy.types import TIMESTAMP
 from sqlalchemy.orm import relation, backref, synonym
 
 from tagger.model import DeclarativeBase, metadata
@@ -208,7 +209,6 @@ class Article(DeclarativeBase):
     category_id = Column(Unicode(50), ForeignKey('categories.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
     created = Column(DateTime, default=datetime.now)
-    modified = Column(DateTime, default=datetime.now)
 
     # Relations
     associable = relation('Associable', backref=backref('associated_article',
@@ -247,6 +247,10 @@ class Article(DeclarativeBase):
     def text(self):
         return self.pages['default'].text
 
+    @property
+    def modified(self):
+        return max([p.modified for p in self.pages])
+
     # Special methods
     def __init__(self, title, category, lang, user, text=None):
         self.string_id = make_id(title)
@@ -282,6 +286,11 @@ class Page(DeclarativeBase):
     article = relation('Article', backref=backref('pages',
                                 collection_class=mapped_scalar('string_id')))
 
+    # Properties
+    @property
+    def modified(self):
+        return max([d.modified for d in self.data])
+
     # Special methods
     def __init__(self, name, lang, text=None, string_id=None):
         self.string_id = string_id or make_id(name)
@@ -310,7 +319,7 @@ class PageData(DeclarativeBase):
                                         onupdate='CASCADE', ondelete='CASCADE'))
     _name = Column('name', Unicode(255))
     created = Column(DateTime, default=datetime.now)
-    modified = Column(DateTime, default=datetime.now)
+    modified = Column(TIMESTAMP, default=datetime.now)
     text = Column(UnicodeText)
 
     # Relations
@@ -355,13 +364,17 @@ class Link(DeclarativeBase):
     associable_id = Column(Integer, ForeignKey('associables.id'))
     user_id = Column(Integer, ForeignKey('auth_users.user_id'))
     created = Column(DateTime, default=datetime.now)
-    modified = Column(DateTime, default=datetime.now)
     uri = Column(Unicode(255))
 
     # Relations
     associable = relation('Associable', backref=backref('associated_link',
                                                                 uselist=False))
     user = relation('User', backref='links')
+
+    # Properties
+    @property
+    def modified(self):
+        return max([d.modified for d in self.data])
 
     # Special methods
     def __init__(self, uri, user, lang, description=None):
@@ -390,6 +403,7 @@ class LinkData(DeclarativeBase):
     language_id = Column(Unicode(50), ForeignKey('languages.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
     description = Column(Unicode(255))
+    modified = Column(TIMESTAMP, default=datetime.now)
 
     # Relations
     link = relation('Link', backref=backref('data',
