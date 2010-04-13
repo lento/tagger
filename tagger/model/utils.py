@@ -130,8 +130,40 @@ def dict_property(fget=None, fset=None, fdel=None, doc=None):
 
     return property(DictProperty, doc=doc)
 
+def add_language_props(cls, props=[]):
+    """Add language related properties to a class"""
+    cls.language_id = property(lambda obj: obj.data[0].language_id)
+    cls.language_ids = property(
+                            lambda obj: set([d.language_id for d in obj.data]))
+    cls.languages = property(lambda obj: set([d.language for d in obj.data]))
+
+    def prop_getter(attr):
+        def _prop_get(obj, lang):
+            if lang and lang in obj.language_ids:
+                return getattr(obj.data[lang], attr)
+            return getattr(obj.data[0], attr)
+        return _prop_get
+
+    def prop_setter(attr, append):
+        def _prop_set(obj, lang, val):
+            if not lang:
+                setattr(obj.data[0], attr, val)
+            elif lang in obj.language_ids:
+                setattr(obj.data[lang], attr, val)
+            elif callable(append):
+                obj.data.append(append(obj, lang, val))
+        return _prop_set
+
+    for prop, append in props:
+        print('add_language_props', cls, prop, prop.__class__)
+        super(cls.__class__, cls).__setattr__(
+            prop, dict_property(prop_getter(prop), prop_setter(prop, append)))
+
 
 class TriggerRemover(SchemaVisitor):
+    """Sqlalchemy SchemaVisitor to traverse the schema and remove
+       "CREATE TRIGGER" statements from it, useful when deploying with a host
+       that doesn't allow trigger creation"""
     def _is_trigger(self, x):
         return x.statement and 'create trigger' in x.statement.lower()
 

@@ -42,7 +42,7 @@ def setup_schema(command, conf, vars):
     create_triggers = asbool(config.get('sql_create_triggers', 'true'))
     if not create_triggers:
         log.debug('removing triggers creation from metadata')
-        model.TriggerRemover().traverse(model.metadata)
+        model.utils.TriggerRemover().traverse(model.metadata)
 
     log.debug('Creating tables')
     model.metadata.create_all(bind=engine)

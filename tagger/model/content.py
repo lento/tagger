@@ -26,7 +26,8 @@ from sqlalchemy import Table, ForeignKey, Column, DDL, UniqueConstraint
 from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
 from sqlalchemy.orm import relation, backref, synonym
 
-from tagger.model import DeclarativeBase, metadata, mapped_scalar, dict_property
+from tagger.model import DeclarativeBase, metadata
+from tagger.model.utils import mapped_scalar, dict_property, add_language_props
 from tagger.model.auth import User
 from tagger.lib.utils import make_id
 
@@ -135,49 +136,6 @@ class Category(DeclarativeBase):
     # Columns
     id = Column(Unicode(50), primary_key=True)
 
-    # Properties
-    @property
-    def language_id(self):
-        return self.data[0].language_id
-
-    @property
-    def language_ids(self):
-        return set([data.language_id for data in self.data])
-
-    @property
-    def languages(self):
-        return set([data.language for data in self.data])
-
-    def _name_get(self, lang):
-        if lang and lang in self.language_ids:
-            return self.data[lang].name
-        return self.data[0].name
-
-    def _name_set(self, lang, value):
-        if not lang:
-            self.data[0].name = value
-        elif lang in self.language_ids:
-            self.data[lang].name = value
-        else:
-            self.data.append(CategoryData(value, lang, None))
-
-    name = dict_property(_name_get, _name_set)
-
-    def _description_get(self, lang):
-        if lang and lang in self.language_ids:
-            return self.data[lang].description
-        return self.data[0].description
-
-    def _description_set(self, lang, value):
-        if not lang:
-            self.data[0].description = value
-        elif lang in self.language_ids:
-            self.data[lang].description = value
-        else:
-            self.data.append(CategoryData(self.name[''], lang, value))
-
-    description = dict_property(_description_get, _description_set)
-
     # Special methods
     def __init__(self, name, lang, description=None):
         self.id = make_id(name)
@@ -185,6 +143,12 @@ class Category(DeclarativeBase):
 
     def __repr__(self):
         return '<Category: %s %s>' % (self.id or 0, self.name)
+
+add_language_props(Category,
+    [('name', lambda obj, lang, val: CategoryData(val, lang, None)),
+     ('description', lambda obj, lang, val: CategoryData(
+                                                    obj.name[''], lang, val)),
+    ])
 
 
 class CategoryData(DeclarativeBase):
@@ -275,21 +239,13 @@ class Article(DeclarativeBase):
             langs |= p.languages
         return langs
 
-    def _title_get(self, lang):
-        return self.pages['default'].name[lang]
+    @property
+    def title(self):
+        return self.pages['default'].name
 
-    def _title_set(self, lang, value):
-        self.pages['default'].name[lang] = value
-
-    title = dict_property(_title_get, _title_set)
-
-    def _text_get(self, lang):
-        return self.pages['default'].text[lang]
-
-    def _text_set(self, lang, value):
-        self.pages['default'].text[lang] = value
-
-    text = dict_property(_text_get, _text_set)
+    @property
+    def text(self):
+        return self.pages['default'].text
 
     # Special methods
     def __init__(self, title, category, lang, user, text=None):
@@ -326,49 +282,6 @@ class Page(DeclarativeBase):
     article = relation('Article', backref=backref('pages',
                                 collection_class=mapped_scalar('string_id')))
 
-    # Properties
-    @property
-    def language_id(self):
-        return self.data[0].language_id
-
-    @property
-    def language_ids(self):
-        return set([data.language_id for data in self.data])
-
-    @property
-    def languages(self):
-        return set([data.language for data in self.data])
-
-    def _name_get(self, lang):
-        if lang and lang in self.language_ids:
-            return self.data[lang].name
-        return self.data[0].name
-
-    def _name_set(self, lang, value):
-        if not lang:
-            self.data[0].name = value
-        elif lang in self.language_ids:
-            self.data[lang].name = value
-        else:
-            self.data.append(PageData(value, lang, None))
-
-    name = dict_property(_name_get, _name_set)
-
-    def _text_get(self, lang):
-        if lang and lang in self.language_ids:
-            return self.data[lang].text
-        return self.data[0].text
-
-    def _text_set(self, lang, value):
-        if not lang:
-            self.data[0].text = value
-        elif lang in self.language_ids:
-            self.data[lang].text = value
-        else:
-            self.data.append(PageData(self.name[''], lang, value))
-
-    text = dict_property(_text_get, _text_set)
-
     # Special methods
     def __init__(self, name, lang, text=None, string_id=None):
         self.string_id = string_id or make_id(name)
@@ -376,6 +289,11 @@ class Page(DeclarativeBase):
 
     def __repr__(self):
         return '<Page: [%s] %s %s>' % (self.article_id, self.id, self.string_id)
+
+add_language_props(Page,
+    [('name', lambda obj, lang, val: PageData(value, lang, None)),
+     ('text', lambda obj, lang, val: CategoryData(obj.name[''], lang, val)),
+    ])
 
 
 class PageData(DeclarativeBase):
@@ -445,38 +363,6 @@ class Link(DeclarativeBase):
                                                                 uselist=False))
     user = relation('User', backref='links')
 
-    # Properties
-    @property
-    def tags(self):
-        return self.associable.tags
-
-    @property
-    def language_id(self):
-        return self.data[0].language_id
-
-    @property
-    def language_ids(self):
-        return set([data.language_id for data in self.data])
-
-    @property
-    def languages(self):
-        return set([data.language for data in self.data])
-
-    def _description_get(self, lang):
-        if lang and lang in self.language_ids:
-            return self.data[lang].description
-        return self.data[0].description
-
-    def _description_set(self, lang, value):
-        if not lang:
-            self.data[0].description = value
-        elif lang in self.language_ids:
-            self.data[lang].description = value
-        else:
-            self.data.append(LinkData(lang, value))
-
-    description = dict_property(_description_get, _description_set)
-
     # Special methods
     def __init__(self, uri, user, lang, description=None):
         self.uri = uri
@@ -487,6 +373,9 @@ class Link(DeclarativeBase):
         return '<Link: %s %s>' % (self.id, self.uri)
 
 DDL(orphaned_associable_trigger).execute_at('after-create', Link.__table__)
+add_language_props(Link, 
+            [('description', lambda obj, lang, value: LinkData(lang, value))])
+
 
 class LinkData(DeclarativeBase):
     """Language specific Link data"""
