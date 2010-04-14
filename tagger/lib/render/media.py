@@ -22,10 +22,10 @@
 
 import cgi
 from tw.api import Widget
-from docutils.parsers.rst import Directive
+from docutils.parsers.rst import directives, Directive
 from docutils import nodes
 
-media_types = ['image']
+media_types = ['image', 'video', 'youtube', 'vimeo']
 
 
 ############################################################
@@ -47,7 +47,9 @@ class MediaDirective(Directive):
     """Return a MediaWidget invocation"""
     required_arguments = 1
     optional_arguments = 1
-    option_spec = {}
+    option_spec = {'width': directives.nonnegative_int,
+                   'height': directives.nonnegative_int,
+                  }
     has_content = False
 
     def run(self):
@@ -60,8 +62,14 @@ class MediaDirective(Directive):
             label = ''
         label = cgi.escape(label)
 
-        text = '${w_media(mediaid=%s, label="%s", extra=extra)}' % (
-                                                                mediaid, label)
+        width = self.options.get('width', None)
+        height = self.options.get('height', None)
+
+        text = ('${w_media(mediaid=%s, '
+                          'label="%s", '
+                          'width=%s, '
+                          'height=%s, '
+                          'extra=extra)}' % (mediaid, label, width, height))
         media_node = nodes.raw(rawsource='', text=text, format='html')
         return [media_node]
 
