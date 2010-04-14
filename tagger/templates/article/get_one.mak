@@ -1,7 +1,7 @@
 <%inherit file="local:templates.master"/>
 
 <%!
-    from tagger.lib.render import render_text
+    from tagger.lib.render.rst import render_text
 %>
 
 <%def name="title()">

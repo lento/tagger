@@ -159,15 +159,38 @@ class FormLinkDelete(TableForm):
         uri_ = TextField(validator=None, disabled=True)
 
 
-############################################################
-# Custom Render Widgets
-############################################################
+# Media
+class FormMediaNew(TableForm):
+    """New media form"""
+    class fields(WidgetsList):
+        type = SingleSelectField(label_text=l_('Type'), size=10)
+        uri = TextField(label_text=l_('Uri'),
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        languageid = SingleSelectField(label_text=l_('Language'), size=10)
+        description = TextArea(rows=10)
 
-class LinkWidget(Widget):
-    """Render a Link object"""
-    params = ['linkid', 'languageid', 'label']
-    template = 'mako:tagger.templates.widgets.link'
 
-    languageid = None
-    label = None
+class FormMediaEdit(TableForm):
+    """Edit media form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='PUT', validator=None)
+        mediaid = HiddenField(validator=NotEmpty)
+        id_ = TextField(validator=None, disabled=True)
+        type = SingleSelectField(label_text=l_('Type'), size=10)
+        uri = TextField(label_text=l_('Uri'),
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        languageid = CascadingSingleSelectField(label_text=l_('Language'),
+                            size=10, cascadeurl=tg.url('/media/translation'),
+                            extra=['mediaid'])
+        description = TextArea(label_text=l_('Description'), rows=10)
+
+
+class FormMediaDelete(TableForm):
+    """Delete media confirmation form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='DELETE', validator=None)
+        mediaid = HiddenField(validator=NotEmpty)
+        id_ = TextField(validator=None, disabled=True)
+        type_ = TextField(label_text=l_('Type'), validator=None, disabled=True)
+        uri_ = TextField(label_text=l_('Uri'), validator=None, disabled=True)
 

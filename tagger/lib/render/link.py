@@ -18,16 +18,24 @@
 # Original Copyright (c) 2010, Lorenzo Pierfederici <lpierfederici@gmail.com>
 # Contributor(s): 
 #
-"""Page render module"""
+"""Link render module"""
 
 import cgi
-from docutils.core import publish_parts
+from tw.api import Widget
+from docutils.parsers.rst import Directive
 from docutils import nodes
-from docutils.parsers.rst import directives, Directive
-from mako.template import Template
-from tagger.lib.widgets import LinkWidget
 
-w_link = LinkWidget()
+
+############################################################
+# render widgets
+############################################################
+class LinkWidget(Widget):
+    """Render a Link object"""
+    params = ['linkid', 'languageid', 'label']
+    template = 'mako:tagger.templates.widgets.link'
+
+    languageid = None
+    label = None
 
 
 ############################################################
@@ -53,20 +61,4 @@ class LinkDirective(Directive):
         text = '${w_link(linkid=%s, label="%s")}' % (linkid, label)
         link_node = nodes.raw(rawsource='', text=text, format='html')
         return [link_node]
-
-directives.register_directive('link', LinkDirective)
-
-
-def render_rst(text):
-    return publish_parts(text, writer_name='html')['html_body']
-
-def render_mak(text):
-    template = Template(text, default_filters=['trim'])
-    widgets = dict(w_link=w_link)
-    return template.render(**widgets)
-
-def render_text(text):
-    text = render_rst(text)
-    text = render_mak(text)
-    return text
 
