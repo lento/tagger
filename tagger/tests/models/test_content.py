@@ -274,7 +274,6 @@ class TestPage(ModelTest):
             DBSession.add(self.language)
             DBSession.flush()
             return dict(name=u"A test page!",
-                        #language=self.language,
                         lang=self.language.id,
                         text=u"random text",
                        )
@@ -431,10 +430,10 @@ class TestLink(ModelTest):
         """model.content.Link property "description" can get value"""
         expected = u'Test Link'
         assert_equals(self.obj.description[''], expected,
-                'Link.description[""] should be "%s", not "%s"' % 
+                'Link.description[""] should be "%s", not "%s"' %
                 (expected, self.obj.description['']))
         assert_equals(self.obj.description[u'xx'], expected,
-                'Link.description["xx"] should be "%s", not "%s"' % 
+                'Link.description["xx"] should be "%s", not "%s"' %
                 (expected, self.obj.description[u'xx']))
 
     def test_obj_property_description_set(self):
@@ -442,7 +441,87 @@ class TestLink(ModelTest):
         expected = u'changed text'
         self.obj.description[''] = expected
         assert_equals(self.obj.data[0].description, expected,
-                'Link.data[0].description should be "%s", not "%s"' % 
+                'Link.data[0].description should be "%s", not "%s"' %
+                (expected, self.obj.data[0].description))
+
+
+class TestMedia(ModelTest):
+    """Unit test case for the ``Media`` model."""
+    klass = content.Media
+    attrs = dict(
+        type = u'image',
+        uri = u"http://example.com",
+        description = u"Test Media",
+        )
+
+    def do_get_dependencies(self):
+        try:
+            self.user = auth.User(user_name=u'test_user')
+            DBSession.add(self.user)
+            self.language = content.Language(id=u'xx', name=u'test_lang')
+            DBSession.add(self.language)
+            DBSession.flush()
+            return dict(lang=self.language.id,
+                        user=self.user,
+                       )
+        except:
+            DBSession.rollback()
+            raise
+
+    def test_obj_creation(self):
+        """model.content.Media objects can be created"""
+        self._obj_creation()
+
+    def test_obj_query(self):
+        """model.content.Media objects can be queried"""
+        obj = DBSession.query(self.klass).one()
+        assert_true(obj, 'Media not found')
+        eq_(obj.uri, self.attrs['uri'])
+
+    def test_obj_creation_type(self):
+        """model.content.Media constructor must set the type right"""
+        eq_(self.obj.type, u'image')
+
+    def test_obj_creation_uri(self):
+        """model.content.Media constructor must set the uri right"""
+        eq_(self.obj.uri, u'http://example.com')
+
+    def test_obj_creation_user(self):
+        """model.content.Media constructor must set the user right"""
+        eq_(self.obj.user, self.user)
+
+    def test_obj_creation_description(self):
+        """model.content.Media constructor must set the description right"""
+        eq_(self.obj.description[''], u"Test Media")
+
+    def test_obj_property_language_id_get(self):
+        """model.content.Media property "language_id" can get value"""
+        eq_(self.obj.language_id, self.language.id)
+
+    def test_obj_property_language_ids_get(self):
+        """model.content.Media property "language_ids" can get value"""
+        eq_(self.obj.language_ids, set([self.language.id]))
+
+    def test_obj_property_languages_get(self):
+        """model.content.Media property "languages" can get value"""
+        eq_(self.obj.languages, set([self.language]))
+
+    def test_obj_property_description_get(self):
+        """model.content.Media property "description" can get value"""
+        expected = u'Test Media'
+        assert_equals(self.obj.description[''], expected,
+                'Media.description[""] should be "%s", not "%s"' %
+                (expected, self.obj.description['']))
+        assert_equals(self.obj.description[u'xx'], expected,
+                'Media.description["xx"] should be "%s", not "%s"' %
+                (expected, self.obj.description[u'xx']))
+
+    def test_obj_property_description_set(self):
+        """model.content.Media property "description" can set value"""
+        expected = u'changed text'
+        self.obj.description[''] = expected
+        assert_equals(self.obj.data[0].description, expected,
+                'Media.data[0].description should be "%s", not "%s"' %
                 (expected, self.obj.data[0].description))
 
 

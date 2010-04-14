@@ -155,12 +155,12 @@ add_language_props(Category,
 class CategoryData(DeclarativeBase):
     """Language specific Category data"""
     __tablename__ = 'categories_data'
-    __table_args__ = (UniqueConstraint('category_id', 'language_id'),
+    __table_args__ = (UniqueConstraint('parent_id', 'language_id'),
                       {})
 
     # Columns
     id = Column(Integer, primary_key=True)
-    category_id = Column(Unicode(50), ForeignKey('categories.id',
+    parent_id = Column(Unicode(50), ForeignKey('categories.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
     language_id = Column(Unicode(50), ForeignKey('languages.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
@@ -190,7 +190,7 @@ class CategoryData(DeclarativeBase):
         self.description = description
 
     def __repr__(self):
-        return '<CategoryData: %s (%s) %s>' % (self.category_id,
+        return '<CategoryData: %s (%s) %s>' % (self.parent_id,
                                                     self.language_id, self.name)
 
 
@@ -308,12 +308,12 @@ add_language_props(Page,
 class PageData(DeclarativeBase):
     """Language specific Page data"""
     __tablename__ = 'pages_data'
-    __table_args__ = (UniqueConstraint('page_id', 'language_id'),
+    __table_args__ = (UniqueConstraint('parent_id', 'language_id'),
                       {})
 
     # Columns
     id = Column(Integer, primary_key=True)
-    page_id = Column(Integer, ForeignKey('pages.id',
+    parent_id = Column(Integer, ForeignKey('pages.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
     language_id = Column(Unicode(50), ForeignKey('languages.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
@@ -323,7 +323,7 @@ class PageData(DeclarativeBase):
     text = Column(UnicodeText)
 
     # Relations
-    page = relation('Page', backref=backref('data',
+    parent = relation('Page', backref=backref('data',
                                 collection_class=mapped_scalar('language_id')))
     language = relation('Language', backref=backref('pages_data'))
 
@@ -332,11 +332,11 @@ class PageData(DeclarativeBase):
         return self._name
 
     def _set_name(self, value):
-        if self.page.language_id == self.language_id:
-            if self.page.string_id == 'default':
-                self.page.article.string_id = make_id(value)
+        if self.parent.language_id == self.language_id:
+            if self.parent.string_id == 'default':
+                self.parent.article.string_id = make_id(value)
             else:
-                self.page.string_id = make_id(value)
+                self.parent.string_id = make_id(value)
         self._name = value
 
     name = synonym('_name', descriptor=property(_get_name, _set_name))
@@ -348,7 +348,7 @@ class PageData(DeclarativeBase):
         self.text = text
 
     def __repr__(self):
-        return '<PageData: %s (%s) %s>' % (self.page_id, self.language_id,
+        return '<PageData: %s (%s) %s>' % (self.parent_id, self.language_id,
                                                                     self.name)
 
 
@@ -393,12 +393,12 @@ add_language_props(Link,
 class LinkData(DeclarativeBase):
     """Language specific Link data"""
     __tablename__ = 'links_data'
-    __table_args__ = (UniqueConstraint('link_id', 'language_id'),
+    __table_args__ = (UniqueConstraint('parent_id', 'language_id'),
                       {})
 
     # Columns
     id = Column(Integer, primary_key=True)
-    link_id = Column(Integer, ForeignKey('links.id',
+    parent_id = Column(Integer, ForeignKey('links.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
     language_id = Column(Unicode(50), ForeignKey('languages.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
@@ -406,7 +406,7 @@ class LinkData(DeclarativeBase):
     modified = Column(TIMESTAMP, default=datetime.now)
 
     # Relations
-    link = relation('Link', backref=backref('data',
+    parent = relation('Link', backref=backref('data',
                                 collection_class=mapped_scalar('language_id')))
     language = relation('Language', backref=backref('links_data'))
 
@@ -416,5 +416,74 @@ class LinkData(DeclarativeBase):
         self.description = description
 
     def __repr__(self):
-        return '<linkData: %s (%s)>' % (self.link_id, self.language_id)
+        return '<linkData: %s (%s)>' % (self.parent_id, self.language_id)
+
+
+############################################################
+# Media
+############################################################
+class Media(DeclarativeBase):
+    """Media definition"""
+    __tablename__ = 'media'
+
+    # Columns
+    id = Column(Integer, primary_key=True)
+    associable_id = Column(Integer, ForeignKey('associables.id'))
+    user_id = Column(Integer, ForeignKey('auth_users.user_id'))
+    created = Column(DateTime, default=datetime.now)
+    type = Column(Unicode(50))
+    uri = Column(Unicode(255))
+
+    # Relations
+    associable = relation('Associable', backref=backref('associated_media',
+                                                                uselist=False))
+    user = relation('User', backref='media')
+
+    # Properties
+    @property
+    def modified(self):
+        return max([d.modified for d in self.data])
+
+    # Special methods
+    def __init__(self, type, uri, user, lang, description=None):
+        self.type = type
+        self.uri = uri
+        self.user = user
+        self.data.append(MediaData(lang, description))
+
+    def __repr__(self):
+        return '<Media: %s %s %s>' % (self.id, self, type, self.uri)
+
+DDL(orphaned_associable_trigger).execute_at('after-create', Media.__table__)
+add_language_props(Media, 
+            [('description', lambda obj, lang, value: MediaData(lang, value))])
+
+
+class MediaData(DeclarativeBase):
+    """Language specific Media data"""
+    __tablename__ = 'media_data'
+    __table_args__ = (UniqueConstraint('parent_id', 'language_id'),
+                      {})
+
+    # Columns
+    id = Column(Integer, primary_key=True)
+    parent_id = Column(Integer, ForeignKey('media.id',
+                                        onupdate='CASCADE', ondelete='CASCADE'))
+    language_id = Column(Unicode(50), ForeignKey('languages.id',
+                                        onupdate='CASCADE', ondelete='CASCADE'))
+    description = Column(Unicode(255))
+    modified = Column(TIMESTAMP, default=datetime.now)
+
+    # Relations
+    parent = relation('Media', backref=backref('data',
+                                collection_class=mapped_scalar('language_id')))
+    language = relation('Language', backref=backref('media_data'))
+
+    # Special methods
+    def __init__(self, lang, description=None):
+        self.language_id = lang
+        self.description = description
+
+    def __repr__(self):
+        return '<MediaData: %s (%s)>' % (self.parent_id, self.language_id)
 
