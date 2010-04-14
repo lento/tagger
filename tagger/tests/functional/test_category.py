@@ -184,7 +184,7 @@ class TestCategoryController(TestController):
         assert_true(cat is None,
                             'Category should have been deleted from the db')
         query = DBSession.query(CategoryData)
-        categorydata = query.filter_by(category_id=None).all()
+        categorydata = query.filter_by(parent_id=None).all()
         assert_false(categorydata,
                 'orphaned CategoryData should have been deleted from the db')
 

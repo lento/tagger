@@ -201,7 +201,7 @@ class TestCategoryController(TestController):
         pages = DBSession.query(Page).filter_by(article_id=None).all()
         assert_false(pages,
                     'orphaned Pages should have been deleted from the db')
-        pagedata = DBSession.query(PageData).filter_by(page_id=None).all()
+        pagedata = DBSession.query(PageData).filter_by(parent_id=None).all()
         assert_false(pagedata,
                     'orphaned PageData should have been deleted from the db')
 
