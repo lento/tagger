@@ -3,7 +3,10 @@
 %>
 
 <%
-    link = DBSession.query(Media).get(mediaid)
+    media = DBSession.query(Media).get(mediaid)
 %>
 
-<a href="${media.uri}" title="${media.description[lang]}">${label or media.uri}</a>
+% if media.type == 'image':
+    <img src="${extra.url(media.uri)}" alt="${label or media.uri}"  title="${media.description[extra.lang]}"/>
+% endif
+

@@ -33,10 +33,10 @@ media_types = ['image']
 ############################################################
 class MediaWidget(Widget):
     """Render a Media object"""
-    params = ['mediaid', 'languageid', 'label']
-    template = 'mako:tagger.templates.widgets.link'
+    params = ['mediaid', 'lang', 'label']
+    template = 'mako:tagger.templates.widgets.media'
 
-    languageid = None
+    lang = None
     label = None
 
 
@@ -60,10 +60,10 @@ class MediaDirective(Directive):
             label = ''
         label = cgi.escape(label)
 
-        text = '${w_media(mediaid=%s, label="%s", lang=lang)}' % (
+        text = '${w_media(mediaid=%s, label="%s", extra=extra)}' % (
                                                                 mediaid, label)
-        link_node = nodes.raw(rawsource='', text=text, format='html')
-        return [link_node]
+        media_node = nodes.raw(rawsource='', text=text, format='html')
+        return [media_node]
 
 
 

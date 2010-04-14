@@ -58,7 +58,7 @@ class LinkDirective(Directive):
             label = ''
         label = cgi.escape(label)
 
-        text = '${w_link(linkid=%s, label="%s", lang=lang)}' % (linkid, label)
+        text = '${w_link(linkid=%s, label="%s", extra=extra)}' % (linkid, label)
         link_node = nodes.raw(rawsource='', text=text, format='html')
         return [link_node]
 
