@@ -176,10 +176,10 @@ class CategoryData(DeclarativeBase):
     def _get_name(self):
         return self._name
 
-    def _set_name(self, value):
+    def _set_name(self, val):
         if self.parent.language_id == self.language_id:
-            self.parent.id = make_id(value)
-        self._name = value
+            self.parent.id = make_id(val)
+        self._name = val
 
     name = synonym('_name', descriptor=property(_get_name, _set_name))
 
@@ -300,7 +300,7 @@ class Page(DeclarativeBase):
         return '<Page: [%s] %s %s>' % (self.article_id, self.id, self.string_id)
 
 add_language_props(Page,
-    [('name', lambda obj, lang, val: PageData(value, lang, None)),
+    [('name', lambda obj, lang, val: PageData(val, lang, None)),
      ('text', lambda obj, lang, val: CategoryData(obj.name[''], lang, val)),
     ])
 
@@ -331,13 +331,13 @@ class PageData(DeclarativeBase):
     def _get_name(self):
         return self._name
 
-    def _set_name(self, value):
+    def _set_name(self, val):
         if self.parent.language_id == self.language_id:
             if self.parent.string_id == 'default':
-                self.parent.article.string_id = make_id(value)
+                self.parent.article.string_id = make_id(val)
             else:
-                self.parent.string_id = make_id(value)
-        self._name = value
+                self.parent.string_id = make_id(val)
+        self._name = val
 
     name = synonym('_name', descriptor=property(_get_name, _set_name))
 
@@ -387,7 +387,7 @@ class Link(DeclarativeBase):
 
 DDL(orphaned_associable_trigger).execute_at('after-create', Link.__table__)
 add_language_props(Link, 
-            [('description', lambda obj, lang, value: LinkData(lang, value))])
+            [('description', lambda obj, lang, val: LinkData(lang, val))])
 
 
 class LinkData(DeclarativeBase):
@@ -456,7 +456,7 @@ class Media(DeclarativeBase):
 
 DDL(orphaned_associable_trigger).execute_at('after-create', Media.__table__)
 add_language_props(Media, 
-            [('description', lambda obj, lang, value: MediaData(lang, value))])
+            [('description', lambda obj, lang, val: MediaData(lang, val))])
 
 
 class MediaData(DeclarativeBase):

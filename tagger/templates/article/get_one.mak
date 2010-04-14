@@ -25,6 +25,6 @@
 </div>
 
 <div>
-    ${render_text(article.text[lang]) | n}
+    ${render_text(article.text[lang], lang) | n}
 </div>
 

@@ -22,11 +22,13 @@
 
 from docutils.parsers.rst import directives
 from link import LinkWidget, LinkDirective
-from media import media_types
+from media import media_types, MediaWidget, MediaDirective
 
 directives.register_directive('link', LinkDirective)
+directives.register_directive('media', MediaDirective)
 
 widgets = dict(w_link=LinkWidget(),
+               w_media=MediaWidget(),
               )
 
 

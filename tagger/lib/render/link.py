@@ -31,10 +31,10 @@ from docutils import nodes
 ############################################################
 class LinkWidget(Widget):
     """Render a Link object"""
-    params = ['linkid', 'languageid', 'label']
+    params = ['linkid', 'lang', 'label']
     template = 'mako:tagger.templates.widgets.link'
 
-    languageid = None
+    lang = None
     label = None
 
 
@@ -58,7 +58,7 @@ class LinkDirective(Directive):
             label = ''
         label = cgi.escape(label)
 
-        text = '${w_link(linkid=%s, label="%s")}' % (linkid, label)
+        text = '${w_link(linkid=%s, label="%s", lang=lang)}' % (linkid, label)
         link_node = nodes.raw(rawsource='', text=text, format='html')
         return [link_node]
 

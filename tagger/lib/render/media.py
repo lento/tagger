@@ -20,4 +20,50 @@
 #
 """Media render module"""
 
+import cgi
+from tw.api import Widget
+from docutils.parsers.rst import Directive
+from docutils import nodes
+
 media_types = ['image']
+
+
+############################################################
+# render widgets
+############################################################
+class MediaWidget(Widget):
+    """Render a Media object"""
+    params = ['mediaid', 'languageid', 'label']
+    template = 'mako:tagger.templates.widgets.link'
+
+    languageid = None
+    label = None
+
+
+############################################################
+# reStructuredText directives
+############################################################
+class MediaDirective(Directive):
+    """Return a MediaWidget invocation"""
+    required_arguments = 1
+    optional_arguments = 1
+    option_spec = {}
+    has_content = False
+
+    def run(self):
+        mediaid = int(self.arguments[0])
+        if len(self.arguments) > 1:
+            label = self.arguments[1]
+        elif isinstance(self.state.parent, nodes.substitution_definition):
+            label = self.state.parent['names'][0]
+        else:
+            label = ''
+        label = cgi.escape(label)
+
+        text = '${w_media(mediaid=%s, label="%s", lang=lang)}' % (
+                                                                mediaid, label)
+        link_node = nodes.raw(rawsource='', text=text, format='html')
+        return [link_node]
+
+
+

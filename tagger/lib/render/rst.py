@@ -27,12 +27,12 @@ from tagger.lib.render import widgets
 def render_rst(text):
     return publish_parts(text, writer_name='html')['html_body']
 
-def render_mak(text):
+def render_mak(text, lang=None):
     template = Template(text, default_filters=['trim'])
-    return template.render(**widgets)
+    return template.render(lang=lang, **widgets)
 
-def render_text(text):
+def render_text(text, lang=None):
     text = render_rst(text)
-    text = render_mak(text)
+    text = render_mak(text, lang)
     return text
 
