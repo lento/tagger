@@ -28,7 +28,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from tagger.lib.base import BaseController
 from tagger.controllers.error import ErrorController
-from tagger.controllers import admin, language, category, article, link
+from tagger.controllers import admin, language, category, article, link, media
 from tagger.model import DBSession, Language, Category, Article
 
 __all__ = ['RootController']
@@ -42,6 +42,7 @@ class RootController(BaseController):
     language = language.Controller()
     article = article.Controller()
     link = link.Controller()
+    media = media.Controller()
 
     @expose('tagger.templates.index')
     def index(self):

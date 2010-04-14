@@ -163,8 +163,8 @@ class FormLinkDelete(TableForm):
 class FormMediaNew(TableForm):
     """New media form"""
     class fields(WidgetsList):
-        type = SingleSelectField(label_text=l_('Type'), size=10)
-        uri = TextField(label_text=l_('Uri'),
+        mediatype = SingleSelectField(label_text=l_('Type'), size=10)
+        uri = TextField(label_text=l_('URI'),
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         languageid = SingleSelectField(label_text=l_('Language'), size=10)
         description = TextArea(rows=10)
@@ -176,8 +176,8 @@ class FormMediaEdit(TableForm):
         _method = HiddenField(default='PUT', validator=None)
         mediaid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        type = SingleSelectField(label_text=l_('Type'), size=10)
-        uri = TextField(label_text=l_('Uri'),
+        mediatype = SingleSelectField(label_text=l_('Type'), size=10)
+        uri = TextField(label_text=l_('URI'),
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         languageid = CascadingSingleSelectField(label_text=l_('Language'),
                             size=10, cascadeurl=tg.url('/media/translation'),
@@ -191,6 +191,7 @@ class FormMediaDelete(TableForm):
         _method = HiddenField(default='DELETE', validator=None)
         mediaid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        type_ = TextField(label_text=l_('Type'), validator=None, disabled=True)
-        uri_ = TextField(label_text=l_('Uri'), validator=None, disabled=True)
+        mediatype_ = TextField(label_text=l_('Type'), validator=None,
+                                                                disabled=True)
+        uri_ = TextField(label_text=l_('URI'), validator=None, disabled=True)
 
