@@ -96,11 +96,9 @@ class TestLinkController(TestController):
                                                 languageid=languageid,
                                                 description='random text',
                                                ),
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /link/;' in response.body,
+                            'should be redirected to "/link/" via javascript')
 
         query = DBSession().query(Link)
         link = query.filter_by(uri=u'http://example.com').first()
@@ -143,11 +141,9 @@ class TestLinkController(TestController):
                                                  languageid=languageid,
                                                  description='Changed',
                                                 ),
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /link/;' in response.body,
+                            'should be redirected to "/link/" via javascript')
 
         link = DBSession.query(Link).get(linkid)
         eq_(link.uri, 'changed')
@@ -176,11 +172,9 @@ class TestLinkController(TestController):
 
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/link?linkid=%s' % linkid,
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /link/;' in response.body,
+                            'should be redirected to "/link/" via javascript')
 
         link = DBSession.query(Link).get(linkid)
         assert_true(link is None,

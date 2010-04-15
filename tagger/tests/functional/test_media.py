@@ -106,11 +106,9 @@ class TestMediaController(TestController):
                                                  name='another image',
                                                  description='random text',
                                                 ),
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /media/;' in response.body,
+                            'should be redirected to "/media/" via javascript')
 
         media = DBSession().query(Media).get(u'another-image')
         eq_(media.type, u'image')
@@ -155,11 +153,9 @@ class TestMediaController(TestController):
                                                  name='changed',
                                                  description='Changed',
                                                 ),
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /media/;' in response.body,
+                            'should be redirected to "/media/" via javascript')
 
         media = DBSession.query(Media).get(u'changed')
         eq_(media.uri, 'changed')
@@ -189,11 +185,9 @@ class TestMediaController(TestController):
 
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/media?mediaid=%s' % mediaid,
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /media/;' in response.body,
+                            'should be redirected to "/media/" via javascript')
 
         media = DBSession.query(Media).get(mediaid.decode())
         assert_true(media is None,

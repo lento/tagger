@@ -20,7 +20,7 @@
 #
 """Language controller"""
 
-from tg import expose, url, tmpl_context, redirect, validate, require, flash
+from tg import expose, url, tmpl_context, validate, require, flash
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Language
@@ -68,13 +68,13 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_new, error_handler=new)
     def post(self, languageid, name):
         """create a new Language"""
         DBSession.add(Language(languageid, name))
         flash(_('Created Language "%s"') % name, 'ok')
-        redirect(url('/language/'))
+        return dict(redirect_to=url('/language/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -90,7 +90,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
     def put(self, languageid, name):
         """Edit a language"""
@@ -105,7 +105,7 @@ class Controller(RestController):
             flash(_('updated language "%s"') % languageid, 'ok')
         else:
             flash(_('language "%s" unchanged') % languageid, 'info')
-        redirect(url('/language/'))
+        return dict(redirect_to=url('/language/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -126,7 +126,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_delete, error_handler=get_delete)
     def post_delete(self, languageid):
         """Delete a Language"""
@@ -134,5 +134,5 @@ class Controller(RestController):
 
         DBSession.delete(language)
         flash(_('Deleted Language "%s"') % language.id, 'ok')
-        redirect(url('/language/'))
+        return dict(redirect_to=url('/language/'))
 

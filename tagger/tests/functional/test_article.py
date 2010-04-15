@@ -101,11 +101,9 @@ class TestCategoryController(TestController):
                                                    languageid=languageid,
                                                    text='random text',
                                                   ),
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /article/;' in response.body,
+                        'should be redirected to "/article/" via javascript')
 
         query = DBSession().query(Article)
         article = query.filter_by(string_id=u'test').first()
@@ -153,11 +151,10 @@ class TestCategoryController(TestController):
                                                  languageid=languageid,
                                                  text='Test',
                                                 ),
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true(
+            'parent.location = /article/%s/edit;' % articleid in response.body,
+            'should be redirected to "/article/<id>/edit" via javascript')
 
         article = DBSession().query(Article).get(articleid)
         eq_(article.string_id, 'test')
@@ -187,11 +184,9 @@ class TestCategoryController(TestController):
 
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/article?articleid=%s' % articleid,
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /article/;' in response.body,
+                        'should be redirected to "/article/" via javascript')
 
         query = DBSession().query(Article)
         article = query.filter_by(string_id=u'test').first()

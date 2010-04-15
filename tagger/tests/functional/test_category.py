@@ -96,11 +96,9 @@ class TestCategoryController(TestController):
                                                 languageid=languageid,
                                                  description='Test',
                                                 ),
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-        
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /category/;' in response.body,
+                        'should be redirected to "/category/" via javascript')
 
         cat = DBSession().query(Category).get(u'test')
         eq_(cat.language_ids, set([languageid]))
@@ -141,11 +139,9 @@ class TestCategoryController(TestController):
                                                  languageid=languageid,
                                                  description='Changed',
                                                 ),
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-        
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /category/;' in response.body,
+                        'should be redirected to "/category/" via javascript')
 
         cat = DBSession.query(Category).get(u'changed')
         eq_(cat.name[languageid], 'changed')
@@ -174,11 +170,9 @@ class TestCategoryController(TestController):
 
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/category?categoryid=%s' % categoryid,
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-        
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /category/;' in response.body,
+                        'should be redirected to "/category/" via javascript')
 
         cat = DBSession.query(Category).get(categoryid.decode())
         assert_true(cat is None,

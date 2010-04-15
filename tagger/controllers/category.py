@@ -20,7 +20,7 @@
 #
 """Category controller"""
 
-from tg import expose, url, tmpl_context, redirect, validate, require, flash
+from tg import expose, url, tmpl_context, validate, require, flash
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Language, Category
@@ -69,13 +69,13 @@ class Controller(RestController):
     
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_new, error_handler=new)
     def post(self, name, languageid, description):
         """create a new Category"""
         DBSession.add(Category(name, languageid, description))
         flash(_('Created Category "%s"') % name, 'ok')
-        redirect(url('/category/'))
+        return dict(redirect_to=url('/category/'))
     
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -95,7 +95,7 @@ class Controller(RestController):
         
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
     def put(self, categoryid, name, languageid, description=None):
         """Edit a category"""
@@ -114,7 +114,7 @@ class Controller(RestController):
             flash(_('updated category "%s"') % category.id, 'ok')
         else:
             flash(_('category "%s" unchanged') % category.id, 'info')
-        redirect(url('/category/'))
+        return dict(redirect_to=url('/category/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -136,7 +136,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_delete, error_handler=get_delete)
     def post_delete(self, categoryid):
         """Delete a Category"""
@@ -146,7 +146,7 @@ class Controller(RestController):
             DBSession.delete(categorydata)
         DBSession.delete(category)
         flash(_('Deleted Category "%s"') % category.id, 'ok')
-        redirect(url('/category/'))
+        return dict(redirect_to=url('/category/'))
 
     # REST-like methods
     _custom_actions = ['translation']

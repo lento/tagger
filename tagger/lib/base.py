@@ -2,14 +2,22 @@
 
 """The base Controller API."""
 
-from tg import TGController, tmpl_context, config, i18n
+from tg import TGController, tmpl_context, config, i18n, url
 from tg.render import render
 from tg import request
 from pylons.i18n import _, ungettext, N_
-from tw.api import WidgetBunch
+from tw.api import WidgetBunch, JSLink
 from tagger.model import DBSession, Language, Category
 
 __all__ = ['BaseController']
+
+# JQuery and plugins
+jquery_js = JSLink(link=url('/js/jquery.js'))
+jquery_tools_js = JSLink(link=url('/js/jquery.tools.js'))
+
+# tagger
+tagger_js = JSLink(link=url('/js/tagger.js'))
+
 
 class BaseController(TGController):
     """
@@ -36,6 +44,11 @@ class BaseController(TGController):
         tmpl_context.title = config.get(
                                     'title', 'Welcome to Tagger!').strip('\"')
         tmpl_context.copyright = config.get('copyright', '').strip('\"')
+
+        # load javascripts
+        jquery_js.inject()
+        jquery_tools_js.inject()
+        tagger_js.inject()
 
         # add languages and categories to template context (used in the header)
         tmpl_context.languages = DBSession.query(Language)

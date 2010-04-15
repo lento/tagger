@@ -6,8 +6,8 @@
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
     ${self.style()}
+    ##${c.j_startup()}
 </head>
-##${c.j_startup()}
 
 <body>
     ${self.body()}
@@ -16,6 +16,6 @@
 </html>
 
 <%def name="style()">
-    ##<link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/themes/%s/css/style.css' % c.theme)}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/themes/%s/css/style.css' % c.theme)}" />
 </%def>
 

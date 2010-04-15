@@ -20,7 +20,7 @@
 #
 """Link controller"""
 
-from tg import expose, tmpl_context, redirect, validate, require, flash, url
+from tg import expose, tmpl_context, validate, require, flash, url
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Link, Language
@@ -68,14 +68,14 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_new, error_handler=new)
     def post(self, uri, languageid, description):
         """create a new Link"""
         user = tmpl_context.user
         DBSession.add(Link(uri, user, languageid, description))
         flash(_('Created Link "%s"') % uri, 'ok')
-        redirect(url('/link/'))
+        return dict(redirect_to=url('/link/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -94,7 +94,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
     def put(self, linkid, uri, languageid, description=None):
         """Edit a link"""
@@ -113,7 +113,7 @@ class Controller(RestController):
             flash(_('updated link "%s"') % linkid, 'ok')
         else:
             flash(_('link "%s" unchanged') % linkid, 'info')
-        redirect(url('/link/'))
+        return dict(redirect_to=url('/link/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -134,7 +134,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_delete, error_handler=get_delete)
     def post_delete(self, linkid):
         """Delete a Link"""
@@ -144,7 +144,7 @@ class Controller(RestController):
             DBSession.delete(linkdata)
         DBSession.delete(link)
         flash(_('Deleted Link "%s"') % link.id, 'ok')
-        redirect(url('/link/'))
+        return dict(redirect_to=url('/link/'))
 
     # REST-like methods
     _custom_actions = ['translation']

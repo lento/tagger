@@ -85,11 +85,9 @@ class TestLanguageController(TestController):
                                             dict(languageid='xx',
                                                  name='test language',
                                                 ),
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /language/;' in response.body,
+                        'should be redirected to "/language/" via javascript')
 
         cat = DBSession().query(Language).get(u'xx')
         eq_(cat.name, 'test language')
@@ -120,11 +118,9 @@ class TestLanguageController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.put('/language/%s' % languageid,
                                             dict(name='changed'),
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /language/;' in response.body,
+                        'should be redirected to "/language/" via javascript')
 
         cat = DBSession.query(Language).get(languageid.decode())
         eq_(cat.name, 'changed')
@@ -152,11 +148,9 @@ class TestLanguageController(TestController):
 
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/language?languageid=%s' % languageid,
-                                            extra_environ=environ, status=302)
-        redirected = response.follow(extra_environ=environ, status=200)
-
-        assert_true(redirected.html.find(id='flash').find('div', 'ok'),
-                                'result should have a "ok" flash notification')
+                                            extra_environ=environ, status=200)
+        assert_true('parent.location = /language/;' in response.body,
+                        'should be redirected to "/language/" via javascript')
 
         result = DBSession.query(Language).get(languageid.decode())
         assert_true(result is None,

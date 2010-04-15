@@ -149,7 +149,7 @@ table td.icon {
 	cursor: pointer;
 } 
 
-#overlay .wrap {
+#overlay iframe {
     width: 600px;
 	height: 450px;
 	padding: 10px;

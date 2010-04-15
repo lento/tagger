@@ -19,11 +19,11 @@ tagger.overlays_activate = function(select) {
     $(select + " .overlay").overlay({
         onBeforeLoad: function(event) {
             // grab wrapper element inside content
-            var wrap = this.getContent().find(".wrap");
-            console.log('tagger.overlays_activate', wrap);
+            var iframe = $("#overlay iframe")[0];
+            //console.log('tagger.overlays_activate', wrap);
 
             // load the page specified in the trigger
-            wrap.load(this.getTrigger().attr("href"));
+            iframe.src = this.getTrigger().attr("href");
         },
         expose: {
             color: '#333'

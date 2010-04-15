@@ -10,10 +10,8 @@
     ${self.meta()}
     <title>${self.title()}</title>
     <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/themes/%s/css/style.css' % c.theme)}" />
-    <script type="text/javascript" src="${tg.url('/js/jquery.js')}"></script>
-    <script type="text/javascript" src="${tg.url('/js/jquery.tools.js')}"></script>
-    <script type="text/javascript" src="${tg.url('/js/tagger.js')}"></script>
 
+    ##${c.j_startup()}
     <script type="text/javascript">
     $(function() {
         % if page:
@@ -27,9 +25,11 @@
     });
     </script>
 </head>
+
 <body>
     <div id="overlay">
         <div class="wrap"></div>
+        <iframe src="about:blank"></iframe>
     </div>
 
     ${self.header()}

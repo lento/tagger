@@ -20,7 +20,7 @@
 #
 """Article controller"""
 
-from tg import expose, url, tmpl_context, redirect, validate, require, flash
+from tg import expose, url, tmpl_context, validate, require, flash
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Language, Category, Article
@@ -80,7 +80,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_new, error_handler=new)
     def post(self, title, categoryid, languageid, text):
         """create a new Article"""
@@ -88,7 +88,7 @@ class Controller(RestController):
         category = DBSession.query(Category).get(categoryid)
         DBSession.add(Article(title, category, languageid, user, text))
         flash(_('Created Article "%s"') % title, 'ok')
-        redirect(url('/article/'))
+        return dict(redirect_to=url('/article/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.article.edit')
@@ -116,7 +116,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
     def put(self, articleid, title, categoryid, languageid, text=None):
         """Edit a article"""
@@ -142,7 +142,7 @@ class Controller(RestController):
             flash(_('updated article "%s"') % articleid, 'ok')
         else:
             flash(_('article "%s" unchanged') % articleid, 'info')
-        redirect(url('/article/%s/edit' % article.id))
+        return dict(redirect_to=url('/article/%s/edit' % article.id))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -164,7 +164,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_delete, error_handler=get_delete)
     def post_delete(self, articleid):
         """Delete a Article"""
@@ -176,7 +176,7 @@ class Controller(RestController):
             DBSession.delete(page)
         DBSession.delete(article)
         flash(_('Deleted Article "%s"') % article.id, 'ok')
-        redirect(url('/article/'))
+        return dict(redirect_to=url('/article/'))
 
 
     # REST-like methods

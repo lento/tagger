@@ -20,7 +20,7 @@
 #
 """Media controller"""
 
-from tg import expose, tmpl_context, redirect, validate, require, flash, url
+from tg import expose, tmpl_context, validate, require, flash, url
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Media, Language
@@ -68,7 +68,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_new, error_handler=new)
     def post(self, mediatype, uri, uploadfile, fallbackfile, languageid, name,
                                                                 description):
@@ -78,7 +78,7 @@ class Controller(RestController):
         media = Media(mediatype, name, uri, user, languageid, description)
         DBSession.add(media)
         flash(_('Created Media "%s"') % media.id, 'ok')
-        redirect(url('/media/'))
+        return dict(redirect_to=url('/media/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -99,7 +99,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
     def put(self, mediaid, uri, languageid, name, description=None):
         """Edit a media"""
@@ -122,7 +122,8 @@ class Controller(RestController):
             flash(_('updated media "%s"') % mediaid, 'ok')
         else:
             flash(_('media "%s" unchanged') % mediaid, 'info')
-        redirect(url('/media/'))
+
+        return dict(redirect_to=url('/media/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -144,7 +145,7 @@ class Controller(RestController):
 
     @require(has_permission('manage'))
     @expose('json')
-    @expose('tagger.templates.forms.result')
+    @expose('tagger.templates.redirect_parent')
     @validate(f_delete, error_handler=get_delete)
     def post_delete(self, mediaid):
         """Delete a Media"""
@@ -154,7 +155,7 @@ class Controller(RestController):
             DBSession.delete(mediadata)
         DBSession.delete(media)
         flash(_('Deleted Media "%s"') % media.id, 'ok')
-        redirect(url('/media/'))
+        return dict(redirect_to=url('/media/'))
 
     # REST-like methods
     _custom_actions = ['translation']
