@@ -24,7 +24,7 @@ class TestRootController(TestController):
         tadm = DBSession.query(User).filter_by(user_name=u'test_admin').one()
         language = Language(u'xx', u'test_langugage')
         DBSession.add(language)
-        cat = Category(u'test category', u'xx')
+        cat = Category(u'test_category', u'xx')
         DBSession.add(cat)
         article = Article(u'A Test Article!', cat, u'xx', tadm, u'random text')
         DBSession.add(article)
@@ -46,7 +46,7 @@ class TestRootController(TestController):
         """articles can be retrived with url: /category/string_id"""
         languageid, categoryid, articleid = self._fill_db()
 
-        response = self.app.get('/test_category/a_test_article')
+        response = self.app.get('/test_category/a-test-article')
 
         assert_true(str(response.html.find(id='content_with_side')),
                                 'content should have class "content_with_side"')

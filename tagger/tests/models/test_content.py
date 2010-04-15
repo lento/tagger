@@ -95,7 +95,7 @@ class TestCategory(ModelTest):
 
     def test_obj_creation_id(self):
         """model.content.Category constructor must set the name right"""
-        eq_(self.obj.id, u"test_category")
+        eq_(self.obj.id, u"test-category")
 
     def test_obj_creation_description(self):
         """model.content.Category constructor must set the description right"""
@@ -186,7 +186,7 @@ class TestArticle(ModelTest):
 
     def test_obj_creation_string_id(self):
         """model.content.Article constructor must set the string_id right"""
-        eq_(self.obj.string_id, u'a_test_article')
+        eq_(self.obj.string_id, u'a-test-article')
 
     def test_obj_creation_default_page(self):
         """model.content.Article constructor must create a default page"""
@@ -291,7 +291,7 @@ class TestPage(ModelTest):
 
     def test_obj_creation_string_id(self):
         """model.content.Page constructor must set the string_id right"""
-        eq_(self.obj.string_id, u'a_test_page')
+        eq_(self.obj.string_id, u'a-test-page')
 
     def test_obj_creation_page_data(self):
         """model.content.Page constructor must create a PageData"""

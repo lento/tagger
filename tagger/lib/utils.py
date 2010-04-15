@@ -25,8 +25,8 @@ from docutils.core import publish_parts
 
 def make_id(text):
     newid = text.lower()
-    newid = re.sub('[^a-z0-9\s]', '', newid)
+    newid = re.sub('[^a-z0-9_\s]', '', newid)
     newid = newid.strip()
-    newid = re.sub('[\s]+', '_', newid)
+    newid = re.sub('[\s]+', '-', newid)
     return newid
 
