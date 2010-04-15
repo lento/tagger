@@ -13,7 +13,7 @@
     <tr>
         <th>${_('ID')}</th>
         <th>${_('Name')}</th>
-        <th>${_('URL')}</th>
+        <th>${_('URI')}</th>
         <th>${_('Languages')}</th>
     </tr>
     % for link in links:

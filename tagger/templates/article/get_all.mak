@@ -13,8 +13,8 @@
     <tr>
         <th>${_('ID')}</th>
         <th>${_('Title')}</th>
-        <th>${_('category')}</th>
-        <th>${_('languages')}</th>
+        <th>${_('Category')}</th>
+        <th>${_('Languages')}</th>
         <th>${_('Actions')}</th>
     </tr>
     % for article in articles:
