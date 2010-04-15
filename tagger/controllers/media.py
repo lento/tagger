@@ -25,7 +25,6 @@ from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Media, Language
 from tagger.lib.widgets import FormMediaNew, FormMediaEdit, FormMediaDelete
-from tagger.lib.render import media_types
 from repoze.what.predicates import has_permission
 
 import logging
@@ -63,9 +62,7 @@ class Controller(RestController):
 
         fargs = dict()
         lang_list = [(l.id, l.name) for l in DBSession.query(Language).all()]
-        fcargs = dict(mediatype=dict(options=media_types),
-                      languageid=dict(options=lang_list),
-                     )
+        fcargs = dict(languageid=dict(options=lang_list))
         return dict(title=_('Create a new Media'),
                                                 args=fargs, child_args=fcargs)
 
@@ -73,11 +70,14 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.forms.result')
     @validate(f_new, error_handler=new)
-    def post(self, mediatype, uri, languageid, description):
+    def post(self, mediatype, uri, uploadfile, fallbackfile, languageid, name,
+                                                                description):
         """create a new Media"""
         user = tmpl_context.user
-        DBSession.add(Media(mediatype, uri, user, languageid, description))
-        flash(_('Created Media "%s"') % uri, 'ok')
+
+        media = Media(mediatype, name, uri, user, languageid, description)
+        DBSession.add(media)
+        flash(_('Created Media "%s"') % media.id, 'ok')
         redirect(url('/media/'))
 
     @require(has_permission('manage'))
@@ -87,13 +87,13 @@ class Controller(RestController):
         tmpl_context.form = f_edit
         media = DBSession.query(Media).get(mediaid.decode())
         fargs = dict(mediaid=media.id, id_=media.id,
+                     mediatype_=media.type,
                      uri=media.uri,
                      languageid=media.language_id,
+                     name=media.name[''],
                      description=media.description[''])
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
-        fcargs = dict(mediatype=dict(options=media_types),
-                      languageid=dict(options=languages),
-                     )
+        fcargs = dict(languageid=dict(options=languages))
         return dict(title='Edit media "%s"' % media.id, args=fargs,
                                                             child_args=fcargs)
 
@@ -101,17 +101,17 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.forms.result')
     @validate(f_edit, error_handler=edit)
-    def put(self, mediaid, mediatype, uri, languageid, description=None):
+    def put(self, mediaid, uri, languageid, name, description=None):
         """Edit a media"""
         media = DBSession.query(Media).get(mediaid.decode())
 
         modified = False
-        if media.type != mediatype:
-            media.type = mediatype
-            modified = True
-
         if media.uri != uri:
             media.uri = uri
+            modified = True
+
+        if media.name[languageid] != name:
+            media.name[languageid] = name
             modified = True
 
         if media.description[languageid] != description:
@@ -164,7 +164,8 @@ class Controller(RestController):
         """Return a media translation"""
         media = DBSession.query(Media).get(mediaid)
 
+        name = media.name[value]
         description = media.description[value]
         
-        return dict(description=description)
+        return dict(name=name, description=description)
 

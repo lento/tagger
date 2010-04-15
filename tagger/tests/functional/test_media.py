@@ -33,14 +33,14 @@ class TestMediaController(TestController):
         tadm = DBSession.query(User).filter_by(user_name=u'test_admin').one()
         language = Language(u'xx', u'test_langugage')
         DBSession.add(language)
-        media = Media(u'image', u'http://example.com', tadm, u'xx',
+        media = Media(u'image', u'test image', u'/test.png', tadm, u'xx',
                                                                 u'random text')
         DBSession.add(media)
         DBSession.flush()
         languageid = language.id
         mediaid = media.id
         transaction.commit()
-        return languageid, mediaid
+        return languageid, mediaid.encode()
 
     def test_get_all(self):
         """controllers.media.Controller.get_all is working properly"""
@@ -52,8 +52,8 @@ class TestMediaController(TestController):
         tr = response.html.table('tr')[1]
         eq_(str(tr('td')[0]), '<td>%s</td>' % mediaid)
         eq_(str(tr('td')[1]), '<td>image</td>')
-        eq_(str(tr('td')[2]), '<td>http://example.com</td>')
-        eq_(str(tr('td')[3]), '<td>random text</td>')
+        eq_(str(tr('td')[2]), '<td>test image</td>')
+        eq_(str(tr('td')[3]), '<td>/test.png</td>')
         eq_(str(tr('td')[4]), '<td>%s</td>' % languageid)
         actions = tr('td')[5]
         eq_(str(actions('a')[0]['class']), 'icon edit overlay')
@@ -68,7 +68,8 @@ class TestMediaController(TestController):
         expected = ('<div id="content_with_side">\n'
                     '<div>%s</div>\n'
                     '<div>image</div>\n'
-                    '<div>http://example.com</div>\n'
+                    '<div>test image</div>\n'
+                    '<div>/test.png</div>\n'
                     '<div>random text</div>\n'
                     '</div>' % mediaid
                    )
@@ -98,8 +99,11 @@ class TestMediaController(TestController):
 
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.post('/media/', dict(mediatype='image',
-                                                 uri='http://example.com',
+                                                 uri='/test.png',
+                                                 uploadfile='',
+                                                 fallbackfile='',
                                                  languageid=languageid,
+                                                 name='another image',
                                                  description='random text',
                                                 ),
                                             extra_environ=environ, status=302)
@@ -108,9 +112,9 @@ class TestMediaController(TestController):
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
 
-        query = DBSession().query(Media)
-        media = query.filter_by(uri=u'http://example.com').first()
+        media = DBSession().query(Media).get(u'another-image')
         eq_(media.type, u'image')
+        eq_(media.name[''], u'another image')
         eq_(media.description[''], u'random text')
         eq_(media.language_ids, set([languageid]))
         eq_(media.user.user_name, 'test_admin')
@@ -131,14 +135,12 @@ class TestMediaController(TestController):
         assert_true(response.html.find('input',
                                 {'name': 'mediaid', 'value': str(mediaid)}),
                                 'wrong media_id')
-        elem_mediatype = response.html.find('select', {'id': 'mediatype'})
-        assert_true(elem_mediatype, '"mediatype" input element not found')
         elem_languageid = response.html.find('select', {'id': 'languageid'})
         assert_true(elem_languageid, '"languageid" input element not found')
         eq_(elem_languageid.find('option', {'selected': 'selected'})['value'],
                                                             languageid)
         eq_(response.html.find('input', {'id': 'uri'})['value'],
-                                                        u'http://example.com')
+                                                        u'/test.png')
         eq_(response.html.find('textarea', {'id': 'description'}).string,
                                                         u'random text')
 
@@ -148,9 +150,9 @@ class TestMediaController(TestController):
 
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.put('/media/%s' % mediaid,
-                                            dict(mediatype='video',
-                                                 uri='changed',
+                                            dict(uri='changed',
                                                  languageid=languageid,
+                                                 name='changed',
                                                  description='Changed',
                                                 ),
                                             extra_environ=environ, status=302)
@@ -159,9 +161,9 @@ class TestMediaController(TestController):
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
 
-        media = DBSession.query(Media).get(mediaid)
-        eq_(media.type, 'video')
+        media = DBSession.query(Media).get(u'changed')
         eq_(media.uri, 'changed')
+        eq_(media.name[languageid], 'changed')
         eq_(media.description[languageid], 'Changed')
 
     def test_get_delete(self):
@@ -193,7 +195,7 @@ class TestMediaController(TestController):
         assert_true(redirected.html.find(id='flash').find('div', 'ok'),
                                 'result should have a "ok" flash notification')
 
-        media = DBSession.query(Media).get(mediaid)
+        media = DBSession.query(Media).get(mediaid.decode())
         assert_true(media is None,
                             'Media "1" should have been deleted from the db')
         mediadata = DBSession.query(MediaData).filter_by(parent_id=None).all()
@@ -210,6 +212,6 @@ class TestMediaController(TestController):
                                               )
                                 )
 
-        expected = '{"description": "random text"}'
+        expected = '{"name": "test image", "description": "random text"}'
         eq_(response.body, expected)
 

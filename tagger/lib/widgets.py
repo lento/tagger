@@ -26,9 +26,11 @@ from tg import config, url
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tw.api import Widget, WidgetsList
 from tw.forms import TableForm, TextField, TextArea, HiddenField
-from tw.forms import SingleSelectField
-from tw.dynforms import CascadingSingleSelectField
+from tw.forms import SingleSelectField, FileField
+from tw.dynforms import CascadingSingleSelectField, HidingTableForm
+from tw.dynforms import HidingSingleSelectField
 from tw.forms.validators import All, Regex, NotEmpty, UnicodeString, MaxLength
+from tagger.lib.render import media_types
 
 
 ############################################################
@@ -160,13 +162,25 @@ class FormLinkDelete(TableForm):
 
 
 # Media
-class FormMediaNew(TableForm):
+class FormMediaNew(HidingTableForm):
     """New media form"""
     class fields(WidgetsList):
-        mediatype = SingleSelectField(label_text=l_('Type'), size=10)
+        mediatype = HidingSingleSelectField(label_text=l_('Type'), size=10,
+            options=[''] + media_types,
+            mapping={'image': ['uploadfile'],
+                     'video': ['uploadfile', 'fallbackfile'],
+                     'youtube': ['uri'],
+                     'vimeo': ['uri'],
+                    }
+        )
         uri = TextField(label_text=l_('URI'),
-                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+                                validator=All(UnicodeString, MaxLength(255)))
+        uploadfile = FileField(label_text=l_('File to upload'))
+        fallbackfile = FileField(label_text=l_('Fallback file'))
+
         languageid = SingleSelectField(label_text=l_('Language'), size=10)
+        name = TextField(label_text=l_('Name'),
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         description = TextArea(rows=10)
 
 
@@ -176,12 +190,15 @@ class FormMediaEdit(TableForm):
         _method = HiddenField(default='PUT', validator=None)
         mediaid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        mediatype = SingleSelectField(label_text=l_('Type'), size=10)
+        mediatype_ = TextField(label_text=l_('Type'), validator=None,
+                                                                disabled=True)
         uri = TextField(label_text=l_('URI'),
-                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+                                validator=All(UnicodeString, MaxLength(255)))
         languageid = CascadingSingleSelectField(label_text=l_('Language'),
                             size=10, cascadeurl=tg.url('/media/translation'),
                             extra=['mediaid'])
+        name = TextField(label_text=l_('Name'),
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         description = TextArea(label_text=l_('Description'), rows=10)
 
 
