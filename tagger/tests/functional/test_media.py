@@ -98,21 +98,21 @@ class TestMediaController(TestController):
         languageid, mediaid = self._fill_db()
 
         environ = {'REMOTE_USER': 'test_admin'}
-        response = self.app.post('/media/', dict(mediatype='image',
-                                                 uri='/test.png',
+        response = self.app.post('/media/', dict(mediatype='youtube',
+                                                 uri='nROPFegfRuU',
                                                  uploadfile='',
                                                  fallbackfile='',
                                                  languageid=languageid,
-                                                 name='another image',
+                                                 name='test video',
                                                  description='random text',
                                                 ),
                                             extra_environ=environ, status=200)
         assert_true('parent.location = /media/;' in response.body,
                             'should be redirected to "/media/" via javascript')
 
-        media = DBSession().query(Media).get(u'another-image')
-        eq_(media.type, u'image')
-        eq_(media.name[''], u'another image')
+        media = DBSession().query(Media).get(u'test-video')
+        eq_(media.type, u'youtube')
+        eq_(media.name[''], u'test video')
         eq_(media.description[''], u'random text')
         eq_(media.language_ids, set([languageid]))
         eq_(media.user.user_name, 'test_admin')
