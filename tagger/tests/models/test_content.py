@@ -90,7 +90,7 @@ class TestCategory(ModelTest):
 
     def test_obj_query(self):
         """model.content.Category objects can be queried"""
-        obj = DBSession.query(self.klass).get(u"test_category")
+        obj = DBSession.query(self.klass).get(u"test-category")
         assert_true(obj, 'Category not found')
 
     def test_obj_creation_id(self):
@@ -450,7 +450,8 @@ class TestMedia(ModelTest):
     klass = content.Media
     attrs = dict(
         type = u'image',
-        uri = u"http://example.com",
+        name = u'test image',
+        uri = u"/test.png",
         description = u"Test Media",
         )
 
@@ -474,7 +475,7 @@ class TestMedia(ModelTest):
 
     def test_obj_query(self):
         """model.content.Media objects can be queried"""
-        obj = DBSession.query(self.klass).one()
+        obj = DBSession.query(self.klass).get(u'test-image')
         assert_true(obj, 'Media not found')
         eq_(obj.uri, self.attrs['uri'])
 
@@ -482,9 +483,17 @@ class TestMedia(ModelTest):
         """model.content.Media constructor must set the type right"""
         eq_(self.obj.type, u'image')
 
+    def test_obj_creation_id(self):
+        """model.content.Media constructor must set the id right"""
+        eq_(self.obj.id, u'test-image')
+
+    def test_obj_creation_name(self):
+        """model.content.Media constructor must set the name right"""
+        eq_(self.obj.name[''], u'test image')
+
     def test_obj_creation_uri(self):
         """model.content.Media constructor must set the uri right"""
-        eq_(self.obj.uri, u'http://example.com')
+        eq_(self.obj.uri, u'/test.png')
 
     def test_obj_creation_user(self):
         """model.content.Media constructor must set the user right"""

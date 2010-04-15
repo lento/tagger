@@ -427,7 +427,7 @@ class Media(DeclarativeBase):
     __tablename__ = 'media'
 
     # Columns
-    id = Column(Integer, primary_key=True)
+    id = Column(Unicode(255), primary_key=True)
     associable_id = Column(Integer, ForeignKey('associables.id'))
     user_id = Column(Integer, ForeignKey('auth_users.user_id'))
     created = Column(DateTime, default=datetime.now)
@@ -445,18 +445,21 @@ class Media(DeclarativeBase):
         return max([d.modified for d in self.data])
 
     # Special methods
-    def __init__(self, type, uri, user, lang, description=None):
+    def __init__(self, type, name, uri, user, lang, description=None):
+        self.id = make_id(name)
         self.type = type
         self.uri = uri
         self.user = user
-        self.data.append(MediaData(lang, description))
+        self.data.append(MediaData(name, lang, description))
 
     def __repr__(self):
         return '<Media: %s %s %s>' % (self.id, self, type, self.uri)
 
 DDL(orphaned_associable_trigger).execute_at('after-create', Media.__table__)
 add_language_props(Media, 
-            [('description', lambda obj, lang, val: MediaData(lang, val))])
+    [('name', lambda obj, lang, val: MediaData(val, lang, None)),
+     ('description', lambda obj, lang, val: MediaData(obj.name[''],lang, val)),
+    ])
 
 
 class MediaData(DeclarativeBase):
@@ -467,12 +470,24 @@ class MediaData(DeclarativeBase):
 
     # Columns
     id = Column(Integer, primary_key=True)
-    parent_id = Column(Integer, ForeignKey('media.id',
+    parent_id = Column(Unicode(255), ForeignKey('media.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
     language_id = Column(Unicode(50), ForeignKey('languages.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
-    description = Column(Unicode(255))
+    _name = Column('name', Unicode(255))
+    description = Column(UnicodeText)
     modified = Column(TIMESTAMP, default=datetime.now)
+
+    # Properties
+    def _get_name(self):
+        return self._name
+
+    def _set_name(self, val):
+        if self.parent.language_id == self.language_id:
+            self.parent.id = make_id(val)
+        self._name = val
+
+    name = synonym('_name', descriptor=property(_get_name, _set_name))
 
     # Relations
     parent = relation('Media', backref=backref('data',
@@ -480,7 +495,8 @@ class MediaData(DeclarativeBase):
     language = relation('Language', backref=backref('media_data'))
 
     # Special methods
-    def __init__(self, lang, description=None):
+    def __init__(self, name, lang, description=None):
+        self._name = name
         self.language_id = lang
         self.description = description
 
