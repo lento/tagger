@@ -38,6 +38,36 @@ from tagger.lib.render import media_types
 # Forms
 ############################################################
 
+# Tag
+class FormTagNew(TableForm):
+    """New Tag form"""
+    class fields(WidgetsList):
+        languageid = SingleSelectField(label_text=_('Language'), size=10)
+        name = TextField(label_text=l_('Name'),
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+
+
+class FormTagEdit(TableForm):
+    """Edit Tag form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='PUT', validator=None)
+        tagid = HiddenField(validator=NotEmpty)
+        id_ = TextField(validator=None, disabled=True)
+        languageid = CascadingSingleSelectField(label_text=_('Language'),
+                            size=10, cascadeurl=tg.url('/tag/translation'),
+                            extra=['tagid'])
+        name = TextField(label_text=l_('Name'),
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+
+
+class FormTagDelete(TableForm):
+    """Delete Tag confirmation form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='DELETE', validator=None)
+        tagid = HiddenField(validator=NotEmpty)
+        id_ = TextField(validator=None, disabled=True)
+
+
 # Language
 class FormLanguageNew(TableForm):
     """New language form"""
