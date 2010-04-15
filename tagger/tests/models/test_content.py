@@ -49,8 +49,19 @@ class TestTag(ModelTest):
     """Unit test case for the ``Tag`` model."""
     klass = content.Tag
     attrs = dict(
-        id = u"test_tag",
+        name = u"test tag",
         )
+
+    def do_get_dependencies(self):
+        try:
+            self.language = content.Language(id=u'xx', name=u'test_lang')
+            DBSession.add(self.language)
+            DBSession.flush()
+            return dict(lang=self.language.id,
+                       )
+        except:
+            DBSession.rollback()
+            raise
 
     def test_obj_creation(self):
         """model.content.Tag objects can be created"""
@@ -58,11 +69,48 @@ class TestTag(ModelTest):
 
     def test_obj_query(self):
         """model.content.Tag objects can be queried"""
-        self._obj_query()
+        obj = DBSession.query(self.klass).get(u"test-tag")
+        assert_true(obj, 'Tag not found')
 
     def test_obj_creation_id(self):
         """model.content.Tag constructor must set the id right"""
-        eq_(self.obj.id, u"test_tag")
+        eq_(self.obj.id, u"test-tag")
+
+    def test_obj_property_language_id_get(self):
+        """model.content.Tag property "language_id" can get value"""
+        eq_(self.obj.language_id, self.language.id)
+
+    def test_obj_property_language_ids_get(self):
+        """model.content.Tag property "language_ids" can get value"""
+        eq_(self.obj.language_ids, set([self.language.id]))
+
+    def test_obj_property_languages_get(self):
+        """model.content.Tag property "languages" can get value"""
+        eq_(self.obj.languages, set([self.language]))
+
+    def test_obj_property_name_get(self):
+        """model.content.Tag property "name" can get value"""
+        expected = u'test tag'
+        assert_equals(self.obj.name[''], expected,
+                        'Tag.name[""] should be "%s", not "%s"' %
+                        (expected, self.obj.name['']))
+        assert_equals(self.obj.name[u'xx'], expected,
+                        'Tag.name[u"xx"] should be "%s", not "%s"' %
+                        (expected, self.obj.name[u'xx']))
+
+    def test_obj_property_name_set(self):
+        """model.content.Tag property "name" can set value"""
+        expected = u'changed name (default lang)'
+        self.obj.name[''] = expected
+        assert_equals(self.obj.name[''], expected,
+                        'Tag.name[""] should be "%s", not "%s"' %
+                        (expected, self.obj.name['']))
+
+        expected = u'changed name (specific lang)'
+        self.obj.name[u'xx'] = expected
+        assert_equals(self.obj.name[u'xx'], expected,
+                        'Tag.name[u"xx"] should be "%s", not "%s"' %
+                        (expected, self.obj.name[u'xx']))
 
 
 class TestCategory(ModelTest):
@@ -256,7 +304,7 @@ class TestArticle(ModelTest):
 
     def test_is_taggable(self):
         """model.content.Article objects are taggable"""
-        tag = content.Tag(id=u'test_tag')
+        tag = content.Tag(u'test_tag', self.language.id)
         self.obj.tags.append(tag)
         DBSession.flush()
         eq_(self.obj.tags[0], tag) 
@@ -477,6 +525,13 @@ class TestLink(ModelTest):
                 'Link.data[0].description should be "%s", not "%s"' %
                 (expected, self.obj.data[0].description))
 
+    def test_is_taggable(self):
+        """model.content.Link objects are taggable"""
+        tag = content.Tag(u'test_tag', self.language.id)
+        self.obj.tags.append(tag)
+        DBSession.flush()
+        eq_(self.obj.tags[0], tag) 
+
 
 class TestMedia(ModelTest):
     """Unit test case for the ``Media`` model."""
@@ -589,5 +644,12 @@ class TestMedia(ModelTest):
         assert_equals(self.obj.data[0].description, expected,
                 'Media.data[0].description should be "%s", not "%s"' %
                 (expected, self.obj.data[0].description))
+
+    def test_is_taggable(self):
+        """model.content.Media objects are taggable"""
+        tag = content.Tag(u'test_tag', self.language.id)
+        self.obj.tags.append(tag)
+        DBSession.flush()
+        eq_(self.obj.tags[0], tag) 
 
 

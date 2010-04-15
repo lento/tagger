@@ -98,14 +98,59 @@ class Tag(DeclarativeBase):
         return [t.associated for t in self.associables]
     
     # Special methods
-    def __init__(self, id):
-        self.id = id
+    def __init__(self, name, lang):
+        self.id = make_id(name)
+        self.data.append(TagData(name, lang))
 
     def __repr__(self):
         return '<Tag: %s>' % self.id
 
     def __json__(self):
         return dict(id=self.id)
+
+add_language_props(Tag,
+    [('name', lambda obj, lang, val: CategoryData(val, lang)),
+    ])
+
+
+class TagData(DeclarativeBase):
+    """Language specific Tag data"""
+    __tablename__ = 'tags_data'
+    __table_args__ = (UniqueConstraint('parent_id', 'language_id'),
+                      {})
+
+    # Columns
+    id = Column(Integer, primary_key=True)
+    parent_id = Column(Unicode(50), ForeignKey('tags.id',
+                                        onupdate='CASCADE', ondelete='CASCADE'))
+    language_id = Column(Unicode(50), ForeignKey('languages.id',
+                                        onupdate='CASCADE', ondelete='CASCADE'))
+    _name = Column('name', Unicode(255))
+
+    # Relations
+    parent = relation('Tag', backref=backref('data',
+                                collection_class=mapped_scalar('language_id')))
+    language = relation('Language', backref=backref('tags_data'))
+
+    # Properties
+    def _get_name(self):
+        return self._name
+
+    def _set_name(self, val):
+        if self.parent.language_id == self.language_id:
+            self.parent.id = make_id(val)
+        self._name = val
+
+    name = synonym('_name', descriptor=property(_get_name, _set_name))
+
+    # Special methods
+    def __init__(self, name, lang):
+        self._name = name
+        self.language_id = lang
+
+    def __repr__(self):
+        return '<TagData: %s (%s) %s>' % (self.parent_id,
+                                                    self.language_id, self.name)
 
 
 ############################################################
@@ -255,8 +300,8 @@ class Article(DeclarativeBase):
         self.id = make_id(title)
         self.category = category
         self.user = user
-        self.associable = Associable(u'article')
         self.pages.append(Page(title, lang, text=text, is_default=True))
+        self.associable = Associable(u'article')
 
     def __repr__(self):
         return '<Article: %s>' % self.id
@@ -371,6 +416,10 @@ class Link(DeclarativeBase):
 
     # Properties
     @property
+    def tags(self):
+        return self.associable.tags
+
+    @property
     def modified(self):
         return max([d.modified for d in self.data])
 
@@ -380,6 +429,7 @@ class Link(DeclarativeBase):
         self.uri = uri
         self.user = user
         self.data.append(LinkData(name, lang, description))
+        self.associable = Associable(u'link')
 
     def __repr__(self):
         return '<Link: %s %s>' % (self.id, self.uri)
@@ -455,6 +505,10 @@ class Media(DeclarativeBase):
 
     # Properties
     @property
+    def tags(self):
+        return self.associable.tags
+
+    @property
     def modified(self):
         return max([d.modified for d in self.data])
 
@@ -465,6 +519,7 @@ class Media(DeclarativeBase):
         self.uri = uri
         self.user = user
         self.data.append(MediaData(name, lang, description))
+        self.associable = Associable(u'media')
 
     def __repr__(self):
         return '<Media: %s %s %s>' % (self.id, self, type, self.uri)
