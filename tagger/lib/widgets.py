@@ -30,6 +30,7 @@ from tw.forms import SingleSelectField, FileField
 from tw.dynforms import CascadingSingleSelectField, HidingTableForm
 from tw.dynforms import HidingSingleSelectField
 from tw.forms.validators import All, Regex, NotEmpty, UnicodeString, MaxLength
+from tw.forms.validators import OneOf
 from tagger.lib.render import media_types
 
 
@@ -174,7 +175,8 @@ class FormMediaNew(HidingTableForm):
                      'video': ['uploadfile', 'fallbackfile'],
                      'youtube': ['uri'],
                      'vimeo': ['uri'],
-                    }
+                    },
+            validator=All(NotEmpty, OneOf(media_types)),
         )
         uri = TextField(label_text=l_('URI'),
                                 validator=All(UnicodeString, MaxLength(255)))

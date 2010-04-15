@@ -18,6 +18,10 @@ jquery_tools_js = JSLink(link=url('/js/jquery.tools.js'))
 # tagger
 tagger_js = JSLink(link=url('/js/tagger.js'))
 
+# FlowPlayer - don't load this at startup, its a fallback for browsers not
+# supporting HTML5 <video> tag
+flowplayer_js = JSLink(link=url('/js/flowplayer.js'))
+
 
 class BaseController(TGController):
     """

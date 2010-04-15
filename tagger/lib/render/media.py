@@ -53,7 +53,7 @@ class MediaDirective(Directive):
     has_content = False
 
     def run(self):
-        mediaid = int(self.arguments[0])
+        mediaid = self.arguments[0]
         if len(self.arguments) > 1:
             label = self.arguments[1]
         elif isinstance(self.state.parent, nodes.substitution_definition):
@@ -65,7 +65,7 @@ class MediaDirective(Directive):
         width = self.options.get('width', None)
         height = self.options.get('height', None)
 
-        text = ('${w_media(mediaid=%s, '
+        text = ('${w_media(mediaid="%s", '
                           'label="%s", '
                           'width=%s, '
                           'height=%s, '

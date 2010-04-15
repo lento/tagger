@@ -20,12 +20,15 @@
 #
 """Media controller"""
 
-from tg import expose, tmpl_context, validate, require, flash, url
+import os.path, shutil
+from tg import expose, tmpl_context, validate, require, flash, url, config
 from tg.controllers import RestController
+from tg.exceptions import HTTPClientError
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
+from repoze.what.predicates import has_permission
 from tagger.model import DBSession, Media, Language
 from tagger.lib.widgets import FormMediaNew, FormMediaEdit, FormMediaDelete
-from repoze.what.predicates import has_permission
+from tagger.lib.utils import make_id
 
 import logging
 log = logging.getLogger(__name__)
@@ -70,10 +73,47 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.redirect_parent')
     @validate(f_new, error_handler=new)
-    def post(self, mediatype, uri, uploadfile, fallbackfile, languageid, name,
-                                                                description):
+    def post(self, mediatype, languageid, name, uri=None, uploadfile=None,
+                                        fallbackfile=None, description=None):
         """create a new Media"""
         user = tmpl_context.user
+        upload_dir = config.get('upload_dir', '%s/upload' % config['cache.dir'])
+        upload_prefix = config.get('upload_prefix', 'upload')
+
+        # TODO: redirect to "new" with errors instead of raising an exception
+        if mediatype == 'image':
+            if not uploadfile:
+                raise HTTPClientError(_('No image uploaded'))
+            origname, ext = os.path.splitext(uploadfile.filename)
+            filename = '%s%s' % (make_id(name), ext)
+            tmpf = open(os.path.join(upload_dir, filename), 'w+b')
+            shutil.copyfileobj(uploadfile.file, tmpf)
+            tmpf.close()
+            uri = '/%s/%s' % (upload_prefix, filename)
+        elif mediatype == 'video':
+            if not(uploadfile and fallbackfile):
+                raise HTTPClientError(_('No video or no fallback uploaded'))
+            # copy video file in the upload area
+            origname, ext = os.path.splitext(uploadfile.filename)
+            filename = '%s%s' % (make_id(name), ext)
+            tmpf = open(os.path.join(upload_dir, filename), 'w+b')
+            shutil.copyfileobj(uploadfile.file, tmpf)
+            tmpf.close()
+
+            # copy fallback video file in the upload area
+            origname, fallbackext = os.path.splitext(fallbackfile.filename)
+            fallbackname = '%s%s' % (make_id(name), fallbackext)
+            fallbacktmpf = open(os.path.join(upload_dir, fallbackname), 'w+b')
+            shutil.copyfileobj(fallbackfile.file, fallbacktmpf)
+            fallbacktmpf.close()
+
+            uri = '/%s/%s' % (upload_prefix, filename)
+        elif mediatype == 'youtube':
+            if not uri:
+                raise HTTPClientError(_('No video id'))
+        elif mediatype == 'vimeo':
+            if not uri:
+                raise HTTPClientError(_('No video id'))
 
         media = Media(mediatype, name, uri, user, languageid, description)
         DBSession.add(media)
