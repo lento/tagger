@@ -43,7 +43,7 @@ class TestRootController(TestController):
         assert_true(msg in response)
 
     def test_default(self):
-        """articles can be retrived with url: /category/string_id"""
+        """articles can be retrived with url: /category/articleid"""
         languageid, categoryid, articleid = self._fill_db()
 
         response = self.app.get('/test_category/a-test-article')

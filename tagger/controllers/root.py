@@ -94,12 +94,12 @@ class RootController(BaseController):
 
     @expose('tagger.templates.article.get_one')
     def _default(self, *args, **kwargs):
-        if 'categoryid' in kwargs and 'stringid' in kwargs:
+        if 'categoryid' in kwargs and 'articleid' in kwargs:
             categoryid = kwargs['categoryid']
-            stringid = kwargs['stringid']
+            articleid = kwargs['articleid']
         elif len(args) >= 2:
             categoryid = args[0]
-            stringid = args[1]
+            articleid = args[1]
         else:
             raise HTTPNotFound
 
@@ -114,7 +114,7 @@ class RootController(BaseController):
             category = DBSession.query(Category).filter_by(
                                             id=categoryid.decode()).one()
             article = DBSession.query(Article).filter_by(
-                    category_id=category.id, string_id=stringid.decode()).one()
+                    category_id=category.id, id=articleid.decode()).one()
         except NoResultFound:
             raise HTTPNotFound
 
