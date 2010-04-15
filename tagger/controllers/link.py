@@ -70,11 +70,12 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.redirect_parent')
     @validate(f_new, error_handler=new)
-    def post(self, uri, languageid, description):
+    def post(self, name, uri, languageid, description):
         """create a new Link"""
         user = tmpl_context.user
-        DBSession.add(Link(uri, user, languageid, description))
-        flash(_('Created Link "%s"') % uri, 'ok')
+        link = Link(name, uri, user, languageid, description)
+        DBSession.add(link)
+        flash(_('Created Link "%s"') % link.id, 'ok')
         return dict(redirect_to=url('/link/'))
 
     @require(has_permission('manage'))
@@ -86,6 +87,7 @@ class Controller(RestController):
         fargs = dict(linkid=link.id, id_=link.id,
                      uri=link.uri,
                      languageid=link.language_id,
+                     name=link.name[''],
                      description=link.description[''])
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
         fcargs = dict(languageid=dict(options=languages))
@@ -96,13 +98,17 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
-    def put(self, linkid, uri, languageid, description=None):
+    def put(self, linkid, name, uri, languageid, description=None):
         """Edit a link"""
         link = DBSession.query(Link).get(linkid.decode())
 
         modified = False
         if link.uri != uri:
             link.uri = uri
+            modified = True
+
+        if link.name[languageid] != name:
+            link.name[languageid] = name
             modified = True
 
         if link.description[languageid] != description:
@@ -152,9 +158,10 @@ class Controller(RestController):
     @expose('json')
     def translation(self, linkid, value):
         """Return a link translation"""
-        link = DBSession.query(Link).get(linkid)
+        link = DBSession.query(Link).get(linkid.decode())
 
+        name = link.name[value]
         description = link.description[value]
         
-        return dict(description=description)
+        return dict(name=name, description=description)
 

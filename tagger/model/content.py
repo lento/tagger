@@ -360,7 +360,7 @@ class Link(DeclarativeBase):
     __tablename__ = 'links'
 
     # Columns
-    id = Column(Integer, primary_key=True)
+    id = Column(Unicode(255), primary_key=True)
     associable_id = Column(Integer, ForeignKey('associables.id'))
     user_id = Column(Integer, ForeignKey('auth_users.user_id'))
     created = Column(DateTime, default=datetime.now)
@@ -377,17 +377,20 @@ class Link(DeclarativeBase):
         return max([d.modified for d in self.data])
 
     # Special methods
-    def __init__(self, uri, user, lang, description=None):
+    def __init__(self, name, uri, user, lang, description=None):
+        self.id = make_id(name)
         self.uri = uri
         self.user = user
-        self.data.append(LinkData(lang, description))
+        self.data.append(LinkData(name, lang, description))
 
     def __repr__(self):
         return '<Link: %s %s>' % (self.id, self.uri)
 
 DDL(orphaned_associable_trigger).execute_at('after-create', Link.__table__)
 add_language_props(Link, 
-            [('description', lambda obj, lang, val: LinkData(lang, val))])
+    [('name', lambda obj, lang, val: LinkData(val, lang, None)),
+     ('description', lambda obj, lang, val: LinkData(obj.name[''], lang, val)),
+    ])
 
 
 class LinkData(DeclarativeBase):
@@ -398,12 +401,24 @@ class LinkData(DeclarativeBase):
 
     # Columns
     id = Column(Integer, primary_key=True)
-    parent_id = Column(Integer, ForeignKey('links.id',
+    parent_id = Column(Unicode(255), ForeignKey('links.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
     language_id = Column(Unicode(50), ForeignKey('languages.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
-    description = Column(Unicode(255))
+    _name = Column('name', Unicode(255))
+    description = Column(UnicodeText)
     modified = Column(TIMESTAMP, default=datetime.now)
+
+    # Properties
+    def _get_name(self):
+        return self._name
+
+    def _set_name(self, val):
+        if self.parent.language_id == self.language_id:
+            self.parent.id = make_id(val)
+        self._name = val
+
+    name = synonym('_name', descriptor=property(_get_name, _set_name))
 
     # Relations
     parent = relation('Link', backref=backref('data',
@@ -411,7 +426,8 @@ class LinkData(DeclarativeBase):
     language = relation('Language', backref=backref('links_data'))
 
     # Special methods
-    def __init__(self, lang, description=None):
+    def __init__(self, name, lang, description=None):
+        self._name = name
         self.language_id = lang
         self.description = description
 

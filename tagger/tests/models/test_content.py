@@ -375,6 +375,7 @@ class TestLink(ModelTest):
     klass = content.Link
     attrs = dict(
         uri = u"http://example.com",
+        name = u'test link',
         description = u"Test Link"
         )
 
@@ -398,9 +399,17 @@ class TestLink(ModelTest):
 
     def test_obj_query(self):
         """model.content.Link objects can be queried"""
-        obj = DBSession.query(self.klass).one()
+        obj = DBSession.query(self.klass).get(u'test-link')
         assert_true(obj, 'Link not found')
         eq_(obj.uri, self.attrs['uri'])
+
+    def test_obj_creation_id(self):
+        """model.content.Link constructor must set the id right"""
+        eq_(self.obj.id, u'test-link')
+
+    def test_obj_creation_name(self):
+        """model.content.Link constructor must set the name right"""
+        eq_(self.obj.name[''], u'test link')
 
     def test_obj_creation_uri(self):
         """model.content.Link constructor must set the uri right"""
@@ -425,6 +434,30 @@ class TestLink(ModelTest):
     def test_obj_property_languages_get(self):
         """model.content.Link property "languages" can get value"""
         eq_(self.obj.languages, set([self.language]))
+
+    def test_obj_property_name_get(self):
+        """model.content.Link property "name" can get value"""
+        expected = u'test link'
+        assert_equals(self.obj.name[''], expected,
+                        'Link.name[""] should be "%s", not "%s"' %
+                        (expected, self.obj.name['']))
+        assert_equals(self.obj.name[u'xx'], expected,
+                        'Link.name[u"xx"] should be "%s", not "%s"' %
+                        (expected, self.obj.name[u'xx']))
+
+    def test_obj_property_name_set(self):
+        """model.content.Link property "name" can set value"""
+        expected = u'changed name (default lang)'
+        self.obj.name[''] = expected
+        assert_equals(self.obj.name[''], expected,
+                        'Link.name[""] should be "%s", not "%s"' %
+                        (expected, self.obj.name['']))
+
+        expected = u'changed name (specific lang)'
+        self.obj.name[u'xx'] = expected
+        assert_equals(self.obj.name[u'xx'], expected,
+                        'Link.name[u"xx"] should be "%s", not "%s"' %
+                        (expected, self.obj.name[u'xx']))
 
     def test_obj_property_description_get(self):
         """model.content.Link property "description" can get value"""
@@ -514,6 +547,30 @@ class TestMedia(ModelTest):
     def test_obj_property_languages_get(self):
         """model.content.Media property "languages" can get value"""
         eq_(self.obj.languages, set([self.language]))
+
+    def test_obj_property_name_get(self):
+        """model.content.Media property "name" can get value"""
+        expected = u'test image'
+        assert_equals(self.obj.name[''], expected,
+                        'Media.name[""] should be "%s", not "%s"' %
+                        (expected, self.obj.name['']))
+        assert_equals(self.obj.name[u'xx'], expected,
+                        'Media.name[u"xx"] should be "%s", not "%s"' %
+                        (expected, self.obj.name[u'xx']))
+
+    def test_obj_property_name_set(self):
+        """model.content.Media property "name" can set value"""
+        expected = u'changed name (default lang)'
+        self.obj.name[''] = expected
+        assert_equals(self.obj.name[''], expected,
+                        'Media.name[""] should be "%s", not "%s"' %
+                        (expected, self.obj.name['']))
+
+        expected = u'changed name (specific lang)'
+        self.obj.name[u'xx'] = expected
+        assert_equals(self.obj.name[u'xx'], expected,
+                        'Media.name[u"xx"] should be "%s", not "%s"' %
+                        (expected, self.obj.name[u'xx']))
 
     def test_obj_property_description_get(self):
         """model.content.Media property "description" can get value"""

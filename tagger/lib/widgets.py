@@ -136,6 +136,8 @@ class FormLinkNew(TableForm):
     class fields(WidgetsList):
         uri = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         languageid = SingleSelectField(label_text=_('Language'), size=10)
+        name = TextField(label_text=l_('Name'),
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         description = TextArea(rows=10)
 
 
@@ -149,6 +151,8 @@ class FormLinkEdit(TableForm):
         languageid = CascadingSingleSelectField(label_text=_('Language'),
                             size=10, cascadeurl=tg.url('/link/translation'),
                             extra=['linkid'])
+        name = TextField(label_text=l_('Name'),
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         description = TextArea(rows=10)
 
 
