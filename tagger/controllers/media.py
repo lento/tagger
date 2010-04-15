@@ -82,7 +82,7 @@ class Controller(RestController):
 
         # TODO: redirect to "new" with errors instead of raising an exception
         if mediatype == 'image':
-            if not uploadfile:
+            if uploadfile is None:
                 raise HTTPClientError(_('No image uploaded'))
             origname, ext = os.path.splitext(uploadfile.filename)
             filename = '%s%s' % (make_id(name), ext)
@@ -91,7 +91,7 @@ class Controller(RestController):
             tmpf.close()
             uri = '/%s/%s' % (upload_prefix, filename)
         elif mediatype == 'video':
-            if not(uploadfile and fallbackfile):
+            if uploadfile is None or fallbackfile is None:
                 raise HTTPClientError(_('No video or no fallback uploaded'))
             # copy video file in the upload area
             origname, ext = os.path.splitext(uploadfile.filename)
