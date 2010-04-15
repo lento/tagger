@@ -202,8 +202,7 @@ class Article(DeclarativeBase):
     __tablename__ = 'articles'
 
     # Columns
-    id = Column(Integer, primary_key=True)
-    string_id = Column(Unicode(255))
+    id = Column(Unicode(255), primary_key=True)
     associable_id = Column(Integer, ForeignKey('associables.id'))
     user_id = Column(Integer, ForeignKey('auth_users.user_id'))
     category_id = Column(Unicode(50), ForeignKey('categories.id',
@@ -253,15 +252,14 @@ class Article(DeclarativeBase):
 
     # Special methods
     def __init__(self, title, category, lang, user, text=None):
-        self.string_id = make_id(title)
+        self.id = make_id(title)
         self.category = category
         self.user = user
         self.associable = Associable(u'article')
-        self.pages.append(Page(title, lang, text=text,
-                                                        string_id=u'default'))
+        self.pages.append(Page(title, lang, text=text, is_default=True))
 
     def __repr__(self):
-        return '<Article: %s %s>' % (self.id, self.string_id)
+        return '<Article: %s>' % self.id
 
 DDL(orphaned_associable_trigger).execute_at('after-create', Article.__table__)
 
@@ -279,7 +277,7 @@ class Page(DeclarativeBase):
     # Columns
     id = Column(Integer, primary_key=True)
     string_id = Column(Unicode(255))
-    article_id = Column(Integer, ForeignKey('articles.id',
+    article_id = Column(Unicode(255), ForeignKey('articles.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
 
     # Relations
@@ -292,8 +290,8 @@ class Page(DeclarativeBase):
         return max([d.modified for d in self.data])
 
     # Special methods
-    def __init__(self, name, lang, text=None, string_id=None):
-        self.string_id = string_id or make_id(name)
+    def __init__(self, name, lang, text=None, is_default=False):
+        self.string_id = is_default and u'default' or make_id(name)
         self.data.append(PageData(name, lang, text))
 
     def __repr__(self):
@@ -334,7 +332,7 @@ class PageData(DeclarativeBase):
     def _set_name(self, val):
         if self.parent.language_id == self.language_id:
             if self.parent.string_id == 'default':
-                self.parent.article.string_id = make_id(val)
+                self.parent.article.id = make_id(val)
             else:
                 self.parent.string_id = make_id(val)
         self._name = val

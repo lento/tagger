@@ -112,7 +112,6 @@ class FormArticleEdit(TableForm):
         _method = HiddenField(default='PUT', validator=None)
         articleid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        stringid_ = TextField(size=44, validator=None, disabled=True)
         categoryid = SingleSelectField(label_text=_('Category'), size=10)
         languageid = CascadingSingleSelectField(label_text=_('Language'),
                     size=10, cascadeurl=url('/article/translation'), extra=['articleid'])

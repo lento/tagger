@@ -184,9 +184,9 @@ class TestArticle(ModelTest):
         """model.content.Article objects can be queried"""
         self._obj_query()
 
-    def test_obj_creation_string_id(self):
-        """model.content.Article constructor must set the string_id right"""
-        eq_(self.obj.string_id, u'a-test-article')
+    def test_obj_creation_id(self):
+        """model.content.Article constructor must set the id right"""
+        eq_(self.obj.id, u'a-test-article')
 
     def test_obj_creation_default_page(self):
         """model.content.Article constructor must create a default page"""

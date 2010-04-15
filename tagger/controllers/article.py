@@ -52,7 +52,7 @@ class Controller(RestController):
     @expose('tagger.templates.article.get_one')
     def get_one(self, articleid, languageid=None):
         """Return a single article"""
-        article = DBSession.query(Article).get(articleid)
+        article = DBSession.query(Article).get(articleid.decode())
         if languageid:
             lang = languageid
         elif tmpl_context.lang:
@@ -96,13 +96,12 @@ class Controller(RestController):
         """Return a page to edit an article and all its pages"""
         tmpl_context.f_edit = f_edit
         lang = tmpl_context.lang
-        article = DBSession.query(Article).get(articleid)
+        article = DBSession.query(Article).get(articleid.decode())
 
         categories = [(c.id, c.name[lang]) for c in DBSession.query(Category)]
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
         fargs = dict(articleid=article.id,
                      id_=article.id,
-                     stringid_=article.string_id,
                      categoryid=article.category_id,
                      languageid=article.language_id,
                      title=article.title[''],
@@ -120,7 +119,7 @@ class Controller(RestController):
     @validate(f_edit, error_handler=edit)
     def put(self, articleid, title, categoryid, languageid, text=None):
         """Edit a article"""
-        article = DBSession.query(Article).get(articleid)
+        article = DBSession.query(Article).get(articleid.decode())
 
         modified = False
         if article.title[languageid] != title:
@@ -149,7 +148,7 @@ class Controller(RestController):
     def get_delete(self, articleid, **kwargs):
         """Display a DELETE confirmation form."""
         tmpl_context.form = f_delete
-        article = DBSession.query(Article).get(articleid)
+        article = DBSession.query(Article).get(articleid.decode())
 
         fargs = dict(articleid=article.id,
                      id_=article.id,
@@ -168,7 +167,7 @@ class Controller(RestController):
     @validate(f_delete, error_handler=get_delete)
     def post_delete(self, articleid):
         """Delete a Article"""
-        article = DBSession.query(Article).get(articleid)
+        article = DBSession.query(Article).get(articleid.decode())
 
         for page in article.pages:
             for pagedata in page.data:
@@ -186,7 +185,7 @@ class Controller(RestController):
     def translation(self, articleid, value):
         """Return a article translation"""
         log.debug('article.translation: %s %s' % (articleid, value))
-        article = DBSession.query(Article).get(articleid)
+        article = DBSession.query(Article).get(articleid.decode())
 
         title = article.title[value]
         text = article.text[value]

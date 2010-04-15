@@ -43,7 +43,7 @@ class TestCategoryController(TestController):
         articleid = article.id
         languageid = language.id
         transaction.commit()
-        return languageid, categoryid, articleid
+        return languageid, categoryid, articleid.encode()
 
     def test_get_all(self):
         """controllers.article.Controller.get_all is working properly"""
@@ -52,7 +52,7 @@ class TestCategoryController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/article/', extra_environ=environ, status=200)
 
-        tr = response.html.table.find('tr', str(articleid))
+        tr = response.html.table.find('tr', articleid)
         eq_(str(tr('td')[0]), '<td>%s</td>' % articleid)
         eq_(str(tr('td')[1]), '<td>A Test Article!</td>')
         eq_(str(tr('td')[2]), '<td>test_category</td>')
@@ -105,8 +105,7 @@ class TestCategoryController(TestController):
         assert_true('parent.location = /article/;' in response.body,
                         'should be redirected to "/article/" via javascript')
 
-        query = DBSession().query(Article)
-        article = query.filter_by(string_id=u'test').first()
+        article = DBSession().query(Article).get(u'test')
         eq_(article.category.id, 'test_category')
         eq_(article.language_ids, set([u'%s' % languageid]))
         eq_(article.user.user_name, 'test_admin')
@@ -125,7 +124,7 @@ class TestCategoryController(TestController):
                                 {'name': '_method', 'value': 'PUT'}),
                                 '"_method" should be "PUT"')
         assert_true(response.html.find('input',
-                                {'name': 'articleid', 'value': str(articleid)}),
+                                {'name': 'articleid', 'value': articleid}),
                                 'wrong article_id')
         elem_categoryid = response.html.find('select', {'id': 'categoryid'})
         assert_true(elem_categoryid, '"categoryid" input element not found')
@@ -153,11 +152,10 @@ class TestCategoryController(TestController):
                                                 ),
                                             extra_environ=environ, status=200)
         assert_true(
-            'parent.location = /article/%s/edit;' % articleid in response.body,
+            'parent.location = /article/test/edit;' in response.body,
             'should be redirected to "/article/<id>/edit" via javascript')
 
-        article = DBSession().query(Article).get(articleid)
-        eq_(article.string_id, 'test')
+        article = DBSession().query(Article).get(u'test')
         eq_(article.title[''], 'test')
         eq_(article.text[''], 'Test')
 
@@ -175,7 +173,7 @@ class TestCategoryController(TestController):
                                 {'name': '_method', 'value': 'DELETE'}),
                                 '"_method" should be "DELETE"')
         assert_true(response.html.find('input',
-                                {'name': 'articleid', 'value': str(articleid)}),
+                                {'name': 'articleid', 'value': articleid}),
                                 'wrong article_id')
 
     def test_post_delete(self):
@@ -188,8 +186,7 @@ class TestCategoryController(TestController):
         assert_true('parent.location = /article/;' in response.body,
                         'should be redirected to "/article/" via javascript')
 
-        query = DBSession().query(Article)
-        article = query.filter_by(string_id=u'test').first()
+        article = DBSession().query(Article).get(articleid.decode())
         assert_true(article is None,
                             'the article should have been deleted from the db')
         pages = DBSession.query(Page).filter_by(article_id=None).all()
