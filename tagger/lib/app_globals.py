@@ -2,6 +2,8 @@
 
 """The application's Globals object"""
 
+from tg import config
+
 __all__ = ['Globals']
 
 
@@ -14,5 +16,8 @@ class Globals(object):
     """
 
     def __init__(self):
-        """Do nothing, by default."""
-        pass
+        """Initialize global variables"""
+        cache_dir = config.get('cache.dir', '')
+        self.upload_dir = config.get('upload_dir', '%s/upload' % cache_dir)
+        self.upload_prefix = config.get('upload_prefix', 'upload')
+

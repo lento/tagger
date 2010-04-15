@@ -1,22 +1,24 @@
 <%!
     import os.path
+    from tg import app_globals as G
     from tagger.model import DBSession, Media
     from tagger.lib.base import flowplayer_js
 %>
 
 <%
     media = DBSession.query(Media).get(mediaid)
+    mediaurl = extra.url('/%s/%s' % (G.upload_prefix, media.uri))
 %>
 
 % if media.type == 'image':
-    <img src="${extra.url(media.uri)}"
+    <img src="${mediaurl}"
         alt="${label or media.uri}"
         title="${media.description[extra.lang] or ''}"
         width="${width or '480'}"
         height="${height or '270'}"
     />
 % elif media.type == 'video':
-    <video src="${extra.url(media.uri)}"
+    <video src="${mediaurl}"
         title="${media.description[extra.lang] or ''}"
         controls
         width="${width or '480'}"
@@ -24,11 +26,11 @@
         onerror="alert('Can\'t load video');">
             ${flowplayer_js.render() | n}
             <%
-                filename, ext = os.path.splitext(media.uri)
-                fallbackuri = '%s.flv' % filename
+                filename, ext = os.path.splitext(mediaurl)
+                fallbackurl = '%s.flv' % filename
             %>
             <a id="flowplayer_${media.id}"
-                href="${extra.url(fallbackuri)}"
+                href="${fallbackurl}"
                 style="display:block;width:${width or '480'}px;height:${height or '270'}px;">
             </a>
             <script type="text/javascript">

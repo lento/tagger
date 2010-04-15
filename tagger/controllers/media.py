@@ -21,7 +21,8 @@
 """Media controller"""
 
 import os.path, shutil
-from tg import expose, tmpl_context, validate, require, flash, url, config
+from tg import expose, tmpl_context, validate, require, flash, url
+from tg import app_globals as G
 from tg.controllers import RestController
 from tg.exceptions import HTTPClientError
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
@@ -77,8 +78,6 @@ class Controller(RestController):
                                         fallbackfile=None, description=None):
         """create a new Media"""
         user = tmpl_context.user
-        upload_dir = config.get('upload_dir', '%s/upload' % config['cache.dir'])
-        upload_prefix = config.get('upload_prefix', 'upload')
 
         # TODO: redirect to "new" with errors instead of raising an exception
         if mediatype == 'image':
@@ -86,28 +85,28 @@ class Controller(RestController):
                 raise HTTPClientError(_('No image uploaded'))
             origname, ext = os.path.splitext(uploadfile.filename)
             filename = '%s%s' % (make_id(name), ext)
-            tmpf = open(os.path.join(upload_dir, filename), 'w+b')
+            tmpf = open(os.path.join(G.upload_dir, filename), 'w+b')
             shutil.copyfileobj(uploadfile.file, tmpf)
             tmpf.close()
-            uri = '/%s/%s' % (upload_prefix, filename)
+            uri = filename
         elif mediatype == 'video':
             if uploadfile is None or fallbackfile is None:
                 raise HTTPClientError(_('No video or no fallback uploaded'))
             # copy video file in the upload area
             origname, ext = os.path.splitext(uploadfile.filename)
             filename = '%s%s' % (make_id(name), ext)
-            tmpf = open(os.path.join(upload_dir, filename), 'w+b')
+            tmpf = open(os.path.join(G.upload_dir, filename), 'w+b')
             shutil.copyfileobj(uploadfile.file, tmpf)
             tmpf.close()
 
             # copy fallback video file in the upload area
             origname, fallbackext = os.path.splitext(fallbackfile.filename)
             fallbackname = '%s%s' % (make_id(name), fallbackext)
-            fallbacktmpf = open(os.path.join(upload_dir, fallbackname), 'w+b')
+            fallbacktmpf = open(os.path.join(G.upload_dir, fallbackname), 'w+b')
             shutil.copyfileobj(fallbackfile.file, fallbacktmpf)
             fallbacktmpf.close()
 
-            uri = '/%s/%s' % (upload_prefix, filename)
+            uri = filename
         elif mediatype == 'youtube':
             if not uri:
                 raise HTTPClientError(_('No video id'))
@@ -177,7 +176,8 @@ class Controller(RestController):
                      uri_=media.uri,
                     )
         fcargs = dict()
-        warning = _('This will delete the media entry in the database')
+        warning = _('This will delete the media entry in the database '
+                    'and all related files in the upload area')
         return dict(
                 title=_('Are you sure you want to delete Media "%s"?') %
                                                                 media.id,
@@ -190,6 +190,33 @@ class Controller(RestController):
     def post_delete(self, mediaid):
         """Delete a Media"""
         media = DBSession.query(Media).get(mediaid.decode())
+
+        if media.type == 'image':
+            mediaurl = os.path.join(G.upload_dir, media.uri)
+            try:
+                os.remove(mediaurl)
+            except OSError as error:
+                if error.errno == 2:
+                    log.debug('file "%s" not found' % mediaurl)
+                else:
+                    raise
+        elif media.type == 'video':
+            mediaurl = os.path.join(G.upload_dir, media.uri)
+            filename, ext = os.path.splitext(mediaurl)
+            try:
+                os.remove(mediaurl)
+            except OSError as error:
+                if error.errno == 2:
+                    log.debug('file "%s" not found' % mediaurl)
+                else:
+                    raise
+            try:
+                os.remove('%s.flv' % filename)
+            except OSError:
+                if error.errno == 2:
+                    log.debug('file "%s.flv" not found' % filename)
+                else:
+                    raise
 
         for mediadata in media.data:
             DBSession.delete(mediadata)
