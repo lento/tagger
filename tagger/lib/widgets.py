@@ -48,7 +48,7 @@ class FormTagNew(TableForm):
     """New Tag form"""
     class fields(WidgetsList):
         languageid = SingleSelectField(label_text=l_('Language'), size=SF_SIZE)
-        name = TextField(label_text=l_('Name'),
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
 
 
@@ -57,11 +57,11 @@ class FormTagEdit(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='PUT', validator=None)
         tagid = HiddenField(validator=NotEmpty)
-        id_ = TextField(validator=None, disabled=True)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
         languageid = CascadingSingleSelectField(label_text=l_('Language'),
                             size=SF_SIZE, cascadeurl=tg.url('/tag/translation'),
                             extra=['tagid'])
-        name = TextField(label_text=l_('Name'),
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
 
 
@@ -70,7 +70,7 @@ class FormTagDelete(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='DELETE', validator=None)
         tagid = HiddenField(validator=NotEmpty)
-        id_ = TextField(validator=None, disabled=True)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
 
 
 # Language
@@ -119,7 +119,7 @@ class FormCategoryEdit(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='PUT', validator=None)
         categoryid = HiddenField(validator=NotEmpty)
-        id_ = TextField(validator=None, disabled=True)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
         languageid = CascadingSingleSelectField(label_text=l_('Language'),
                         size=SF_SIZE, cascadeurl=tg.url('/category/translation'),
                         extra=['categoryid'])
@@ -134,7 +134,7 @@ class FormCategoryDelete(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='DELETE', validator=None)
         categoryid = HiddenField(validator=NotEmpty)
-        id_ = TextField(validator=None, disabled=True)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
         name_ = TextField(label_text=l_('Name'), size=TF_SIZE, validator=None,
                                                                 disabled=True)
 
@@ -174,7 +174,7 @@ class FormArticleDelete(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='DELETE', validator=None)
         articleid = HiddenField(validator=NotEmpty)
-        id_ = TextField(validator=None, disabled=True)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
         title_ = TextField(label_text=l_('Title'), size=TF_SIZE, validator=None,
                                                                 disabled=True)
 
@@ -199,7 +199,7 @@ class FormLinkEdit(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='PUT', validator=None)
         linkid = HiddenField(validator=NotEmpty)
-        id_ = TextField(validator=None, disabled=True)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
         uri = TextField(label_text='URI', size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         languageid = CascadingSingleSelectField(label_text=l_('Language'),
@@ -218,7 +218,7 @@ class FormLinkDelete(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='DELETE', validator=None)
         linkid = HiddenField(validator=NotEmpty)
-        id_ = TextField(validator=None, disabled=True)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
         uri_ = TextField(label_text='URI', size=TF_SIZE, validator=None,
                                                                 disabled=True)
 

@@ -10,7 +10,7 @@
 </div>
 
 <table>
-    <tr>
+    <tr class="table_header">
         <th>${_('ID')}</th>
         <th>${_('Title')}</th>
         <th>${_('Category')}</th>

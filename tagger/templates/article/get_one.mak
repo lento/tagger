@@ -14,14 +14,14 @@
         <span class="date">${article.created}</span>
         <span class="user">${article.user.user_name}</span>
     </div>
-    <div>
+    <div class="tags">
         % for tag in article.tags:
             <a class="tag" href="">
                 ${tag.name[lang]}
             </a>
         % endfor
     </div>
-    <div>
+    <div class="languages">
         % for language in article.languages:
             <a class="language ${language.id == lang and 'active' or ''}"
                 title="${language.name}"

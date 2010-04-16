@@ -6,11 +6,11 @@
 
 <script type="text/javascript">
     $(function() {
-        $("label", $("input:disabled").parent()).addClass('disabled');
+        $("label", $("input:disabled").parents("tr:first")).addClass('disabled');
     });
 </script>
 
-<h2>${title}</h2>
+<h1>${title}</h1>
     % if msg:
         <div class="msg">${msg}</div>
     % endif

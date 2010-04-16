@@ -44,5 +44,8 @@ $(function() {
         }, 2500);
     });
 
+    /* zebra stripes tables */
+    $("tr:odd").addClass("odd").removeClass("even");
+    $("tr:even").addClass("even").removeClass("odd");
 });
 

@@ -33,12 +33,15 @@
     </div>
 
     ${self.header()}
-    % if self.attr.show_side:
-        <div id="side">
-            ${self.side()}
-        </div>
-    % endif
-    ${self.content_wrapper()}
+
+    <div id="main">
+        % if self.attr.show_side:
+            <div id="side">
+                ${self.side()}
+            </div>
+        % endif
+        ${self.content_wrapper()}
+    </div>
     ${self.footer()}
 </body>
 
@@ -66,8 +69,10 @@
     <script type="text/javascript">
         $(function() {
             $(".menu_top .languages").addClass("hidden");
-            $(".menu_top .language_chooser").hover(
-                function(event){$(".menu_top .languages").show("fast");},
+            $(".menu_top .language_chooser").click(
+                function(event){$(".menu_top .languages").toggle("fast");}
+            ).hover(
+                function(event){},
                 function(event){$(".menu_top .languages").hide("fast");}
             );
         });
@@ -77,7 +82,7 @@
         <div class="menu_top">
             <ul>
                 <li class="language_chooser">
-                    <div class="" href="">${c.lang and '%s: %s' % (_('preferred language'), c.lang) or _('choose a language')}</div>
+                    <div class="current_language">${c.lang and '%s: %s' % (_('preferred language'), c.lang) or _('choose a language')}</div>
                     <div class="languages">
                         % for language in [l for l in c.languages if l.id != c.lang]:
                             <div class="language"><a href="${tg.url('/set_language/%s?came_from=%s' % (language.id, c.current_url))}">${language.name}</a></div>

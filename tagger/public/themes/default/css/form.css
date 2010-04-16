@@ -6,6 +6,7 @@ common colors from the tango palette:
 #4e9a06; / * Chameleon 3 * /
 #f6f6f4; / * Aluminium 0 * /
 #eeeeec; / * Aluminium 1 * /
+#d3d7cf; / * Aluminium 2 * /
 #babdb6; / * Aluminium 3 * /
 #729fcf; / * Sky Blue 1 * /
 #3465a4; / * Sky Blue 2 * /
@@ -16,8 +17,8 @@ common colors from the tango palette:
 
 body {
     font-family: "Lucida Grande", "Lucida Sans Unicode", geneva, verdana, sans-serif;
-    font-size: small;
-    color: #204a87; /* Sky Blue 3 */
+    /*font-size: small;*/
+    /*color: #204a87; /* Sky Blue 3 */
 }
 
 ul {
@@ -26,7 +27,7 @@ ul {
 
 h1 {
     font-size: large;
-    border-bottom: 1px solid #204a87; /* Sky Blue 3 */
+    border-bottom: 1px solid #babdb6; /* Aluminium 3 */
 }
 
 /* result */
@@ -66,7 +67,7 @@ label.required {
 }
 
 .disabled {
-    color: gray;
+    color: #d3d7cf; /* Aluminium 2 */
 }
 
 /* Progressbar */
