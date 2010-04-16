@@ -34,6 +34,11 @@ from tw.forms.validators import OneOf
 from tagger.lib.render import media_types
 
 
+TF_SIZE = 44    # TextField
+TA_COLS = 50    # TextArea
+TA_ROWS = 5
+SF_SIZE = 10    # SelectField
+
 ############################################################
 # Forms
 ############################################################
@@ -42,7 +47,7 @@ from tagger.lib.render import media_types
 class FormTagNew(TableForm):
     """New Tag form"""
     class fields(WidgetsList):
-        languageid = SingleSelectField(label_text=_('Language'), size=10)
+        languageid = SingleSelectField(label_text=l_('Language'), size=SF_SIZE)
         name = TextField(label_text=l_('Name'),
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
 
@@ -53,8 +58,8 @@ class FormTagEdit(TableForm):
         _method = HiddenField(default='PUT', validator=None)
         tagid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        languageid = CascadingSingleSelectField(label_text=_('Language'),
-                            size=10, cascadeurl=tg.url('/tag/translation'),
+        languageid = CascadingSingleSelectField(label_text=l_('Language'),
+                            size=SF_SIZE, cascadeurl=tg.url('/tag/translation'),
                             extra=['tagid'])
         name = TextField(label_text=l_('Name'),
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
@@ -72,9 +77,10 @@ class FormTagDelete(TableForm):
 class FormLanguageNew(TableForm):
     """New language form"""
     class fields(WidgetsList):
-        languageid = TextField(validator=All(UnicodeString, NotEmpty,
-                                                                MaxLength(3)))
-        name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
+        languageid = TextField(label_text='ID',
+                        validator=All(UnicodeString, NotEmpty, MaxLength(5)))
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(50)))
 
 
 class FormLanguageEdit(TableForm):
@@ -83,7 +89,8 @@ class FormLanguageEdit(TableForm):
         _method = HiddenField(default='PUT', validator=None)
         languageid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(50)))
 
 
 class FormLanguageDelete(TableForm):
@@ -92,16 +99,19 @@ class FormLanguageDelete(TableForm):
         _method = HiddenField(default='DELETE', validator=None)
         languageid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        name_ = TextField(validator=None, disabled=True)
+        name_ = TextField(label_text=l_('Name'), size=TF_SIZE, validator=None,
+                                                                disabled=True)
 
 
 # Category
 class FormCategoryNew(TableForm):
     """New category form"""
     class fields(WidgetsList):
-        languageid = SingleSelectField(label_text=_('Language'), size=10)
-        name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
-        description = TextArea(rows=10)
+        languageid = SingleSelectField(label_text=l_('Language'), size=SF_SIZE)
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(50)))
+        description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
+                                                                cols=TA_COLS)
 
 
 class FormCategoryEdit(TableForm):
@@ -110,11 +120,13 @@ class FormCategoryEdit(TableForm):
         _method = HiddenField(default='PUT', validator=None)
         categoryid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        languageid = CascadingSingleSelectField(label_text=_('Language'),
-                            size=10, cascadeurl=tg.url('/category/translation'),
-                            extra=['categoryid'])
-        name = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(50)))
-        description = TextArea(rows=10)
+        languageid = CascadingSingleSelectField(label_text=l_('Language'),
+                        size=SF_SIZE, cascadeurl=tg.url('/category/translation'),
+                        extra=['categoryid'])
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(50)))
+        description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
+                                                                cols=TA_COLS)
 
 
 class FormCategoryDelete(TableForm):
@@ -123,18 +135,19 @@ class FormCategoryDelete(TableForm):
         _method = HiddenField(default='DELETE', validator=None)
         categoryid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        name_ = TextField(validator=None, disabled=True)
+        name_ = TextField(label_text=l_('Name'), size=TF_SIZE, validator=None,
+                                                                disabled=True)
 
 
 # Article
 class FormArticleNew(TableForm):
     """New article form"""
     class fields(WidgetsList):
-        categoryid = SingleSelectField(label_text=_('Category'), size=10)
-        languageid = SingleSelectField(label_text=_('Language'), size=10)
-        title = TextField(size=44, validator=All(UnicodeString, NotEmpty,
-                                                                MaxLength(50)))
-        text = TextArea(id='text', rows=20)
+        categoryid = SingleSelectField(label_text=l_('Category'), size=SF_SIZE)
+        languageid = SingleSelectField(label_text=l_('Language'), size=SF_SIZE)
+        title = TextField(label_text=l_('Title'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(50)))
+        text = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS)
 
 
 class FormArticleEdit(TableForm):
@@ -143,12 +156,13 @@ class FormArticleEdit(TableForm):
         _method = HiddenField(default='PUT', validator=None)
         articleid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        categoryid = SingleSelectField(label_text=_('Category'), size=10)
-        languageid = CascadingSingleSelectField(label_text=_('Language'),
-                    size=10, cascadeurl=url('/article/translation'), extra=['articleid'])
-        title = TextField(size=44, validator=All(UnicodeString, NotEmpty,
-                                                                MaxLength(50)))
-        text = TextArea(rows=30)
+        categoryid = SingleSelectField(label_text=l_('Category'), size=SF_SIZE)
+        languageid = CascadingSingleSelectField(label_text=l_('Language'),
+                        size=SF_SIZE, cascadeurl=url('/article/translation'),
+                        extra=['articleid'])
+        title = TextField(label_text=l_('Title'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(50)))
+        text = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS)
 
 
 class FormArticleDelete(TableForm):
@@ -157,18 +171,21 @@ class FormArticleDelete(TableForm):
         _method = HiddenField(default='DELETE', validator=None)
         articleid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        title_ = TextField(validator=None, disabled=True)
+        title_ = TextField(label_text=l_('Title'), size=TF_SIZE, validator=None,
+                                                                disabled=True)
 
 
 # Link
 class FormLinkNew(TableForm):
     """New link form"""
     class fields(WidgetsList):
-        uri = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(255)))
-        languageid = SingleSelectField(label_text=_('Language'), size=10)
-        name = TextField(label_text=l_('Name'),
+        uri = TextField(label_text='URI', size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
-        description = TextArea(rows=10)
+        languageid = SingleSelectField(label_text=l_('Language'), size=SF_SIZE)
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
+                                                                cols=TA_COLS)
 
 
 class FormLinkEdit(TableForm):
@@ -177,13 +194,15 @@ class FormLinkEdit(TableForm):
         _method = HiddenField(default='PUT', validator=None)
         linkid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        uri = TextField(validator=All(UnicodeString, NotEmpty, MaxLength(255)))
-        languageid = CascadingSingleSelectField(label_text=_('Language'),
-                            size=10, cascadeurl=tg.url('/link/translation'),
-                            extra=['linkid'])
-        name = TextField(label_text=l_('Name'),
+        uri = TextField(label_text='URI', size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
-        description = TextArea(rows=10)
+        languageid = CascadingSingleSelectField(label_text=l_('Language'),
+                        size=SF_SIZE, cascadeurl=tg.url('/link/translation'),
+                        extra=['linkid'])
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
+                                                                cols=TA_COLS)
 
 
 class FormLinkDelete(TableForm):
@@ -192,14 +211,15 @@ class FormLinkDelete(TableForm):
         _method = HiddenField(default='DELETE', validator=None)
         linkid = HiddenField(validator=NotEmpty)
         id_ = TextField(validator=None, disabled=True)
-        uri_ = TextField(validator=None, disabled=True)
+        uri_ = TextField(label_text='URI', size=TF_SIZE, validator=None,
+                                                                disabled=True)
 
 
 # Media
 class FormMediaNew(HidingTableForm):
     """New media form"""
     class fields(WidgetsList):
-        mediatype = HidingSingleSelectField(label_text=l_('Type'), size=10,
+        mediatype = HidingSingleSelectField(label_text=l_('Type'), size=SF_SIZE,
             options=[''] + media_types,
             mapping={'image': ['uploadfile'],
                      'video': ['uploadfile', 'fallbackfile'],
@@ -208,15 +228,16 @@ class FormMediaNew(HidingTableForm):
                     },
             validator=All(NotEmpty, OneOf(media_types)),
         )
-        uri = TextField(label_text=l_('URI'),
+        uri = TextField(label_text='URI', size=TF_SIZE,
                                 validator=All(UnicodeString, MaxLength(255)))
         uploadfile = FileField(label_text=l_('File to upload'))
         fallbackfile = FileField(label_text=l_('Fallback file'))
 
-        languageid = SingleSelectField(label_text=l_('Language'), size=10)
-        name = TextField(label_text=l_('Name'),
+        languageid = SingleSelectField(label_text=l_('Language'), size=SF_SIZE)
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
-        description = TextArea(rows=10)
+        description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
+                                                                cols=TA_COLS)
 
 
 class FormMediaEdit(TableForm):
@@ -224,17 +245,18 @@ class FormMediaEdit(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='PUT', validator=None)
         mediaid = HiddenField(validator=NotEmpty)
-        id_ = TextField(validator=None, disabled=True)
-        mediatype_ = TextField(label_text=l_('Type'), validator=None,
-                                                                disabled=True)
-        uri = TextField(label_text=l_('URI'),
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
+        mediatype_ = TextField(label_text=l_('Type'), size=TF_SIZE,
+                                                validator=None, disabled=True)
+        uri = TextField(label_text='URI', size=TF_SIZE,
                                 validator=All(UnicodeString, MaxLength(255)))
         languageid = CascadingSingleSelectField(label_text=l_('Language'),
-                            size=10, cascadeurl=tg.url('/media/translation'),
-                            extra=['mediaid'])
-        name = TextField(label_text=l_('Name'),
+                        size=SF_SIZE, cascadeurl=tg.url('/media/translation'),
+                        extra=['mediaid'])
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
-        description = TextArea(label_text=l_('Description'), rows=10)
+        description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
+                                                                cols=TA_COLS)
 
 
 class FormMediaDelete(TableForm):
@@ -242,8 +264,9 @@ class FormMediaDelete(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='DELETE', validator=None)
         mediaid = HiddenField(validator=NotEmpty)
-        id_ = TextField(validator=None, disabled=True)
-        mediatype_ = TextField(label_text=l_('Type'), validator=None,
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
+        mediatype_ = TextField(label_text=l_('Type'), size=TF_SIZE,
+                                                validator=None, disabled=True)
+        uri_ = TextField(label_text='URI', size=TF_SIZE, validator=None,
                                                                 disabled=True)
-        uri_ = TextField(label_text=l_('URI'), validator=None, disabled=True)
 
