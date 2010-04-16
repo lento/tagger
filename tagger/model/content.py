@@ -109,7 +109,7 @@ class Tag(DeclarativeBase):
         return dict(id=self.id)
 
 add_language_props(Tag,
-    [('name', lambda obj, lang, val: CategoryData(val, lang)),
+    [('name', lambda obj, lang, val: TagData(val, lang)),
     ])
 
 

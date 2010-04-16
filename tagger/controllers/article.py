@@ -24,6 +24,7 @@ from tg import expose, url, tmpl_context, validate, require, flash
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Language, Category, Article
+from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormArticleNew, FormArticleEdit
 from tagger.lib.widgets import FormArticleDelete
 from repoze.what.predicates import has_permission
@@ -82,12 +83,18 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.redirect_parent')
     @validate(f_new, error_handler=new)
-    def post(self, title, categoryid, languageid, text):
+    def post(self, title, categoryid, languageid, text=None, tagids=None):
         """create a new Article"""
         user = tmpl_context.user
+        lang = tmpl_context.lang or DBSession.query(Language).first().id
         category = DBSession.query(Category).get(categoryid)
-        DBSession.add(Article(title, category, languageid, user, text))
-        flash(_('Created Article "%s"') % title, 'ok')
+        article = Article(title, category, languageid, user, text)
+        DBSession.add(article)
+
+        tags = tags_from_string(tagids, lang=lang)
+        article.tags[:] = tags
+
+        flash(_('Created Article "%s"') % article.id, 'ok')
         return dict(redirect_to=url('/article/'))
 
     @require(has_permission('manage'))
@@ -98,15 +105,17 @@ class Controller(RestController):
         lang = tmpl_context.lang
         article = DBSession.query(Article).get(articleid.decode())
 
-        categories = [(c.id, c.name[lang]) for c in DBSession.query(Category)]
-        languages = [(l.id, l.name) for l in DBSession.query(Language)]
+        tags = ', '.join([t.name[lang] for t in article.tags])
         fargs = dict(articleid=article.id,
                      id_=article.id,
                      categoryid=article.category_id,
                      languageid=article.language_id,
                      title=article.title[''],
                      text=article.text[''],
+                     tagids=tags,
                     )
+        categories = [(c.id, c.name[lang]) for c in DBSession.query(Category)]
+        languages = [(l.id, l.name) for l in DBSession.query(Language)]
         fcargs = dict(categoryid=dict(options=categories),
                       languageid=dict(options=languages),
                      )
@@ -117,25 +126,29 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
-    def put(self, articleid, title, categoryid, languageid, text=None):
+    def put(self, articleid, title, categoryid, languageid, text=None,
+                                                                tagids=None):
         """Edit a article"""
+        lang = tmpl_context.lang or DBSession.query(Language).first().id
         article = DBSession.query(Article).get(articleid.decode())
 
         modified = False
         if article.title[languageid] != title:
             article.title[languageid] = title
             modified = True
-            log.debug('article.put title: %s - %s' % (article.title[languageid], title))
 
         if article.category_id != categoryid:
             article.category_id = categoryid
             modified = True
-            log.debug('article.put category: %s - %s' % (article.category_id, categoryid))
 
         if article.text[languageid] != text:
             article.text[languageid] = text
             modified = True
-            log.debug('article.put text: %s - %s' % (article.text[languageid], text))
+
+        tags = tags_from_string(tagids, lang=lang)
+        if article.tags != tags:
+            article.tags[:] = tags
+            modified = True
 
         if modified:
             flash(_('updated article "%s"') % articleid, 'ok')
@@ -184,7 +197,6 @@ class Controller(RestController):
     @expose('json')
     def translation(self, articleid, value):
         """Return a article translation"""
-        log.debug('article.translation: %s %s' % (articleid, value))
         article = DBSession.query(Article).get(articleid.decode())
 
         title = article.title[value]

@@ -24,6 +24,7 @@ from tg import expose, tmpl_context, validate, require, flash, url
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Link, Language
+from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormLinkNew, FormLinkEdit, FormLinkDelete
 from repoze.what.predicates import has_permission
 
@@ -70,11 +71,16 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.redirect_parent')
     @validate(f_new, error_handler=new)
-    def post(self, name, uri, languageid, description):
+    def post(self, name, uri, languageid, description=None, tagids=None):
         """create a new Link"""
         user = tmpl_context.user
+        lang = tmpl_context.lang or DBSession.query(Language).first().id
         link = Link(name, uri, user, languageid, description)
         DBSession.add(link)
+
+        tags = tags_from_string(tagids, lang=lang)
+        link.tags[:] = tags
+
         flash(_('Created Link "%s"') % link.id, 'ok')
         return dict(redirect_to=url('/link/'))
 
@@ -83,12 +89,18 @@ class Controller(RestController):
     def edit(self, linkid, **kwargs):
         """Display a EDIT form."""
         tmpl_context.form = f_edit
+        lang = tmpl_context.lang
         link = DBSession.query(Link).get(linkid.decode())
+
+        tags = ', '.join([t.name[lang] for t in link.tags])
         fargs = dict(linkid=link.id, id_=link.id,
                      uri=link.uri,
                      languageid=link.language_id,
                      name=link.name[''],
-                     description=link.description[''])
+                     description=link.description[''],
+                     tagids=tags,
+                    )
+
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
         fcargs = dict(languageid=dict(options=languages))
         return dict(title='Edit link "%s"' % link.id, args=fargs,
@@ -98,8 +110,9 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
-    def put(self, linkid, name, uri, languageid, description=None):
+    def put(self, linkid, name, uri, languageid, description=None, tagids=None):
         """Edit a link"""
+        lang = tmpl_context.lang or DBSession.query(Language).first().id
         link = DBSession.query(Link).get(linkid.decode())
 
         modified = False
@@ -113,6 +126,11 @@ class Controller(RestController):
 
         if link.description[languageid] != description:
             link.description[languageid] = description
+            modified = True
+
+        tags = tags_from_string(tagids, lang=lang)
+        if link.tags != tags:
+            link.tags[:] = tags
             modified = True
 
         if modified:

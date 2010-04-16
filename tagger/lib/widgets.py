@@ -147,7 +147,9 @@ class FormArticleNew(TableForm):
         languageid = SingleSelectField(label_text=l_('Language'), size=SF_SIZE)
         title = TextField(label_text=l_('Title'), size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(50)))
-        text = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS)
+        text = TextArea(label_text=l_('Text'), rows=20, cols=TA_COLS)
+        tagids = TextField(label_text=l_('Tags'), size=TF_SIZE,
+                        attrs=dict(title=l_('Comma separated list of tags')))
 
 
 class FormArticleEdit(TableForm):
@@ -155,14 +157,16 @@ class FormArticleEdit(TableForm):
     class fields(WidgetsList):
         _method = HiddenField(default='PUT', validator=None)
         articleid = HiddenField(validator=NotEmpty)
-        id_ = TextField(validator=None, disabled=True)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
         categoryid = SingleSelectField(label_text=l_('Category'), size=SF_SIZE)
         languageid = CascadingSingleSelectField(label_text=l_('Language'),
                         size=SF_SIZE, cascadeurl=url('/article/translation'),
                         extra=['articleid'])
         title = TextField(label_text=l_('Title'), size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(50)))
-        text = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS)
+        text = TextArea(label_text=l_('Text'), rows=20, cols=TA_COLS)
+        tagids = TextField(label_text=l_('Tags'), size=TF_SIZE,
+                        attrs=dict(title=l_('Comma separated list of tags')))
 
 
 class FormArticleDelete(TableForm):
@@ -186,6 +190,8 @@ class FormLinkNew(TableForm):
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
                                                                 cols=TA_COLS)
+        tagids = TextField(label_text=l_('Tags'), size=TF_SIZE,
+                        attrs=dict(title=l_('Comma separated list of tags')))
 
 
 class FormLinkEdit(TableForm):
@@ -203,6 +209,8 @@ class FormLinkEdit(TableForm):
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
                                                                 cols=TA_COLS)
+        tagids = TextField(label_text=l_('Tags'), size=TF_SIZE,
+                        attrs=dict(title=l_('Comma separated list of tags')))
 
 
 class FormLinkDelete(TableForm):
@@ -238,6 +246,8 @@ class FormMediaNew(HidingTableForm):
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
                                                                 cols=TA_COLS)
+        tagids = TextField(label_text=l_('Tags'), size=TF_SIZE,
+                        attrs=dict(title=l_('Comma separated list of tags')))
 
 
 class FormMediaEdit(TableForm):
@@ -257,6 +267,8 @@ class FormMediaEdit(TableForm):
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
                                                                 cols=TA_COLS)
+        tagids = TextField(label_text=l_('Tags'), size=TF_SIZE,
+                        attrs=dict(title=l_('Comma separated list of tags')))
 
 
 class FormMediaDelete(TableForm):
