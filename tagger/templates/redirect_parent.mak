@@ -1,4 +1,4 @@
 <script type="text/javascript">
-    parent.location = ${redirect_to};
+    parent.location = "${redirect_to}";
 </script>
 
