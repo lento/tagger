@@ -86,7 +86,7 @@ class TestLanguageController(TestController):
                                                  name='test language',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /language/;' in response.body,
+        assert_true('parent.location = "/language/";' in response.body,
                         'should be redirected to "/language/" via javascript')
 
         cat = DBSession().query(Language).get(u'xx')
@@ -119,7 +119,7 @@ class TestLanguageController(TestController):
         response = self.app.put('/language/%s' % languageid,
                                             dict(name='changed'),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /language/;' in response.body,
+        assert_true('parent.location = "/language/";' in response.body,
                         'should be redirected to "/language/" via javascript')
 
         cat = DBSession.query(Language).get(languageid.decode())
@@ -149,7 +149,7 @@ class TestLanguageController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/language?languageid=%s' % languageid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /language/;' in response.body,
+        assert_true('parent.location = "/language/";' in response.body,
                         'should be redirected to "/language/" via javascript')
 
         result = DBSession.query(Language).get(languageid.decode())

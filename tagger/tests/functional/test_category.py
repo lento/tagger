@@ -97,7 +97,7 @@ class TestCategoryController(TestController):
                                                  description='Test',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /category/;' in response.body,
+        assert_true('parent.location = "/category/";' in response.body,
                         'should be redirected to "/category/" via javascript')
 
         cat = DBSession().query(Category).get(u'test')
@@ -140,7 +140,7 @@ class TestCategoryController(TestController):
                                                  description='Changed',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /category/;' in response.body,
+        assert_true('parent.location = "/category/";' in response.body,
                         'should be redirected to "/category/" via javascript')
 
         cat = DBSession.query(Category).get(u'changed')
@@ -171,7 +171,7 @@ class TestCategoryController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/category?categoryid=%s' % categoryid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /category/;' in response.body,
+        assert_true('parent.location = "/category/";' in response.body,
                         'should be redirected to "/category/" via javascript')
 
         cat = DBSession.query(Category).get(categoryid.decode())

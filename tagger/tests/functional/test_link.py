@@ -23,7 +23,7 @@
 import transaction
 from nose.tools import assert_true, assert_false, eq_
 from tagger.tests import TestController
-from tagger.model import DBSession, User, Language, Link, LinkData
+from tagger.model import DBSession, User, Language, Link, LinkData, Tag
 
 
 class TestLinkController(TestController):
@@ -33,8 +33,11 @@ class TestLinkController(TestController):
         tadm = DBSession.query(User).filter_by(user_name=u'test_admin').one()
         language = Language(u'xx', u'test_langugage')
         DBSession.add(language)
+        tag = Tag(u'test_tag', u'xx')
+        DBSession.add(tag)
         link = Link(u'test link', u'http://example.com', tadm, u'xx',
                                                                 u'random text')
+        link.tags.append(tag)
         DBSession.add(link)
         DBSession.flush()
         languageid = language.id
@@ -53,8 +56,9 @@ class TestLinkController(TestController):
         eq_(str(tr('td')[0]), '<td>%s</td>' % linkid)
         eq_(str(tr('td')[1]), '<td>test link</td>')
         eq_(str(tr('td')[2]), '<td>http://example.com</td>')
-        eq_(str(tr('td')[3]), '<td>%s</td>' % languageid)
-        actions = tr('td')[4]
+        eq_(str(tr('td')[3]), '<td>test_tag</td>')
+        eq_(str(tr('td')[4]), '<td>%s</td>' % languageid)
+        actions = tr('td')[5]
         eq_(str(actions('a')[0]['class']), 'icon edit overlay')
         eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
@@ -90,6 +94,8 @@ class TestLinkController(TestController):
                                     '"name" input element not found')
         assert_true(response.html.find('textarea', {'id': 'description'}),
                                     '"description" textarea element not found')
+        assert_true(response.html.find('input', {'id': 'tagids'}),
+                                    '"tagids" input element not found')
 
     def test_post(self):
         """controllers.link.Controller.post is working properly"""
@@ -100,9 +106,10 @@ class TestLinkController(TestController):
                                                 uri='http://example.com',
                                                 languageid=languageid,
                                                 description='random text',
+                                                tagids='test_tag',
                                                ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /link/;' in response.body,
+        assert_true('parent.location = "/link/";' in response.body,
                             'should be redirected to "/link/" via javascript')
 
         link = DBSession().query(Link).get(u'another-link')
@@ -110,6 +117,7 @@ class TestLinkController(TestController):
         eq_(link.description[''], u'random text')
         eq_(link.language_ids, set([languageid]))
         eq_(link.user.user_name, 'test_admin')
+        eq_(link.tags[0].id, 'test_tag')
 
     def test_edit(self):
         """controllers.link.Controller.edit is working"""
@@ -137,6 +145,8 @@ class TestLinkController(TestController):
                                                         u'test link')
         eq_(response.html.find('textarea', {'id': 'description'}).string,
                                                         u'random text')
+        eq_(response.html.find('input', {'id': 'tagids'})['value'],
+                                                        u'test_tag')
 
     def test_put(self):
         """controllers.link.Controller.put is working properly"""
@@ -148,15 +158,17 @@ class TestLinkController(TestController):
                                                  uri='changed',
                                                  languageid=languageid,
                                                  description='Changed',
+                                                 tagids='another_tag',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /link/;' in response.body,
+        assert_true('parent.location = "/link/";' in response.body,
                             'should be redirected to "/link/" via javascript')
 
         link = DBSession.query(Link).get(u'changed')
         eq_(link.uri, 'changed')
         eq_(link.name[languageid], 'changed')
         eq_(link.description[languageid], 'Changed')
+        eq_(link.tags[0].id, 'another_tag')
 
     def test_get_delete(self):
         """controllers.link.Controller.get_delete is working properly"""
@@ -182,7 +194,7 @@ class TestLinkController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/link?linkid=%s' % linkid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /link/;' in response.body,
+        assert_true('parent.location = "/link/";' in response.body,
                             'should be redirected to "/link/" via javascript')
 
         link = DBSession.query(Link).get(linkid.decode())

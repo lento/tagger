@@ -23,7 +23,7 @@
 import transaction
 from nose.tools import assert_true, assert_false, eq_
 from tagger.tests import TestController
-from tagger.model import DBSession, User, Language, Media, MediaData
+from tagger.model import DBSession, User, Language, Media, MediaData, Tag
 
 
 class TestMediaController(TestController):
@@ -33,8 +33,11 @@ class TestMediaController(TestController):
         tadm = DBSession.query(User).filter_by(user_name=u'test_admin').one()
         language = Language(u'xx', u'test_langugage')
         DBSession.add(language)
+        tag = Tag(u'test_tag', u'xx')
+        DBSession.add(tag)
         media = Media(u'image', u'test image', u'/test.png', tadm, u'xx',
                                                                 u'random text')
+        media.tags.append(tag)
         DBSession.add(media)
         DBSession.flush()
         languageid = language.id
@@ -54,8 +57,9 @@ class TestMediaController(TestController):
         eq_(str(tr('td')[1]), '<td>image</td>')
         eq_(str(tr('td')[2]), '<td>test image</td>')
         eq_(str(tr('td')[3]), '<td>/test.png</td>')
-        eq_(str(tr('td')[4]), '<td>%s</td>' % languageid)
-        actions = tr('td')[5]
+        eq_(str(tr('td')[4]), '<td>test_tag</td>')
+        eq_(str(tr('td')[5]), '<td>%s</td>' % languageid)
+        actions = tr('td')[6]
         eq_(str(actions('a')[0]['class']), 'icon edit overlay')
         eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
@@ -92,6 +96,8 @@ class TestMediaController(TestController):
                                     '"uri" input element not found')
         assert_true(response.html.find('textarea', {'id': 'description'}),
                                     '"description" textarea element not found')
+        assert_true(response.html.find('input', {'id': 'tagids'}),
+                                    '"tagids" input element not found')
 
     def test_post(self):
         """controllers.media.Controller.post is working properly"""
@@ -105,9 +111,10 @@ class TestMediaController(TestController):
                                                  languageid=languageid,
                                                  name='test video',
                                                  description='random text',
+                                                 tagids='test_tag',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /media/;' in response.body,
+        assert_true('parent.location = "/media/";' in response.body,
                             'should be redirected to "/media/" via javascript')
 
         media = DBSession().query(Media).get(u'test-video')
@@ -116,6 +123,7 @@ class TestMediaController(TestController):
         eq_(media.description[''], u'random text')
         eq_(media.language_ids, set([languageid]))
         eq_(media.user.user_name, 'test_admin')
+        eq_(media.tags[0].id, 'test_tag')
 
     def test_edit(self):
         """controllers.media.Controller.edit is working"""
@@ -141,6 +149,8 @@ class TestMediaController(TestController):
                                                         u'/test.png')
         eq_(response.html.find('textarea', {'id': 'description'}).string,
                                                         u'random text')
+        eq_(response.html.find('input', {'id': 'tagids'})['value'],
+                                                        u'test_tag')
 
     def test_put(self):
         """controllers.media.Controller.put is working properly"""
@@ -152,15 +162,17 @@ class TestMediaController(TestController):
                                                  languageid=languageid,
                                                  name='changed',
                                                  description='Changed',
+                                                 tagids='another_tag',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /media/;' in response.body,
+        assert_true('parent.location = "/media/";' in response.body,
                             'should be redirected to "/media/" via javascript')
 
         media = DBSession.query(Media).get(u'changed')
         eq_(media.uri, 'changed')
         eq_(media.name[languageid], 'changed')
         eq_(media.description[languageid], 'Changed')
+        eq_(media.tags[0].id, 'another_tag')
 
     def test_get_delete(self):
         """controllers.media.Controller.get_delete is working properly"""
@@ -186,7 +198,7 @@ class TestMediaController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/media?mediaid=%s' % mediaid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /media/;' in response.body,
+        assert_true('parent.location = "/media/";' in response.body,
                             'should be redirected to "/media/" via javascript')
 
         media = DBSession.query(Media).get(mediaid.decode())

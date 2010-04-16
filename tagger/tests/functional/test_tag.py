@@ -91,7 +91,7 @@ class TestTagController(TestController):
                                                languageid=languageid,
                                               ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /tag/;' in response.body,
+        assert_true('parent.location = "/tag/";' in response.body,
                             'should be redirected to "/tag/" via javascript')
 
         tag = DBSession().query(Tag).get(u'another-tag')
@@ -131,7 +131,7 @@ class TestTagController(TestController):
                                                  languageid=languageid,
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /tag/;' in response.body,
+        assert_true('parent.location = "/tag/";' in response.body,
                             'should be redirected to "/tag/" via javascript')
 
         tag = DBSession.query(Tag).get(u'changed')
@@ -161,7 +161,7 @@ class TestTagController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/tag?tagid=%s' % tagid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /tag/;' in response.body,
+        assert_true('parent.location = "/tag/";' in response.body,
                             'should be redirected to "/tag/" via javascript')
 
         tag = DBSession.query(Tag).get(tagid.decode())

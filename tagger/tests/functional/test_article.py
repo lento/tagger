@@ -23,7 +23,7 @@
 import transaction
 from nose.tools import assert_true, assert_false, eq_
 from tagger.tests import TestController
-from tagger.model import DBSession, User, Language, Category, Article
+from tagger.model import DBSession, User, Language, Category, Article, Tag
 from tagger.model import Page, PageData
 
 
@@ -36,7 +36,10 @@ class TestCategoryController(TestController):
         DBSession.add(language)
         cat = Category(u'test_category', u'xx')
         DBSession.add(cat)
+        tag = Tag(u'test_tag', u'xx')
+        DBSession.add(tag)
         article = Article(u'A Test Article!', cat, u'xx', tadm, u'random text')
+        article.tags.append(tag)
         DBSession.add(article)
         DBSession.flush()
         categoryid = cat.id
@@ -56,8 +59,9 @@ class TestCategoryController(TestController):
         eq_(str(tr('td')[0]), '<td>%s</td>' % articleid)
         eq_(str(tr('td')[1]), '<td>A Test Article!</td>')
         eq_(str(tr('td')[2]), '<td>test_category</td>')
-        eq_(str(tr('td')[3]), '<td>%s</td>' % languageid)
-        actions = tr('td')[4]
+        eq_(str(tr('td')[3]), '<td>test_tag</td>')
+        eq_(str(tr('td')[4]), '<td>%s</td>' % languageid)
+        actions = tr('td')[5]
         eq_(str(actions('a')[0]['class']), 'icon edit')
         eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
@@ -90,6 +94,8 @@ class TestCategoryController(TestController):
                                         '"title" input element not found')
         assert_true(response.html.find('textarea', {'id': 'text'}),
                                         '"text" textarea element not found')
+        assert_true(response.html.find('input', {'id': 'tagids'}),
+                                        '"tagids" input element not found')
 
     def test_post(self):
         """controllers.article.Controller.post is working properly"""
@@ -100,15 +106,18 @@ class TestCategoryController(TestController):
                                                    categoryid=categoryid,
                                                    languageid=languageid,
                                                    text='random text',
+                                                   tagids='test_tag',
                                                   ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /article/;' in response.body,
+        print(response.body)
+        assert_true('parent.location = "/article/";' in response.body,
                         'should be redirected to "/article/" via javascript')
 
         article = DBSession().query(Article).get(u'test')
         eq_(article.category.id, 'test_category')
         eq_(article.language_ids, set([u'%s' % languageid]))
         eq_(article.user.user_name, 'test_admin')
+        eq_(article.tags[0].id, u'test_tag')
 
     def test_edit(self):
         """controllers.article.Controller.edit is working"""
@@ -138,6 +147,8 @@ class TestCategoryController(TestController):
                                                             u'A Test Article!')
         eq_(response.html.find('textarea', {'id': 'text'}).string,
                                                             u'random text')
+        eq_(response.html.find('input', {'id': 'tagids'})['value'],
+                                                            u'test_tag')
 
     def test_put(self):
         """controllers.article.Controller.put is working properly"""
@@ -149,15 +160,18 @@ class TestCategoryController(TestController):
                                                  categoryid=categoryid,
                                                  languageid=languageid,
                                                  text='Test',
+                                                 tagids='another_tag',
                                                 ),
                                             extra_environ=environ, status=200)
+        print(response.body)
         assert_true(
-            'parent.location = /article/test/edit;' in response.body,
+            'parent.location = "/article/test/edit";' in response.body,
             'should be redirected to "/article/<id>/edit" via javascript')
 
         article = DBSession().query(Article).get(u'test')
         eq_(article.title[''], 'test')
         eq_(article.text[''], 'Test')
+        eq_(article.tags[0].id, 'another_tag')
 
     def test_get_delete(self):
         """controllers.article.Controller.get_delete is working properly"""
@@ -183,7 +197,7 @@ class TestCategoryController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/article?articleid=%s' % articleid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = /article/;' in response.body,
+        assert_true('parent.location = "/article/";' in response.body,
                         'should be redirected to "/article/" via javascript')
 
         article = DBSession().query(Article).get(articleid.decode())

@@ -14,6 +14,7 @@
         <th>${_('ID')}</th>
         <th>${_('Name')}</th>
         <th>${_('Languages')}</th>
+        <th>${_('Actions')}</th>
     </tr>
     % for tag in tags:
     <tr>
