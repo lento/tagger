@@ -72,6 +72,8 @@ h1 {
 
 .hidden {display: none;}
 
+.clearing {clear: both;}
+
 /* Table */
 table {
     width: 100%;
@@ -185,10 +187,9 @@ table td.icon {
  ****************************************/
 #header {
     position: relative;
-	min-width: 530px;
-	height: 160px;
+	min-width: 425px;
 	margin-bottom: 20px;
-	padding: 0px 0 0 135px;
+	padding-left: 135px;
 }
 
 #header .logo {
@@ -207,8 +208,6 @@ table td.icon {
 }
 
 #header .menu_top ul {
-    /*position: absolute;
-    bottom: 0;*/
     float: right;
     position: relative;
     bottom: -8px;
@@ -268,14 +267,10 @@ table td.icon {
 
 
 #header .menu_bottom {
-    position: relative;
-    top: -18px;
-	height: 18px;
+    margin-top: 3px;
 }
 
 #header .menu_bottom ul {
-    position: absolute;
-    bottom: 0;
     height: 100%;
 	overflow: hidden;
 }
@@ -283,29 +278,27 @@ table td.icon {
 #header .menu_bottom ul li {
     float: left;
     height: 100%;
-    margin-right: 2px;
+    margin: 0 2px 2px 0;
     padding: 0 10px;
-    background-color: #eeeeec; /* Aluminium 1 */
-	border-radius: 8px 8px 0 0;
-    box-shadow: inset 0px -2px 6px #888a85; /* Aluminium 4 */
-	-moz-border-radius: 8px 8px 0 0;
-	-webkit-border-radius: 8px 8px 0 0;
-    -moz-box-shadow: inset 0px -2px 6px #888a85; /* Aluminium 4 */
-    -webkit-box-shadow: inset 0px -2px 6px #888a85; /* Aluminium 4 */
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
 }
 
-#header .menu_bottom ul li:hover, #header .menu_bottom ul li.active {
-    background-color: white;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
+#header .menu_bottom ul li:hover {
+    background-color: #a40000; /* Scarlet Red 3 */
+    color: white;
 }
 
+#header .menu_bottom ul li.active {
+    background-color: #babdb6; /* Aluminium 3 */
+    color: white;
+}
 
 /* Flash */
 #flash {
     position: relative;
-    top: -18px;
+    top: -25px;
     color: white;
 }
 
@@ -340,7 +333,7 @@ table td.icon {
  * Main
  ****************************************/
 #main {
-    min-width: 660px;
+    min-width: 560px;
 }
 
 /****************************************
