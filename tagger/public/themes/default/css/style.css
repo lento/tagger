@@ -103,6 +103,8 @@ table td.icon {
     padding: 2px 6px;
     background-color: #73d216; /* Chameleon 2 */
     color: white;
+	border-radius: 8px;
+    box-shadow: 4px 4px 10px #888a85; /* Aluminium 4 */
 	-moz-border-radius: 8px;
 	-webkit-border-radius: 8px;
     -moz-box-shadow: 4px 4px 10px #888a85; /* Aluminium 4 */
@@ -111,6 +113,7 @@ table td.icon {
 }
 
 .button:active {
+    box-shadow: inset 2px 2px 6px #888a85; /* Aluminium 4 */
     -moz-box-shadow: inset 2px 2px 6px #888a85; /* Aluminium 4 */
     -webkit-box-shadow: inset 2px 2px 6px #888a85; /* Aluminium 4 */
 }
@@ -128,6 +131,7 @@ table td.icon {
 }
 
 .icon:active {
+    box-shadow: inset 2px 2px 6px #888a85; /* Aluminium 4 */
     -moz-box-shadow: inset 2px 2px 6px #888a85; /* Aluminium 4 */
     -webkit-box-shadow: inset 2px 2px 6px #888a85; /* Aluminium 4 */
 }
@@ -151,12 +155,12 @@ table td.icon {
     here it is positioned on top-right corner  
 */ 
 #overlay div.close { 
-    background:url(../images/close.png) no-repeat; 
+    background:url(../images/icons/24x24/close.png) no-repeat; 
     position:absolute; 
-	top: 10px;
-	right: 15px; 
-	width: 35px;
-	height: 35px;
+	top: 20px;
+	right: 20px; 
+	width: 24px;
+	height: 24px;
 	cursor: pointer;
 } 
 
@@ -165,6 +169,8 @@ table td.icon {
 	height: 450px;
 	padding: 10px;
     border: 2px solid #a40000; /* Scarlet Red 3 */
+	border-radius: 10px;
+    box-shadow: 0 0 25px 5px #333;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
     -moz-box-shadow: 0 0 25px 5px #333;
@@ -219,11 +225,13 @@ table td.icon {
 }
 
 #header .menu_top li:first-child {
+	border-radius: 0 6px 6px 0;
 	-moz-border-radius: 0 6px 6px 0;
 	-webkit-border-radius: 0 6px 6px 0;
 }
 
 #header .menu_top li:last-child {
+	border-radius: 6px 0 0 6px;
 	-moz-border-radius: 6px 0 0 6px;
 	-webkit-border-radius: 6px 0 0 6px;
 }
@@ -238,6 +246,7 @@ table td.icon {
 
 #header .menu_top .language:hover {
     background-color: #4e9a06; /* Chameleon 3 */
+	border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }
@@ -249,8 +258,10 @@ table td.icon {
 #header .banner {
 	max-width: 1065px;
 	height: 120px;
+	border-radius: 0 10px 10px 0;
 	-moz-border-radius: 0 10px 10px 0;
 	-webkit-border-radius: 0 10px 10px 0;
+    background: url(../images/banner.png), linear-gradient(90deg,#a40000,#f57900);
     background: url(../images/banner.png), -moz-linear-gradient(90deg,#a40000,#f57900);
     background: url(../images/banner.png), -webkit-gradient(linear,center bottom,center top,from(#a40000),to(#f57900));
 }
@@ -275,6 +286,8 @@ table td.icon {
     margin-right: 2px;
     padding: 0 10px;
     background-color: #eeeeec; /* Aluminium 1 */
+	border-radius: 8px 8px 0 0;
+    box-shadow: inset 0px -2px 6px #888a85; /* Aluminium 4 */
 	-moz-border-radius: 8px 8px 0 0;
 	-webkit-border-radius: 8px 8px 0 0;
     -moz-box-shadow: inset 0px -2px 6px #888a85; /* Aluminium 4 */
@@ -283,6 +296,7 @@ table td.icon {
 
 #header .menu_bottom ul li:hover, #header .menu_bottom ul li.active {
     background-color: white;
+    box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
 }
@@ -300,24 +314,25 @@ table td.icon {
     padding:10px 60px 10px 45px;
     z-index: 4;
     opacity: .8;
+	border-radius: 0 0 10px 10px;
 	-moz-border-radius: 0 0 10px 10px;
 	-webkit-border-radius: 0 0 10px 10px;
 }
 
 #flash .ok {
-    background: #73d216 url(../images/ok.png) no-repeat scroll 10px center; /* Chameleon 2 */
+    background: #73d216 url(../images/icons/24x24/ok.png) no-repeat scroll 10px center; /* Chameleon 2 */
 }
 
 #flash .alert, #flash .warning {
-    background: #edd400 url(../images/warning.png) no-repeat scroll 10px center; /* Butter 1 */
+    background: #edd400 url(../images/icons/24x24/warning.png) no-repeat scroll 10px center; /* Butter 1 */
 }
 
 #flash .error {
-    background: #a40000 url(../images/error.png) no-repeat scroll 10px center; /* Scarlet Red 3 */
+    background: #a40000 url(../images/icons/24x24/error.png) no-repeat scroll 10px center; /* Scarlet Red 3 */
 }
 
 #flash .info, .notice {
-    background: #3465a4 url(../images/info.png) no-repeat scroll 10px center; /* Sky Blue 2 */
+    background: #3465a4 url(../images/icons/24x24/info.png) no-repeat scroll 10px center; /* Sky Blue 2 */
 }
 
 
@@ -343,6 +358,7 @@ table td.icon {
 #side ul {
     padding: 10px;
 	background-color: #eeeeec; /* Aluminium 1 */
+	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 }
@@ -350,6 +366,7 @@ table td.icon {
 #side li {
     margin-bottom: 2px;
     padding: 0 6px;
+	border-radius: 5px;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 }
@@ -385,6 +402,7 @@ table td.icon {
 	margin-bottom: 20px;
 }
 
+
 /****************************************
  * Footer
  ****************************************/
@@ -396,20 +414,16 @@ table td.icon {
     font-size: smaller;
 }
 
+
 /****************************************
  * Login form
  ****************************************/
-#loginform {
+#loginform table {
+    width: auto;
 }
 
-#loginform .loginfields input {
-    display: block;
-}
-
-#loginform .loginfields label {
-    clear: left;
-    float: left;
-    width: 100px;
+#loginform tr {
+    background-color: inherit;
 }
 
 
@@ -442,6 +456,7 @@ table td.icon {
     padding: 0 4px;
     background-color: #babdb6; /* Aluminium 3 */
     color: white;
+	border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }
@@ -453,6 +468,7 @@ table td.icon {
 .article_title .tag {
     color: #888a85; /* Aluminium 4 */
     padding: 0 4px;
+	border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }

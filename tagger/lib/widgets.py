@@ -26,7 +26,7 @@ from tg import config, url
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tw.api import Widget, WidgetsList
 from tw.forms import TableForm, TextField, TextArea, HiddenField
-from tw.forms import SingleSelectField, FileField
+from tw.forms import SingleSelectField, FileField, PasswordField
 from tw.dynforms import CascadingSingleSelectField, HidingTableForm
 from tw.dynforms import HidingSingleSelectField
 from tw.forms.validators import All, Regex, NotEmpty, UnicodeString, MaxLength
@@ -42,6 +42,16 @@ SF_SIZE = 10    # SelectField
 ############################################################
 # Forms
 ############################################################
+
+# Login
+class FormLogin(TableForm):
+    """Login form"""
+    class fields(WidgetsList):
+        came_from = HiddenField()
+        logins = HiddenField()
+        login = TextField(label_text=l_('User Name'))
+        password = PasswordField(label_text=l_('Password'))
+
 
 # Tag
 class FormTagNew(TableForm):

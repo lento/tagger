@@ -21,18 +21,22 @@
 """Main Controller"""
 
 from tg import expose, flash, require, url, request, redirect, response
+from tg import tmpl_context
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what import predicates
 from tg.exceptions import HTTPNotFound
 from sqlalchemy.orm.exc import NoResultFound
 
 from tagger.lib.base import BaseController
+from tagger.lib.widgets import FormLogin
 from tagger.controllers.error import ErrorController
 from tagger.controllers import admin, language, category, article, link, media
 from tagger.controllers import tag
 from tagger.model import DBSession, Language, Category, Article
 
 __all__ = ['RootController']
+
+f_login = FormLogin(action=url('/login_handler'))
 
 
 class RootController(BaseController):
@@ -54,11 +58,14 @@ class RootController(BaseController):
     @expose('tagger.templates.login')
     def login(self, came_from=url('/')):
         """Start the user login."""
+        tmpl_context.f_login = f_login
+
         login_counter = request.environ['repoze.who.logins']
         if login_counter > 0:
             flash(_('Wrong credentials'), 'warning')
-        return dict(page='login', login_counter=str(login_counter),
-                    came_from=came_from)
+
+        fargs = dict(came_from=came_from, logins=str(login_counter))
+        return dict(page='login', fargs=fargs)
 
     @expose()
     def post_login(self, came_from='/'):
@@ -77,7 +84,7 @@ class RootController(BaseController):
         """Redirect the user to the root page on logout and say
         goodbye as well."""
         flash(_('We hope to see you soon!'))
-        redirect(url('/'))
+        redirect('/')
 
     @expose()
     def set_language(self, languageid, came_from=url('/')):
