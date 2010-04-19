@@ -121,7 +121,7 @@ class Controller(RestController):
         tags = tags_from_string(tagids, lang=lang)
         media.tags[:] = tags
 
-        flash(_('Created Media "%s"') % media.id, 'ok')
+        flash('%s %s' % (_('Created Media:'), media.id), 'ok')
         return dict(redirect_to=url('/admin/media/'))
 
     @require(has_permission('manage'))
@@ -144,8 +144,8 @@ class Controller(RestController):
 
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
         fcargs = dict(languageid=dict(options=languages))
-        return dict(title='Edit media "%s"' % media.id, args=fargs,
-                                                            child_args=fcargs)
+        return dict(title='%s %s' % (_('Edit media:'), media.id),
+                                                args=fargs, child_args=fcargs)
 
     @require(has_permission('manage'))
     @expose('json')
@@ -176,9 +176,9 @@ class Controller(RestController):
             modified = True
 
         if modified:
-            flash(_('updated media "%s"') % mediaid, 'ok')
+            flash('%s %s' % (_('Updated Media:'), media.id), 'ok')
         else:
-            flash(_('media "%s" unchanged') % mediaid, 'info')
+            flash('%s %s' % (_('Media is unchanged:'), media.id), 'info')
 
         return dict(redirect_to=url('/admin/media/'))
 
@@ -194,11 +194,12 @@ class Controller(RestController):
                      uri_=media.uri,
                     )
         fcargs = dict()
-        warning = _('This will delete the media entry in the database '
-                    'and all related files in the upload area')
+        warning = _('This will delete the Media from the database '\
+                    'and all related files from the upload area')
         return dict(
-                title=_('Are you sure you want to delete Media "%s"?') %
-                                                                media.id,
+                title='%s %s ?' % (
+                    _('Are you sure you want to delete Media:'),
+                    media.id),
                 warning=warning, args=fargs, child_args=fcargs)
 
     @require(has_permission('manage'))
@@ -239,7 +240,7 @@ class Controller(RestController):
         for mediadata in media.data:
             DBSession.delete(mediadata)
         DBSession.delete(media)
-        flash(_('Deleted Media "%s"') % media.id, 'ok')
+        flash('%s %s' % (_('Deleted Media:'), media.id), 'ok')
         return dict(redirect_to=url('/admin/media/'))
 
     # REST-like methods

@@ -80,7 +80,7 @@ class Controller(RestController):
         tags = tags_from_string(tagids, lang=lang)
         link.tags[:] = tags
 
-        flash(_('Created Link "%s"') % link.id, 'ok')
+        flash('%s %s' % (_('Created Link:'), link.id), 'ok')
         return dict(redirect_to=url('/admin/link/'))
 
     @require(has_permission('manage'))
@@ -102,8 +102,8 @@ class Controller(RestController):
 
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
         fcargs = dict(languageid=dict(options=languages))
-        return dict(title='Edit link "%s"' % link.id, args=fargs,
-                                                            child_args=fcargs)
+        return dict(title='%s %s' % (_('Edit link:'), link.id),
+                                                args=fargs, child_args=fcargs)
 
     @require(has_permission('manage'))
     @expose('json')
@@ -133,9 +133,9 @@ class Controller(RestController):
             modified = True
 
         if modified:
-            flash(_('updated link "%s"') % linkid, 'ok')
+            flash('%s %s' % (_('Updated Link:'), link.id), 'ok')
         else:
-            flash(_('link "%s" unchanged') % linkid, 'info')
+            flash('%s %s' % (_('Link is unchanged:'), link.id), 'info')
         return dict(redirect_to=url('/admin/link/'))
 
     @require(has_permission('manage'))
@@ -149,10 +149,11 @@ class Controller(RestController):
                      uri_=link.uri,
                     )
         fcargs = dict()
-        warning = _('This will delete the link entry in the database')
+        warning = _('This will delete the Link from the database')
         return dict(
-                title=_('Are you sure you want to delete Link "%s"?') %
-                                                                link.id,
+                title='%s %s ?' % (
+                    _('Are you sure you want to delete Link:'),
+                    link.id),
                 warning=warning, args=fargs, child_args=fcargs)
 
     @require(has_permission('manage'))
@@ -166,7 +167,7 @@ class Controller(RestController):
         for linkdata in link.data:
             DBSession.delete(linkdata)
         DBSession.delete(link)
-        flash(_('Deleted Link "%s"') % link.id, 'ok')
+        flash('%s %s' % (_('Deleted Link:'), link.id), 'ok')
         return dict(redirect_to=url('/admin/link/'))
 
     # REST-like methods

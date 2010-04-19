@@ -76,7 +76,7 @@ class RootController(BaseController):
             login_counter = request.environ['repoze.who.logins'] + 1
             redirect('/login', came_from=came_from, __logins=login_counter)
         userid = request.identity['repoze.who.userid']
-        flash(_('Welcome back, %s!') % userid)
+        flash('%s, %s!' % (_('Welcome back'), userid))
         redirect(came_from)
 
     @expose()
@@ -91,7 +91,7 @@ class RootController(BaseController):
         """Set language cookie"""
         language = DBSession.query(Language).get(languageid.decode())
         response.set_cookie('lang', language.id)
-        flash('%s %s' % (_('Preferred language set to'), language.name))
+        flash('%s %s' % (_('Preferred language set to:'), language.name))
         redirect(came_from)
 
     @expose()

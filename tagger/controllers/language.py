@@ -71,8 +71,9 @@ class Controller(RestController):
     @validate(f_new, error_handler=new)
     def post(self, languageid, name):
         """create a new Language"""
-        DBSession.add(Language(languageid, name))
-        flash(_('Created Language "%s"') % name, 'ok')
+        language = Language(languageid, name)
+        DBSession.add(language)
+        flash('%s %s' % (_('Created Language:'), language.id), 'ok')
         return dict(redirect_to=url('/admin/language/'))
 
     @require(has_permission('manage'))
@@ -84,8 +85,8 @@ class Controller(RestController):
         fargs = dict(languageid=language.id, id_=language.id,
                      name=language.name)
         fcargs = dict()
-        return dict(title='Edit category "%s"' % language.id, args=fargs,
-                                                            child_args=fcargs)
+        return dict(title='%s %s' % (_('Edit Language:'), language.id),
+                                                args=fargs, child_args=fcargs)
 
     @require(has_permission('manage'))
     @expose('json')
@@ -101,9 +102,9 @@ class Controller(RestController):
             modified = True
 
         if modified:
-            flash(_('updated language "%s"') % languageid, 'ok')
+            flash('%s %s' % (_('Updated Language:'), language.id), 'ok')
         else:
-            flash(_('language "%s" unchanged') % languageid, 'info')
+            flash('%s %s' % (_('Language is unchanged:'), language.id), 'info')
         return dict(redirect_to=url('/admin/language/'))
 
     @require(has_permission('manage'))
@@ -117,10 +118,11 @@ class Controller(RestController):
                      name_=language.name,
                     )
         fcargs = dict()
-        warning = _('This will delete the language entry in the database')
+        warning = _('This will delete the Language from the database')
         return dict(
-                title=_('Are you sure you want to delete Language "%s"?') %
-                                                                language.name,
+                title='%s %s ?' % (
+                    _('Are you sure you want to delete Language:'),
+                    language.name),
                 warning=warning, args=fargs, child_args=fcargs)
 
     @require(has_permission('manage'))
@@ -132,6 +134,6 @@ class Controller(RestController):
         language = DBSession.query(Language).get(languageid.decode())
 
         DBSession.delete(language)
-        flash(_('Deleted Language "%s"') % language.id, 'ok')
+        flash('%s %s' % (_('Deleted Language:'), language.id), 'ok')
         return dict(redirect_to=url('/admin/language/'))
 

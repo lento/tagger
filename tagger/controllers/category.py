@@ -72,8 +72,9 @@ class Controller(RestController):
     @validate(f_new, error_handler=new)
     def post(self, name, languageid, description):
         """create a new Category"""
-        DBSession.add(Category(name, languageid, description))
-        flash(_('Created Category "%s"') % name, 'ok')
+        category = Category(name, languageid, description)
+        DBSession.add(category)
+        flash('%s %s' % (_('Created Category:'), category.id), 'ok')
         return dict(redirect_to=url('/admin/category/'))
     
     @require(has_permission('manage'))
@@ -89,8 +90,8 @@ class Controller(RestController):
                      description=category.description[lang])
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
         fcargs = dict(languageid=dict(options=languages))
-        return dict(title='Edit category "%s"' % category.id, args=fargs,
-                                                            child_args=fcargs)
+        return dict(title='%s %s' % (_('Edit Category:'), category.id),
+                                                args=fargs, child_args=fcargs)
         
     @require(has_permission('manage'))
     @expose('json')
@@ -110,9 +111,9 @@ class Controller(RestController):
             modified = True
         
         if modified:
-            flash(_('updated category "%s"') % category.id, 'ok')
+            flash('%s %s' (_('Updated Category:'), category.id), 'ok')
         else:
-            flash(_('category "%s" unchanged') % category.id, 'info')
+            flash('%s %s' % (_('Category is unchanged:'), category.id), 'info')
         return dict(redirect_to=url('/admin/category/'))
 
     @require(has_permission('manage'))
@@ -127,10 +128,11 @@ class Controller(RestController):
                      name_=category.name[lang],
                     )
         fcargs = dict()
-        warning = _('This will delete the category entry in the database')
+        warning = _('This will delete the Category from the database')
         return dict(
-                title=_('Are you sure you want to delete Category "%s"?') %
-                                                                category.id,
+                title='%s %s ?' % (
+                    _('Are you sure you want to delete Category:'),
+                    category.id),
                 warning=warning, args=fargs, child_args=fcargs)
 
     @require(has_permission('manage'))
@@ -144,7 +146,7 @@ class Controller(RestController):
         for categorydata in category.data:
             DBSession.delete(categorydata)
         DBSession.delete(category)
-        flash(_('Deleted Category "%s"') % category.id, 'ok')
+        flash('%s %s' % (_('Deleted Category:'), category.id), 'ok')
         return dict(redirect_to=url('/admin/category/'))
 
     # REST-like methods

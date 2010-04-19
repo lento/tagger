@@ -74,7 +74,7 @@ class Controller(RestController):
         user = tmpl_context.user
         tag = Tag(name, languageid)
         DBSession.add(tag)
-        flash(_('Created Tag "%s"') % tag.id, 'ok')
+        flash('%s %s' % (_('Created Tag:'), tag.id), 'ok')
         return dict(redirect_to=url('/admin/tag/'))
 
     @require(has_permission('manage'))
@@ -89,8 +89,8 @@ class Controller(RestController):
                     )
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
         fcargs = dict(languageid=dict(options=languages))
-        return dict(title='Edit tag "%s"' % tag.id, args=fargs,
-                                                            child_args=fcargs)
+        return dict(title='%s %s' % (_('Edit tag:'), tag.id),
+                                                args=fargs, child_args=fcargs)
 
     @require(has_permission('manage'))
     @expose('json')
@@ -106,9 +106,9 @@ class Controller(RestController):
             modified = True
 
         if modified:
-            flash(_('updated tag "%s"') % tagid, 'ok')
+            flash('%s %s' % (_('Updated Tag:'), tag.id), 'ok')
         else:
-            flash(_('tag "%s" unchanged') % tagid, 'info')
+            flash('%s %s' % (_('Tag is unchanged:'), tag.id), 'info')
         return dict(redirect_to=url('/admin/tag/'))
 
     @require(has_permission('manage'))
@@ -121,10 +121,11 @@ class Controller(RestController):
                      id_=tag.id,
                     )
         fcargs = dict()
-        warning = _('This will delete the tag entry in the database')
+        warning = _('This will delete the Tag from the database')
         return dict(
-                title=_('Are you sure you want to delete Tag "%s"?') %
-                                                                tag.id,
+                title='%s %s ?' % (
+                    _('Are you sure you want to delete Tag:'),
+                    tag.id),
                 warning=warning, args=fargs, child_args=fcargs)
 
     @require(has_permission('manage'))
@@ -138,7 +139,7 @@ class Controller(RestController):
         for tagdata in tag.data:
             DBSession.delete(tagdata)
         DBSession.delete(tag)
-        flash(_('Deleted Tag "%s"') % tag.id, 'ok')
+        flash('%s %s' % (_('Deleted Tag:'), tag.id), 'ok')
         return dict(redirect_to=url('/admin/tag/'))
 
     # REST-like methods

@@ -94,7 +94,7 @@ class Controller(RestController):
         tags = tags_from_string(tagids, lang=lang)
         article.tags[:] = tags
 
-        flash(_('Created Article "%s"') % article.id, 'ok')
+        flash('%s %s' % (_('Created Article:'), article.id), 'ok')
         return dict(redirect_to=url('/article/'))
 
     @require(has_permission('manage'))
@@ -151,9 +151,9 @@ class Controller(RestController):
             modified = True
 
         if modified:
-            flash(_('updated article "%s"') % articleid, 'ok')
+            flash('%s %s' % (_('Updated Article:'), articleid), 'ok')
         else:
-            flash(_('article "%s" unchanged') % articleid, 'info')
+            flash('%s %s' % (_('Article is unchanged:'), articleid), 'info')
         return dict(redirect_to=url('/article/%s/edit' % article.id))
 
     @require(has_permission('manage'))
@@ -168,10 +168,12 @@ class Controller(RestController):
                      title_=article.title[''],
                     )
         fcargs = dict()
-        warning = _('This will delete the article and all its pages')
+        warning = _('This will delete the Article and all its Pages from the '
+                    'database')
         return dict(
-                title=_('Are you sure you want to delete Article "%s"?') %
-                                                            article.title[''],
+                title='%s %s ?' % (
+                    _('Are you sure you want to delete Article:'),
+                    article.title['']),
                 warning=warning, args=fargs, child_args=fcargs)
 
     @require(has_permission('manage'))
@@ -187,7 +189,7 @@ class Controller(RestController):
                 DBSession.delete(pagedata)
             DBSession.delete(page)
         DBSession.delete(article)
-        flash(_('Deleted Article "%s"') % article.id, 'ok')
+        flash('%s %s' % (_('Deleted Article:'), article.id), 'ok')
         return dict(redirect_to=url('/article/'))
 
 
