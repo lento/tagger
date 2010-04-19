@@ -52,17 +52,6 @@ class TestMediaController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/media/', extra_environ=environ, status=200)
 
-        tr = response.html.table('tr')[1]
-        eq_(str(tr('td')[0]), '<td>%s</td>' % mediaid)
-        eq_(str(tr('td')[1]), '<td>image</td>')
-        eq_(str(tr('td')[2]), '<td>test image</td>')
-        eq_(str(tr('td')[3]), '<td>/test.png</td>')
-        eq_(str(tr('td')[4]), '<td>test_tag</td>')
-        eq_(str(tr('td')[5]), '<td>%s</td>' % languageid)
-        actions = tr('td')[6]
-        eq_(str(actions('a')[0]['class']), 'icon edit overlay')
-        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
-
     def test_get_one(self):
         """controllers.media.Controller.get_one is working"""
         languageid, mediaid = self._fill_db()
@@ -114,8 +103,8 @@ class TestMediaController(TestController):
                                                  tagids='test_tag',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/media/";' in response.body,
-                            'should be redirected to "/media/" via javascript')
+        assert_true('parent.location = "/admin/media/";' in response.body,
+                            'should be redirected to "/admin/media/" via javascript')
 
         media = DBSession().query(Media).get(u'test-video')
         eq_(media.type, u'youtube')
@@ -165,8 +154,8 @@ class TestMediaController(TestController):
                                                  tagids='another_tag',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/media/";' in response.body,
-                            'should be redirected to "/media/" via javascript')
+        assert_true('parent.location = "/admin/media/";' in response.body,
+                            'should be redirected to "/admin/media/" via javascript')
 
         media = DBSession.query(Media).get(u'changed')
         eq_(media.uri, 'changed')
@@ -198,8 +187,8 @@ class TestMediaController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/media?mediaid=%s' % mediaid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/media/";' in response.body,
-                            'should be redirected to "/media/" via javascript')
+        assert_true('parent.location = "/admin/media/";' in response.body,
+                            'should be redirected to "/admin/media/" via javascript')
 
         media = DBSession.query(Media).get(mediaid.decode())
         assert_true(media is None,

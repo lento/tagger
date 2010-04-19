@@ -46,15 +46,6 @@ class TestCategoryController(TestController):
 
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/category/', extra_environ=environ, status=200)
-        
-        tr = response.html.table.find('tr', categoryid)
-        eq_(str(tr('td')[0]), '<td>%s</td>' % categoryid)
-        eq_(str(tr('td')[1]), '<td>test category</td>')
-        eq_(str(tr('td')[2]), '<td>a test category</td>')
-        eq_(str(tr('td')[3]), '<td>%s</td>' % languageid)
-        actions = tr('td')[4]
-        eq_(str(actions('a')[0]['class']), 'icon edit overlay')
-        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
     def test_get_one(self):
         """controllers.category.Controller.get_one is working properly"""
@@ -97,8 +88,8 @@ class TestCategoryController(TestController):
                                                  description='Test',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/category/";' in response.body,
-                        'should be redirected to "/category/" via javascript')
+        assert_true('parent.location = "/admin/category/";' in response.body,
+                        'should be redirected to "/admin/category/" via javascript')
 
         cat = DBSession().query(Category).get(u'test')
         eq_(cat.language_ids, set([languageid]))
@@ -140,8 +131,8 @@ class TestCategoryController(TestController):
                                                  description='Changed',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/category/";' in response.body,
-                        'should be redirected to "/category/" via javascript')
+        assert_true('parent.location = "/admin/category/";' in response.body,
+                        'should be redirected to "/admin/category/" via javascript')
 
         cat = DBSession.query(Category).get(u'changed')
         eq_(cat.name[languageid], 'changed')
@@ -171,8 +162,8 @@ class TestCategoryController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/category?categoryid=%s' % categoryid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/category/";' in response.body,
-                        'should be redirected to "/category/" via javascript')
+        assert_true('parent.location = "/admin/category/";' in response.body,
+                        'should be redirected to "/admin/category/" via javascript')
 
         cat = DBSession.query(Category).get(categoryid.decode())
         assert_true(cat is None,

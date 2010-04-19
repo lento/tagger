@@ -43,13 +43,6 @@ class TestLanguageController(TestController):
 
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/language', extra_environ=environ, status=200)
-        
-        tr = response.html.table.find('tr', languageid)
-        eq_(str(tr('td')[0]), '<td>%s</td>' % languageid)
-        eq_(str(tr('td')[1]), '<td>test language</td>')
-        actions = tr('td')[2]
-        eq_(str(actions('a')[0]['class']), 'icon edit overlay')
-        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
     def test_get_one(self):
         """controllers.language.Controller.get_one is working properly"""
@@ -86,8 +79,8 @@ class TestLanguageController(TestController):
                                                  name='test language',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/language/";' in response.body,
-                        'should be redirected to "/language/" via javascript')
+        assert_true('parent.location = "/admin/language/";' in response.body,
+                        'should be redirected to "/admin/language/" via javascript')
 
         cat = DBSession().query(Language).get(u'xx')
         eq_(cat.name, 'test language')
@@ -119,8 +112,8 @@ class TestLanguageController(TestController):
         response = self.app.put('/language/%s' % languageid,
                                             dict(name='changed'),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/language/";' in response.body,
-                        'should be redirected to "/language/" via javascript')
+        assert_true('parent.location = "/admin/language/";' in response.body,
+                        'should be redirected to "/admin/language/" via javascript')
 
         cat = DBSession.query(Language).get(languageid.decode())
         eq_(cat.name, 'changed')
@@ -149,8 +142,8 @@ class TestLanguageController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/language?languageid=%s' % languageid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/language/";' in response.body,
-                        'should be redirected to "/language/" via javascript')
+        assert_true('parent.location = "/admin/language/";' in response.body,
+                        'should be redirected to "/admin/language/" via javascript')
 
         result = DBSession.query(Language).get(languageid.decode())
         assert_true(result is None,

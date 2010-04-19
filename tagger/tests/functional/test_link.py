@@ -52,16 +52,6 @@ class TestLinkController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/link/', extra_environ=environ, status=200)
 
-        tr = response.html.table('tr')[1]
-        eq_(str(tr('td')[0]), '<td>%s</td>' % linkid)
-        eq_(str(tr('td')[1]), '<td>test link</td>')
-        eq_(str(tr('td')[2]), '<td>http://example.com</td>')
-        eq_(str(tr('td')[3]), '<td>test_tag</td>')
-        eq_(str(tr('td')[4]), '<td>%s</td>' % languageid)
-        actions = tr('td')[5]
-        eq_(str(actions('a')[0]['class']), 'icon edit overlay')
-        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
-
     def test_get_one(self):
         """controllers.link.Controller.get_one is working"""
         languageid, linkid = self._fill_db()
@@ -109,8 +99,8 @@ class TestLinkController(TestController):
                                                 tagids='test_tag',
                                                ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/link/";' in response.body,
-                            'should be redirected to "/link/" via javascript')
+        assert_true('parent.location = "/admin/link/";' in response.body,
+                            'should be redirected to "/admin/link/" via javascript')
 
         link = DBSession().query(Link).get(u'another-link')
         eq_(link.name[''], u'another link')
@@ -161,8 +151,8 @@ class TestLinkController(TestController):
                                                  tagids='another_tag',
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/link/";' in response.body,
-                            'should be redirected to "/link/" via javascript')
+        assert_true('parent.location = "/admin/link/";' in response.body,
+                            'should be redirected to "/admin/link/" via javascript')
 
         link = DBSession.query(Link).get(u'changed')
         eq_(link.uri, 'changed')
@@ -194,8 +184,8 @@ class TestLinkController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/link?linkid=%s' % linkid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/link/";' in response.body,
-                            'should be redirected to "/link/" via javascript')
+        assert_true('parent.location = "/admin/link/";' in response.body,
+                            'should be redirected to "/admin/link/" via javascript')
 
         link = DBSession.query(Link).get(linkid.decode())
         assert_true(link is None,

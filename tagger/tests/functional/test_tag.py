@@ -47,14 +47,6 @@ class TestTagController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.get('/tag/', extra_environ=environ, status=200)
 
-        tr = response.html.table('tr')[1]
-        eq_(str(tr('td')[0]), '<td>%s</td>' % tagid)
-        eq_(str(tr('td')[1]), '<td>test tag</td>')
-        eq_(str(tr('td')[2]), '<td>%s</td>' % languageid)
-        actions = tr('td')[3]
-        eq_(str(actions('a')[0]['class']), 'icon edit overlay')
-        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
-
     def test_get_one(self):
         """controllers.tag.Controller.get_one is working"""
         languageid, tagid = self._fill_db()
@@ -91,8 +83,8 @@ class TestTagController(TestController):
                                                languageid=languageid,
                                               ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/tag/";' in response.body,
-                            'should be redirected to "/tag/" via javascript')
+        assert_true('parent.location = "/admin/tag/";' in response.body,
+                        'should be redirected to "/admin/tag/" via javascript')
 
         tag = DBSession().query(Tag).get(u'another-tag')
         eq_(tag.name[''], u'another tag')
@@ -131,8 +123,8 @@ class TestTagController(TestController):
                                                  languageid=languageid,
                                                 ),
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/tag/";' in response.body,
-                            'should be redirected to "/tag/" via javascript')
+        assert_true('parent.location = "/admin/tag/";' in response.body,
+                        'should be redirected to "/admin/tag/" via javascript')
 
         tag = DBSession.query(Tag).get(u'changed')
         eq_(tag.name[languageid], 'changed')
@@ -161,8 +153,8 @@ class TestTagController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/tag?tagid=%s' % tagid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/tag/";' in response.body,
-                            'should be redirected to "/tag/" via javascript')
+        assert_true('parent.location = "/admin/tag/";' in response.body,
+                        'should be redirected to "/admin/tag/" via javascript')
 
         tag = DBSession.query(Tag).get(tagid.decode())
         assert_true(tag is None,
