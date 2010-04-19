@@ -113,6 +113,45 @@ class TestTag(ModelTest):
                         (expected, self.obj.name[u'xx']))
 
 
+class TestComment(ModelTest):
+    """Unit test case for the ``Comment`` model."""
+    klass = content.Comment
+    attrs = dict(
+        by=u'anonymous',
+        email=u'anonymous@example.com',
+        text=u"test comment",
+        )
+
+    def test_obj_creation(self):
+        """model.content.Comment objects can be created"""
+        self._obj_creation()
+
+    def test_obj_query(self):
+        """model.content.Comment objects can be queried"""
+        self._obj_query()
+
+    def test_obj_creation_by(self):
+        """model.content.Comment constructor must set the by right"""
+        eq_(self.obj.by, u"anonymous")
+
+    def test_obj_creation_email(self):
+        """model.content.Comment constructor must set the email right"""
+        eq_(self.obj.email, u"anonymous@example.com")
+
+    def test_obj_creation_text(self):
+        """model.content.Comment constructor must set the text right"""
+        eq_(self.obj.text, u"test comment")
+
+    def test_obj_property_header_get(self):
+        """model.content.Comment property "header" can get value"""
+        assert_true(self.obj.header.startswith('anonymous at'),
+                            'comment.header should start with "anonymous at"')
+
+    def test_obj_property_summary_get(self):
+        """model.content.Comment property "summary" can get value"""
+        eq_(self.obj.summary, 'test comment')
+
+
 class TestCategory(ModelTest):
     """Unit test case for the ``Category`` model."""
     klass = content.Category

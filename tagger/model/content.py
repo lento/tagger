@@ -22,7 +22,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import Table, ForeignKey, Column, DDL, UniqueConstraint
+from sqlalchemy import Table, ForeignKey, Column, DDL, UniqueConstraint, desc
 from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
 from sqlalchemy.types import TIMESTAMP, Boolean
 from sqlalchemy.orm import relation, backref, synonym
@@ -82,6 +82,9 @@ associables_tags_table = Table('__associables_tags', metadata,
                                     onupdate='CASCADE', ondelete='CASCADE')),
 )
 
+############################################################
+# Tag
+############################################################
 class Tag(DeclarativeBase):
     __tablename__ = 'tags'
     
@@ -151,6 +154,58 @@ class TagData(DeclarativeBase):
     def __repr__(self):
         return '<TagData: %s (%s) %s>' % (self.parent_id,
                                                     self.language_id, self.name)
+
+
+############################################################
+# Comments
+############################################################
+class Comment(DeclarativeBase):
+    __tablename__ = 'comments'
+    
+    # Columns
+    id = Column(Integer, primary_key=True)
+    associable_id = Column(Integer, ForeignKey('associables.id'))
+    by = Column(Unicode(255))
+    email = Column(Unicode(255))
+    text = Column(UnicodeText)
+    created = Column(DateTime, default=datetime.now)
+    approved = Column(Boolean, default=False)
+    spam = Column(Boolean, default=False)
+
+    # Relations
+    associable = relation(Associable, backref=backref('comments',
+                                                    order_by=(desc('created'))))
+    
+    # Properties
+    @property
+    def commented(self):
+        return self.associable.associated
+    
+    @property
+    def header(self):
+        return '%s at %s' %(self.by, self.created)
+    
+    @property
+    def summary(self):
+        characters = 75
+        summary = self.text[0:characters]
+        if len(self.text) > characters:
+            summary = '%s[...]' % summary
+        return summary
+    
+    @property
+    def lines(self):
+        return [dict(line=l) for l in self.text.split('\n')]
+    
+    # Special methods
+    def __init__(self, by, email, text):
+        self.by = by
+        self.email = email
+        self.text = text
+
+    def __repr__(self):
+        return '<Comment: by %s at %s "%s">' % (self.by, self.created,
+                                                                self.summary)
 
 
 ############################################################
@@ -265,6 +320,10 @@ class Article(DeclarativeBase):
     @property
     def tags(self):
         return self.associable.tags
+
+    @property
+    def comments(self):
+        return self.associable.comments
 
     @property
     def language_id(self):
@@ -421,6 +480,10 @@ class Link(DeclarativeBase):
         return self.associable.tags
 
     @property
+    def comments(self):
+        return self.associable.comments
+
+    @property
     def modified(self):
         return max([d.modified for d in self.data])
 
@@ -508,6 +571,10 @@ class Media(DeclarativeBase):
     @property
     def tags(self):
         return self.associable.tags
+
+    @property
+    def comments(self):
+        return self.associable.comments
 
     @property
     def modified(self):
