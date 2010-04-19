@@ -20,7 +20,7 @@
 #
 """Article controller"""
 
-from tg import expose, url, tmpl_context, validate, require, flash
+from tg import expose, url, tmpl_context, validate, require, flash, redirect
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Language, Category, Article
@@ -94,7 +94,7 @@ class Controller(RestController):
         article.tags[:] = tags
 
         flash('%s %s' % (_('Created Article:'), article.id), 'ok')
-        return dict(redirect_to=url('/article/'))
+        return dict(redirect_to=url('/admin/article/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.article.edit')
@@ -189,11 +189,11 @@ class Controller(RestController):
             DBSession.delete(page)
         DBSession.delete(article)
         flash('%s %s' % (_('Deleted Article:'), article.id), 'ok')
-        return dict(redirect_to=url('/article/'))
+        return dict(redirect_to=url('/admin/article/'))
 
 
     # REST-like methods
-    _custom_actions = ['translation']
+    _custom_actions = ['translation', 'publish', 'unpublish']
     
     @expose('json')
     def translation(self, articleid, value):
@@ -204,5 +204,34 @@ class Controller(RestController):
         text = article.text[value]
         
         return dict(title=title, text=text)
+
+    @require(has_permission('manage'))
+    @expose()
+    def publish(self, articleid):
+        """Make article visible to users"""
+        article = DBSession.query(Article).get(articleid.decode())
+
+        if article.published:
+            flash('%s %s' % (_('Article is already published:'), articleid),
+                                                                        'info')
+        else:
+            article.published = True
+            flash('%s %s' % (_('Published Article:'), articleid), 'ok')
+
+        redirect(url('/admin/article/'))
+
+    @require(has_permission('manage'))
+    @expose()
+    def unpublish(self, articleid):
+        """Revert article publication and making it invisible to user"""
+        article = DBSession.query(Article).get(articleid.decode())
+
+        if article.published:
+            article.published = False
+            flash('%s %s' % (_('Unpublished Article:'), articleid), 'ok')
+        else:
+            flash('%s %s' % (_('Article is not published:'), articleid), 'info')
+
+        redirect(url('/admin/article/'))
 
 

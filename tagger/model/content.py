@@ -24,7 +24,7 @@ from datetime import datetime
 
 from sqlalchemy import Table, ForeignKey, Column, DDL, UniqueConstraint
 from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
-from sqlalchemy.types import TIMESTAMP
+from sqlalchemy.types import TIMESTAMP, Boolean
 from sqlalchemy.orm import relation, backref, synonym
 
 from tagger.model import DeclarativeBase, metadata
@@ -253,6 +253,7 @@ class Article(DeclarativeBase):
     category_id = Column(Unicode(50), ForeignKey('categories.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
     created = Column(DateTime, default=datetime.now)
+    published = Column(Boolean, default=False)
 
     # Relations
     associable = relation('Associable', backref=backref('associated_article',

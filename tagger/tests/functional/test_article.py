@@ -53,17 +53,8 @@ class TestCategoryController(TestController):
         languageid, categoryid, articleid = self._fill_db()
 
         environ = {'REMOTE_USER': 'test_admin'}
-        response = self.app.get('/article/', extra_environ=environ, status=200)
-
-        tr = response.html.table.find('tr', articleid)
-        eq_(str(tr('td')[0]), '<td>%s</td>' % articleid)
-        eq_(str(tr('td')[1]), '<td>A Test Article!</td>')
-        eq_(str(tr('td')[2]), '<td>test_category</td>')
-        eq_(str(tr('td')[3]), '<td>test_tag</td>')
-        eq_(str(tr('td')[4]), '<td>%s</td>' % languageid)
-        actions = tr('td')[5]
-        eq_(str(actions('a')[0]['class']), 'icon edit')
-        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
+        response = self.app.get('/admin/article/', extra_environ=environ,
+                                                                    status=200)
 
     def test_get_one(self):
         """controllers.article.Controller.get_one is working"""
@@ -110,8 +101,8 @@ class TestCategoryController(TestController):
                                                   ),
                                             extra_environ=environ, status=200)
         print(response.body)
-        assert_true('parent.location = "/article/";' in response.body,
-                        'should be redirected to "/article/" via javascript')
+        assert_true('parent.location = "/admin/article/";' in response.body,
+                    'should be redirected to "/admin/article/" via javascript')
 
         article = DBSession().query(Article).get(u'test')
         eq_(article.category.id, 'test_category')
@@ -197,8 +188,8 @@ class TestCategoryController(TestController):
         environ = {'REMOTE_USER': 'test_admin'}
         response = self.app.delete('/article?articleid=%s' % articleid,
                                             extra_environ=environ, status=200)
-        assert_true('parent.location = "/article/";' in response.body,
-                        'should be redirected to "/article/" via javascript')
+        assert_true('parent.location = "/admin/article/";' in response.body,
+                    'should be redirected to "/admin/article/" via javascript')
 
         article = DBSession().query(Article).get(articleid.decode())
         assert_true(article is None,
@@ -222,4 +213,32 @@ class TestCategoryController(TestController):
 
         expected = '{"text": "random text", "title": "A Test Article!"}'
         eq_(response.body, expected)
+
+    def test_publish(self):
+        """controllers.article.Controller.publish is working properly"""
+        languageid, categoryid, articleid = self._fill_db()
+
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.post('/article', dict(articleid=articleid,
+                                                  _method='PUBLISH',
+                                                 ),
+                                            extra_environ=environ, status=302)
+        redirected = response.follow(extra_environ=environ, status=200)
+
+        article = DBSession().query(Article).get(articleid.decode())
+        eq_(article.published, True)
+
+    def test_unpublish(self):
+        """controllers.article.Controller.unpublish is working properly"""
+        languageid, categoryid, articleid = self._fill_db()
+
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.post('/article', dict(articleid=articleid,
+                                                  _method='UNPUBLISH',
+                                                 ),
+                                            extra_environ=environ, status=302)
+        redirected = response.follow(extra_environ=environ, status=200)
+
+        article = DBSession().query(Article).get(articleid.decode())
+        eq_(article.published, False)
 

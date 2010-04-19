@@ -23,7 +23,7 @@
 from tg import expose, flash, require, url, request, redirect
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
-
+from sqlalchemy import desc
 from tagger.lib.base import BaseController
 from tagger.model import DBSession, metadata, Language, Tag, Category
 from tagger.model import Article, Media, Link
@@ -65,7 +65,7 @@ class Controller(BaseController):
     @expose('tagger.templates.admin.article')
     def article(self):
         """Return the list of all articles for administration"""
-        articles = DBSession.query(Article).all()
+        articles = DBSession.query(Article).order_by(desc('created')).all()
         return dict(articles=articles, page=('admin', 'articles'))
 
     @expose('json')

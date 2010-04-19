@@ -111,7 +111,7 @@ class Controller(RestController):
             modified = True
         
         if modified:
-            flash('%s %s' (_('Updated Category:'), category.id), 'ok')
+            flash('%s %s' % (_('Updated Category:'), category.id), 'ok')
         else:
             flash('%s %s' % (_('Category is unchanged:'), category.id), 'info')
         return dict(redirect_to=url('/admin/category/'))

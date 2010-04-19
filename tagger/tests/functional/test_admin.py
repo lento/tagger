@@ -103,6 +103,35 @@ class TestAdminController(TestController):
         eq_(str(actions('a')[0]['class']), 'icon edit overlay')
         eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
+    def test_article(self):
+        """controllers.article.Controller.get_all is working properly"""
+        languageid, tadm = self._fill_db()
+        cat = Category(u'test_category', u'xx')
+        DBSession.add(cat)
+        article = Article(u'A Test Article!', cat, u'xx', tadm, u'random text')
+        DBSession.add(article)
+        DBSession.flush()
+        categoryid = cat.id
+        articleid = article.id
+        transaction.commit()
+
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.get('/admin/article/', extra_environ=environ,
+                                                                    status=200)
+
+        tr = response.html.table.find('tr', articleid)
+        # Date
+        eq_(str(tr('td')[1]), '<td>%s</td>' % articleid)
+        eq_(str(tr('td')[2]), '<td>A Test Article!</td>')
+        eq_(str(tr('td')[3]), '<td>test_category</td>')
+        eq_(str(tr('td')[4]), '<td></td>')
+        eq_(str(tr('td')[5]), '<td>%s</td>' % languageid)
+        # Status
+        actions = tr('td')[7]
+        eq_(str(actions('a')[0]['class']), 'icon edit')
+        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
+        eq_(str(actions('a')[2]['class']), 'icon publish')
+
     def test_media(self):
         """controllers.admin.Controller.media is working properly"""
         languageid, tadm = self._fill_db()

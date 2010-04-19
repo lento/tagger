@@ -141,6 +141,8 @@ table td.icon {
 .icon.new {background: url(../images/icons/16x16/new.png) left center no-repeat;}
 .icon.edit {background: url(../images/icons/16x16/edit.png) left center no-repeat;}
 .icon.delete {background: url(../images/icons/16x16/delete.png) left center no-repeat;}
+.icon.publish {background: url(../images/icons/16x16/redo.png) left center no-repeat;}
+.icon.unpublish {background: url(../images/icons/16x16/undo.png) left center no-repeat;}
 
 
 /**********************************************************************
@@ -469,4 +471,19 @@ table td.icon {
     background-color: #babdb6; /* Aluminium 3 */
     color: white;
 }
+
+.status {
+    text-align: center;
+}
+
+.status.published {
+    background-color: #73d216; /* Chameleon 2 */
+    color: white;
+}
+
+.status.draft {
+    background-color: #edd400; /* Butter 2 */
+    color: white;
+}
+
 
