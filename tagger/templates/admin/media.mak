@@ -1,8 +1,10 @@
-<%inherit file="local:templates.admin"/>
+<%inherit file="local:templates.admin.index"/>
 
 <%def name="title()">
   tagger - ${_('Media')}
 </%def>
+
+${dummy or ''}
 
 <div class="content_title">
     <h1>${_('Media')}</h1>

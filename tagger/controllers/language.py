@@ -40,13 +40,12 @@ f_delete = FormLanguageDelete(action=url('/language/'))
 class Controller(RestController):
     """REST controller for managing languages"""
 
-    @require(has_permission('manage'))
     @expose('json')
     @expose('tagger.templates.language.get_all')
     def get_all(self):
         """Return a list of languages"""
         languages = DBSession.query(Language).all()
-        return dict(languages=languages, page=('admin', 'languages'))
+        return dict(languages=languages)
 
     @expose('json')
     @expose('tagger.templates.language.get_one')
@@ -74,7 +73,7 @@ class Controller(RestController):
         """create a new Language"""
         DBSession.add(Language(languageid, name))
         flash(_('Created Language "%s"') % name, 'ok')
-        return dict(redirect_to=url('/language/'))
+        return dict(redirect_to=url('/admin/language/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -105,7 +104,7 @@ class Controller(RestController):
             flash(_('updated language "%s"') % languageid, 'ok')
         else:
             flash(_('language "%s" unchanged') % languageid, 'info')
-        return dict(redirect_to=url('/language/'))
+        return dict(redirect_to=url('/admin/language/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -134,5 +133,5 @@ class Controller(RestController):
 
         DBSession.delete(language)
         flash(_('Deleted Language "%s"') % language.id, 'ok')
-        return dict(redirect_to=url('/language/'))
+        return dict(redirect_to=url('/admin/language/'))
 

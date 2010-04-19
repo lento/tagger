@@ -44,13 +44,12 @@ f_delete = FormMediaDelete(action=url('/media/'))
 class Controller(RestController):
     """REST controller for managing media"""
 
-    @require(has_permission('manage'))
     @expose('json')
     @expose('tagger.templates.media.get_all')
     def get_all(self):
         """Return a list of media"""
         media = DBSession.query(Media).all()
-        return dict(media=media, page=('admin', 'media'))
+        return dict(media=media, page=('media', ''))
 
     @expose('json')
     @expose('tagger.templates.media.get_one')
@@ -123,7 +122,7 @@ class Controller(RestController):
         media.tags[:] = tags
 
         flash(_('Created Media "%s"') % media.id, 'ok')
-        return dict(redirect_to=url('/media/'))
+        return dict(redirect_to=url('/admin/media/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -181,7 +180,7 @@ class Controller(RestController):
         else:
             flash(_('media "%s" unchanged') % mediaid, 'info')
 
-        return dict(redirect_to=url('/media/'))
+        return dict(redirect_to=url('/admin/media/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -241,7 +240,7 @@ class Controller(RestController):
             DBSession.delete(mediadata)
         DBSession.delete(media)
         flash(_('Deleted Media "%s"') % media.id, 'ok')
-        return dict(redirect_to=url('/media/'))
+        return dict(redirect_to=url('/admin/media/'))
 
     # REST-like methods
     _custom_actions = ['translation']

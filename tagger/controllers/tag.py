@@ -39,13 +39,12 @@ f_delete = FormTagDelete(action=url('/tag/'))
 class Controller(RestController):
     """REST controller for managing tags"""
 
-    @require(has_permission('manage'))
     @expose('json')
     @expose('tagger.templates.tag.get_all')
     def get_all(self):
         """Return a list of tags"""
         tags = DBSession.query(Tag).all()
-        return dict(tags=tags, page=('admin', 'tags'))
+        return dict(tags=tags)
 
     @expose('json')
     @expose('tagger.templates.tag.get_one')
@@ -76,7 +75,7 @@ class Controller(RestController):
         tag = Tag(name, languageid)
         DBSession.add(tag)
         flash(_('Created Tag "%s"') % tag.id, 'ok')
-        return dict(redirect_to=url('/tag/'))
+        return dict(redirect_to=url('/admin/tag/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -110,7 +109,7 @@ class Controller(RestController):
             flash(_('updated tag "%s"') % tagid, 'ok')
         else:
             flash(_('tag "%s" unchanged') % tagid, 'info')
-        return dict(redirect_to=url('/tag/'))
+        return dict(redirect_to=url('/admin/tag/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -140,7 +139,7 @@ class Controller(RestController):
             DBSession.delete(tagdata)
         DBSession.delete(tag)
         flash(_('Deleted Tag "%s"') % tag.id, 'ok')
-        return dict(redirect_to=url('/tag/'))
+        return dict(redirect_to=url('/admin/tag/'))
 
     # REST-like methods
     _custom_actions = ['translation']

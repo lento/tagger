@@ -1,4 +1,4 @@
-<%inherit file="local:templates.admin"/>
+<%inherit file="local:templates.admin.index"/>
 
 <%def name="title()">
   tagger - ${_('Languages')}

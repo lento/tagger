@@ -40,13 +40,12 @@ f_delete = FormLinkDelete(action=url('/link/'))
 class Controller(RestController):
     """REST controller for managing links"""
 
-    @require(has_permission('manage'))
     @expose('json')
     @expose('tagger.templates.link.get_all')
     def get_all(self):
         """Return a list of links"""
         links = DBSession.query(Link).all()
-        return dict(links=links, page=('admin', 'links'))
+        return dict(links=links, page=('links', ''))
 
     @expose('json')
     @expose('tagger.templates.link.get_one')
@@ -82,7 +81,7 @@ class Controller(RestController):
         link.tags[:] = tags
 
         flash(_('Created Link "%s"') % link.id, 'ok')
-        return dict(redirect_to=url('/link/'))
+        return dict(redirect_to=url('/admin/link/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -137,7 +136,7 @@ class Controller(RestController):
             flash(_('updated link "%s"') % linkid, 'ok')
         else:
             flash(_('link "%s" unchanged') % linkid, 'info')
-        return dict(redirect_to=url('/link/'))
+        return dict(redirect_to=url('/admin/link/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -168,7 +167,7 @@ class Controller(RestController):
             DBSession.delete(linkdata)
         DBSession.delete(link)
         flash(_('Deleted Link "%s"') % link.id, 'ok')
-        return dict(redirect_to=url('/link/'))
+        return dict(redirect_to=url('/admin/link/'))
 
     # REST-like methods
     _custom_actions = ['translation']

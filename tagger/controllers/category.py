@@ -40,13 +40,12 @@ f_delete = FormCategoryDelete(action=url('/category/'))
 class Controller(RestController):
     """REST controller for managing categories"""
     
-    @require(has_permission('manage'))
     @expose('json')
     @expose('tagger.templates.category.get_all')
     def get_all(self):
         """Return list of categories"""
         categories = DBSession.query(Category).all()
-        return dict(categories=categories, page=('admin', 'categories'))
+        return dict(categories=categories)
 
     @expose('json')
     @expose('tagger.templates.category.get_one')
@@ -75,7 +74,7 @@ class Controller(RestController):
         """create a new Category"""
         DBSession.add(Category(name, languageid, description))
         flash(_('Created Category "%s"') % name, 'ok')
-        return dict(redirect_to=url('/category/'))
+        return dict(redirect_to=url('/admin/category/'))
     
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -114,7 +113,7 @@ class Controller(RestController):
             flash(_('updated category "%s"') % category.id, 'ok')
         else:
             flash(_('category "%s" unchanged') % category.id, 'info')
-        return dict(redirect_to=url('/category/'))
+        return dict(redirect_to=url('/admin/category/'))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
@@ -146,7 +145,7 @@ class Controller(RestController):
             DBSession.delete(categorydata)
         DBSession.delete(category)
         flash(_('Deleted Category "%s"') % category.id, 'ok')
-        return dict(redirect_to=url('/category/'))
+        return dict(redirect_to=url('/admin/category/'))
 
     # REST-like methods
     _custom_actions = ['translation']
