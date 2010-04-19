@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: tagger 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-04-09 11:30+0200\n"
-"PO-Revision-Date: 2010-04-19 15:10+0200\n"
+"PO-Revision-Date: 2010-04-19 15:22+0100\n"
 "Last-Translator: Lorenzo Pierfederici <lpierfederici@gmail.com>\n"
 "Language-Team: it <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -153,7 +153,8 @@ msgstr "Nessuna immagine caricata"
 msgid "No video or no fallback uploaded"
 msgstr "Nessun video o video di scorta caricati"
 
-#: tagger/controllers/media.py:113 tagger/controllers/media.py:116
+#: tagger/controllers/media.py:113
+#: tagger/controllers/media.py:116
 msgid "No video id"
 msgstr "Nessun id del video"
 
@@ -174,12 +175,8 @@ msgid "Media is unchanged:"
 msgstr "Il Media non è cambiato:"
 
 #: tagger/controllers/media.py:197
-msgid ""
-"This will delete the Media from the database and all related files from "
-"the upload area"
-msgstr ""
-"Questo cancellerà il Media dal database e tutti i file correlati "
-"dall'area di caricamento"
+msgid "This will delete the Media from the database and all related files from the upload area"
+msgstr "Questo cancellerà il Media dal database e tutti i file correlati dall'area di caricamento"
 
 #: tagger/controllers/media.py:201
 msgid "Are you sure you want to delete Media:"
@@ -249,56 +246,97 @@ msgstr "Nome Utente"
 msgid "Password"
 msgstr "Password"
 
-#: tagger/lib/widgets.py:60 tagger/lib/widgets.py:71 tagger/lib/widgets.py:120
-#: tagger/lib/widgets.py:133 tagger/lib/widgets.py:157
-#: tagger/lib/widgets.py:172 tagger/lib/widgets.py:198
-#: tagger/lib/widgets.py:215 tagger/lib/widgets.py:254
+#: tagger/lib/widgets.py:60
+#: tagger/lib/widgets.py:71
+#: tagger/lib/widgets.py:120
+#: tagger/lib/widgets.py:133
+#: tagger/lib/widgets.py:157
+#: tagger/lib/widgets.py:172
+#: tagger/lib/widgets.py:198
+#: tagger/lib/widgets.py:215
+#: tagger/lib/widgets.py:254
 #: tagger/lib/widgets.py:273
+#: tagger/templates/language/get_one.mak:4
 msgid "Language"
 msgstr "Lingua"
 
-#: tagger/lib/widgets.py:61 tagger/lib/widgets.py:74 tagger/lib/widgets.py:92
-#: tagger/lib/widgets.py:102 tagger/lib/widgets.py:112
-#: tagger/lib/widgets.py:121 tagger/lib/widgets.py:136
-#: tagger/lib/widgets.py:148 tagger/lib/widgets.py:199
-#: tagger/lib/widgets.py:218 tagger/lib/widgets.py:255
+#: tagger/lib/widgets.py:61
+#: tagger/lib/widgets.py:74
+#: tagger/lib/widgets.py:92
+#: tagger/lib/widgets.py:102
+#: tagger/lib/widgets.py:112
+#: tagger/lib/widgets.py:121
+#: tagger/lib/widgets.py:136
+#: tagger/lib/widgets.py:148
+#: tagger/lib/widgets.py:199
+#: tagger/lib/widgets.py:218
+#: tagger/lib/widgets.py:255
 #: tagger/lib/widgets.py:276
+#: tagger/templates/admin/category.mak:15
+#: tagger/templates/admin/language.mak:15
+#: tagger/templates/admin/link.mak:15
+#: tagger/templates/admin/media.mak:18
+#: tagger/templates/admin/tag.mak:15
 msgid "Name"
 msgstr "Nome"
 
-#: tagger/lib/widgets.py:123 tagger/lib/widgets.py:138
-#: tagger/lib/widgets.py:201 tagger/lib/widgets.py:220
-#: tagger/lib/widgets.py:257 tagger/lib/widgets.py:278
+#: tagger/lib/widgets.py:123
+#: tagger/lib/widgets.py:138
+#: tagger/lib/widgets.py:201
+#: tagger/lib/widgets.py:220
+#: tagger/lib/widgets.py:257
+#: tagger/lib/widgets.py:278
+#: tagger/templates/admin/category.mak:16
 msgid "Description"
 msgstr "Descrizione"
 
-#: tagger/lib/widgets.py:156 tagger/lib/widgets.py:171
+#: tagger/lib/widgets.py:156
+#: tagger/lib/widgets.py:171
+#: tagger/templates/article/get_all.mak:16
+#: tagger/templates/category/get_one.mak:4
 msgid "Category"
 msgstr "Categoria"
 
-#: tagger/lib/widgets.py:158 tagger/lib/widgets.py:175
+#: tagger/lib/widgets.py:158
+#: tagger/lib/widgets.py:175
 #: tagger/lib/widgets.py:188
+#: tagger/templates/article/get_all.mak:15
 msgid "Title"
 msgstr "Titolo"
 
-#: tagger/lib/widgets.py:160 tagger/lib/widgets.py:177
+#: tagger/lib/widgets.py:160
+#: tagger/lib/widgets.py:177
 msgid "Text"
 msgstr "Testo"
 
-#: tagger/lib/widgets.py:161 tagger/lib/widgets.py:178
-#: tagger/lib/widgets.py:203 tagger/lib/widgets.py:222
-#: tagger/lib/widgets.py:259 tagger/lib/widgets.py:280
+#: tagger/lib/widgets.py:161
+#: tagger/lib/widgets.py:178
+#: tagger/lib/widgets.py:203
+#: tagger/lib/widgets.py:222
+#: tagger/lib/widgets.py:259
+#: tagger/lib/widgets.py:280
+#: tagger/templates/admin/link.mak:17
+#: tagger/templates/admin/media.mak:20
+#: tagger/templates/admin/tag.mak:4
+#: tagger/templates/admin/tag.mak:8
+#: tagger/templates/article/get_all.mak:17
+#: tagger/templates/tag/get_all.mak:4
 msgid "Tags"
 msgstr "Tag"
 
-#: tagger/lib/widgets.py:162 tagger/lib/widgets.py:179
-#: tagger/lib/widgets.py:204 tagger/lib/widgets.py:223
-#: tagger/lib/widgets.py:260 tagger/lib/widgets.py:281
+#: tagger/lib/widgets.py:162
+#: tagger/lib/widgets.py:179
+#: tagger/lib/widgets.py:204
+#: tagger/lib/widgets.py:223
+#: tagger/lib/widgets.py:260
+#: tagger/lib/widgets.py:281
 msgid "Comma separated list of tags"
 msgstr "Lista di tag separate da virgole"
 
-#: tagger/lib/widgets.py:240 tagger/lib/widgets.py:269
+#: tagger/lib/widgets.py:240
+#: tagger/lib/widgets.py:269
 #: tagger/lib/widgets.py:290
+#: tagger/templates/admin/media.mak:17
 msgid "Type"
 msgstr "Tipo"
 
@@ -309,4 +347,146 @@ msgstr "File da caricare"
 #: tagger/lib/widgets.py:252
 msgid "Fallback file"
 msgstr "File di riserva"
+
+#: tagger/templates/master.mak:85
+msgid "preferred language"
+msgstr "lingua preferita"
+
+#: tagger/templates/master.mak:85
+msgid "choose a language"
+msgstr "scegli una lingua"
+
+#: tagger/templates/master.mak:91
+msgid "(none)"
+msgstr "(nessuna)"
+
+#: tagger/templates/admin/category.mak:4
+#: tagger/templates/admin/category.mak:8
+msgid "Article Categories"
+msgstr "Categorie Articoli"
+
+#: tagger/templates/admin/category.mak:9
+#: tagger/templates/admin/language.mak:9
+#: tagger/templates/admin/link.mak:9
+#: tagger/templates/admin/media.mak:11
+#: tagger/templates/admin/tag.mak:9
+#: tagger/templates/article/get_all.mak:9
+msgid "add new"
+msgstr "aggiungi"
+
+#: tagger/templates/admin/category.mak:14
+#: tagger/templates/admin/language.mak:14
+#: tagger/templates/admin/link.mak:14
+#: tagger/templates/admin/media.mak:16
+#: tagger/templates/admin/tag.mak:14
+#: tagger/templates/article/get_all.mak:14
+msgid "ID"
+msgstr "ID"
+
+#: tagger/templates/admin/category.mak:17
+#: tagger/templates/admin/language.mak:4
+#: tagger/templates/admin/language.mak:8
+#: tagger/templates/admin/link.mak:18
+#: tagger/templates/admin/media.mak:21
+#: tagger/templates/admin/tag.mak:16
+#: tagger/templates/article/get_all.mak:18
+#: tagger/templates/language/get_all.mak:4
+msgid "Languages"
+msgstr "Lingue"
+
+#: tagger/templates/admin/category.mak:18
+#: tagger/templates/admin/language.mak:16
+#: tagger/templates/admin/link.mak:19
+#: tagger/templates/admin/media.mak:22
+#: tagger/templates/admin/tag.mak:17
+#: tagger/templates/article/get_all.mak:19
+msgid "Actions"
+msgstr "Azioni"
+
+#: tagger/templates/admin/category.mak:27
+#: tagger/templates/admin/language.mak:23
+#: tagger/templates/admin/link.mak:29
+#: tagger/templates/admin/media.mak:33
+#: tagger/templates/admin/tag.mak:25
+#: tagger/templates/article/get_all.mak:29
+msgid "edit"
+msgstr "modifica"
+
+#: tagger/templates/admin/category.mak:28
+#: tagger/templates/admin/language.mak:24
+#: tagger/templates/admin/link.mak:30
+#: tagger/templates/admin/media.mak:34
+#: tagger/templates/admin/tag.mak:26
+#: tagger/templates/article/get_all.mak:30
+msgid "delete"
+msgstr "cancella"
+
+#: tagger/templates/admin/index.mak:7
+msgid "languages"
+msgstr "lingue"
+
+#: tagger/templates/admin/index.mak:8
+#| msgid "Tags"
+msgid "tags"
+msgstr "tag"
+
+#: tagger/templates/admin/index.mak:9
+#| msgid "Categories"
+msgid "categories"
+msgstr "categorie"
+
+#: tagger/templates/admin/index.mak:10
+#| msgid "Articles"
+msgid "articles"
+msgstr "articoli"
+
+#: tagger/templates/admin/index.mak:11
+#| msgid "Media"
+msgid "media"
+msgstr "media"
+
+#: tagger/templates/admin/index.mak:12
+#| msgid "Links"
+msgid "links"
+msgstr "collegamenti"
+
+#: tagger/templates/admin/link.mak:4
+#: tagger/templates/admin/link.mak:8
+#: tagger/templates/link/get_all.mak:4
+msgid "Links"
+msgstr "Collegamenti"
+
+#: tagger/templates/admin/link.mak:16
+#: tagger/templates/admin/media.mak:19
+msgid "URI"
+msgstr "URI"
+
+#: tagger/templates/admin/media.mak:4
+#: tagger/templates/admin/media.mak:10
+#: tagger/templates/media/get_all.mak:4
+#: tagger/templates/media/get_one.mak:4
+msgid "Media"
+msgstr "Media"
+
+#: tagger/templates/article/edit.mak:4
+#: tagger/templates/article/get_all.mak:4
+#: tagger/templates/article/get_all.mak:8
+msgid "Articles"
+msgstr "Articoli"
+
+#: tagger/templates/article/get_one.mak:8
+msgid "Article"
+msgstr "Articolo"
+
+#: tagger/templates/category/get_all.mak:4
+msgid "Categories"
+msgstr "Categorie"
+
+#: tagger/templates/link/get_one.mak:4
+msgid "Link"
+msgstr "Collegamento"
+
+#: tagger/templates/tag/get_one.mak:4
+msgid "Tag"
+msgstr "Tag"
 

@@ -34,7 +34,7 @@ setup(
                                  'public/*/*']},
     message_extractors={'tagger': [
             ('**.py', 'python', None),
-            ('templates/**.mako', 'mako', None),
+            ('templates/**.mak', 'mako', None),
             ('templates/**.html', 'genshi', None),
             ('public/**', 'ignore', None)]},
 
