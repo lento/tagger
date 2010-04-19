@@ -24,7 +24,7 @@ from datetime import datetime
 
 from sqlalchemy import Table, ForeignKey, Column, DDL, UniqueConstraint, desc
 from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
-from sqlalchemy.types import TIMESTAMP, Boolean
+from sqlalchemy.types import TIMESTAMP, Boolean, Enum
 from sqlalchemy.orm import relation, backref, synonym
 
 from tagger.model import DeclarativeBase, metadata
@@ -169,8 +169,7 @@ class Comment(DeclarativeBase):
     email = Column(Unicode(255))
     text = Column(UnicodeText)
     created = Column(DateTime, default=datetime.now)
-    approved = Column(Boolean, default=False)
-    spam = Column(Boolean, default=False)
+    status = Column(Enum('waiting', 'approved', 'spam'), default='waiting')
 
     # Relations
     associable = relation(Associable, backref=backref('comments',
@@ -179,8 +178,19 @@ class Comment(DeclarativeBase):
     # Properties
     @property
     def commented(self):
-        return self.associable.associated
-    
+        return self.associable and self.associable.associated or None
+
+    @property
+    def to(self):
+        if isinstance(self.commented, Article):
+            return '%s/%s' % (self.commented.category.id, self.commented.id)
+        elif isinstance(self.commented, Media):
+            return 'media/%s' % self.commented.id
+        elif isinstance(self.commented, Link):
+            return 'link/%s' % self.commented.id
+        else:
+            return ''
+
     @property
     def header(self):
         return '%s at %s' %(self.by, self.created)

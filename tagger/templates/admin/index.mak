@@ -10,6 +10,7 @@ admin
         <li class="articles"><a href="${tg.url('/admin/article/')}">${_('articles')}</a></li>
         <li class="media"><a href="${tg.url('/admin/media/')}">${_('media')}</a></li>
         <li class="links"><a href="${tg.url('/admin/link/')}">${_('links')}</a></li>
+        <li class="comments"><a href="${tg.url('/admin/comment/')}">${_('comments')}</a></li>
     </ul>
 </%def>
 

@@ -24,7 +24,7 @@ from nose.tools import assert_true, eq_
 
 from tagger.tests import TestController
 from tagger.model import DBSession, User, Language, Tag, Category, Article
-from tagger.model import Media, Link
+from tagger.model import Media, Link, Comment
 import transaction
 
 
@@ -181,5 +181,32 @@ class TestAdminController(TestController):
         eq_(str(actions('a')[0]['class']), 'icon edit overlay')
         eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
+
+    def test_comment(self):
+        """controllers.admin.Controller.comment is working properly"""
+        languageid, tadm = self._fill_db()
+        comment = Comment(u'anonymous', u'anonym@example.com', u'test comment')
+        DBSession.add(comment)
+        DBSession.flush()
+        commentid = comment.id
+        transaction.commit()
+        
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.get('/admin/comment/', extra_environ=environ,
+                                                                    status=200)
+
+        tr = response.html.table('tr')[1]
+        # Date
+        eq_(str(tr('td')[1]), '<td>%s</td>' % commentid)
+        eq_(str(tr('td')[2]), '<td></td>')
+        eq_(str(tr('td')[3]), '<td>anonymous</td>')
+        eq_(str(tr('td')[4]), '<td>anonym@example.com</td>')
+        eq_(str(tr('td')[5]), '<td>test comment</td>')
+        # Status
+        actions = tr('td')[7]
+        eq_(str(actions('a')[0]['class']), 'icon edit overlay')
+        eq_(str(actions('a')[1]['class']), 'icon delete overlay')
+        eq_(str(actions('a')[2]['class']), 'icon approve')
+        eq_(str(actions('a')[3]['class']), 'icon spam')
 
 

@@ -26,7 +26,7 @@ from repoze.what.predicates import has_permission
 from sqlalchemy import desc
 from tagger.lib.base import BaseController
 from tagger.model import DBSession, metadata, Language, Tag, Category
-from tagger.model import Article, Media, Link
+from tagger.model import Article, Media, Link, Comment
 
 __all__ = ['RootController']
 
@@ -81,5 +81,12 @@ class Controller(BaseController):
         """Return the list of all links for administration"""
         links = DBSession.query(Link).all()
         return dict(links=links, page=('admin', 'links'))
+
+    @expose('json')
+    @expose('tagger.templates.admin.comment')
+    def comment(self):
+        """Return the list of all comments for administration"""
+        comments = DBSession.query(Comment).order_by(desc('created')).all()
+        return dict(comments=comments, page=('admin', 'comments'))
 
 

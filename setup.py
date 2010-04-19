@@ -18,7 +18,7 @@ setup(
         "Babel >=0.9.4",
         "zope.sqlalchemy >= 0.4 ",
         "repoze.tm2 >= 1.0a4",
-        
+        "sqlalchemy >= 0.6.0",        
         "repoze.what-quickstart >= 1.0",
         "tw.dynforms",
         "docutils",

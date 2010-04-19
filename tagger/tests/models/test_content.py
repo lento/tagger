@@ -132,15 +132,19 @@ class TestComment(ModelTest):
 
     def test_obj_creation_by(self):
         """model.content.Comment constructor must set the by right"""
-        eq_(self.obj.by, u"anonymous")
+        eq_(self.obj.by, u'anonymous')
 
     def test_obj_creation_email(self):
         """model.content.Comment constructor must set the email right"""
-        eq_(self.obj.email, u"anonymous@example.com")
+        eq_(self.obj.email, u'anonymous@example.com')
 
     def test_obj_creation_text(self):
         """model.content.Comment constructor must set the text right"""
-        eq_(self.obj.text, u"test comment")
+        eq_(self.obj.text, u'test comment')
+
+    def test_obj_creation_status(self):
+        """model.content.Comment constructor must set the status right"""
+        eq_(self.obj.status, 'waiting')
 
     def test_obj_property_header_get(self):
         """model.content.Comment property "header" can get value"""
