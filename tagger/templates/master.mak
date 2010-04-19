@@ -102,6 +102,7 @@
             </ul>
         </div>
         <div class="banner"></div>
+        ${self.flash_wrapper()}
         <div class="menu_bottom">
             <ul>
                 % for cat in c.categories:
@@ -114,7 +115,6 @@
                 % endif
             </ul>
         </div>
-        ${self.flash_wrapper()}
     </div>
 </%def>
 

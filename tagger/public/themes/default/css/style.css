@@ -298,7 +298,6 @@ table td.icon {
 /* Flash */
 #flash {
     position: relative;
-    top: -25px;
     color: white;
 }
 
@@ -306,7 +305,7 @@ table td.icon {
     position: absolute;
     padding:10px 60px 10px 45px;
     z-index: 4;
-    opacity: .8;
+    opacity: .9;
 	border-radius: 0 0 10px 10px;
 	-moz-border-radius: 0 0 10px 10px;
 	-webkit-border-radius: 0 0 10px 10px;
