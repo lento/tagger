@@ -41,13 +41,12 @@ f_delete = FormArticleDelete(action=url('/article/'))
 class Controller(RestController):
     """REST controller for managing articles"""
 
-    @require(has_permission('manage'))
     @expose('json')
     @expose('tagger.templates.article.get_all')
     def get_all(self):
         """Return a list of articles"""
         articles = DBSession.query(Article).all()
-        return dict(articles=articles, page=('admin', 'articles'))
+        return dict(articles=articles)
 
     @expose('json')
     @expose('tagger.templates.article.get_one')

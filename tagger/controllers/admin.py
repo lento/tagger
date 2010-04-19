@@ -43,23 +43,30 @@ class Controller(BaseController):
     @expose('json')
     @expose('tagger.templates.admin.language')
     def language(self):
-        """Return a list of languages"""
+        """Return the list of all languages for administration"""
         languages = DBSession.query(Language).all()
         return dict(languages=languages, page=('admin', 'languages'))
 
     @expose('json')
     @expose('tagger.templates.admin.tag')
     def tag(self):
-        """Return a list of tags"""
+        """Return the list of all tags for administration"""
         tags = DBSession.query(Tag).all()
         return dict(tags=tags, page=('admin', 'tags'))
 
     @expose('json')
     @expose('tagger.templates.admin.category')
     def category(self):
-        """Return list of categories"""
+        """Return the list of all categories for administration"""
         categories = DBSession.query(Category).all()
         return dict(categories=categories, page=('admin', 'categories'))
+
+    @expose('json')
+    @expose('tagger.templates.admin.article')
+    def article(self):
+        """Return the list of all articles for administration"""
+        articles = DBSession.query(Article).all()
+        return dict(articles=articles, page=('admin', 'articles'))
 
     @expose('json')
     @expose('tagger.templates.admin.media')
@@ -71,7 +78,7 @@ class Controller(BaseController):
     @expose('json')
     @expose('tagger.templates.admin.link')
     def link(self):
-        """Return a list of links"""
+        """Return the list of all links for administration"""
         links = DBSession.query(Link).all()
         return dict(links=links, page=('admin', 'links'))
 
