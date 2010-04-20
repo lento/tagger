@@ -20,7 +20,7 @@
 #
 """Model utilities"""
 
-from sqlalchemy.schema import SchemaVisitor
+from sqlalchemy.schema import SchemaVisitor, DDL
 
 import logging
 log = logging.getLogger(__name__)
@@ -173,7 +173,8 @@ class TriggerRemover(SchemaVisitor):
     def visit_table(self, table):
         for event in table.ddl_events:
             for listener in table.ddl_listeners[event]:
-                if self._is_trigger(listener):
+                if isinstance(listener, DDL) and self._is_trigger(listener):
                     table.ddl_listeners[event].remove(listener)
-                    log.debug('removed %s from %s (%s)' % (listener, table.name, event))
+                    log.debug('removed statement "%s" from table "%s" (%s)' %
+                                        (listener.statement, table.name, event))
 
