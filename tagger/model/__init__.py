@@ -64,5 +64,5 @@ from tagger.model.utils import TriggerRemover
 from tagger.model.auth import User, Group, Permission
 from tagger.model.content import Tag, TagData, Language, Category, CategoryData
 from tagger.model.content import Article, Page, PageData, Link, LinkData
-from tagger.model.content import Media, MediaData, Comment
+from tagger.model.content import Media, MediaData, Comment, Associable
 

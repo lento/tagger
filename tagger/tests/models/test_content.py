@@ -117,7 +117,7 @@ class TestComment(ModelTest):
     """Unit test case for the ``Comment`` model."""
     klass = content.Comment
     attrs = dict(
-        by=u'anonymous',
+        name=u'anonymous',
         email=u'anonymous@example.com',
         text=u"test comment",
         )
@@ -130,9 +130,9 @@ class TestComment(ModelTest):
         """model.content.Comment objects can be queried"""
         self._obj_query()
 
-    def test_obj_creation_by(self):
-        """model.content.Comment constructor must set the by right"""
-        eq_(self.obj.by, u'anonymous')
+    def test_obj_creation_name(self):
+        """model.content.Comment constructor must set the name right"""
+        eq_(self.obj.name, u'anonymous')
 
     def test_obj_creation_email(self):
         """model.content.Comment constructor must set the email right"""

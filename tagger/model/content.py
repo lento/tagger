@@ -165,7 +165,7 @@ class Comment(DeclarativeBase):
     # Columns
     id = Column(Integer, primary_key=True)
     associable_id = Column(Integer, ForeignKey('associables.id'))
-    by = Column(Unicode(255))
+    name = Column(Unicode(255))
     email = Column(Unicode(255))
     text = Column(UnicodeText)
     created = Column(DateTime, default=datetime.now)
@@ -193,7 +193,7 @@ class Comment(DeclarativeBase):
 
     @property
     def header(self):
-        return '%s at %s' %(self.by, self.created)
+        return '%s at %s' %(self.name, self.created)
     
     @property
     def summary(self):
@@ -208,13 +208,13 @@ class Comment(DeclarativeBase):
         return [dict(line=l) for l in self.text.split('\n')]
     
     # Special methods
-    def __init__(self, by, email, text):
-        self.by = by
+    def __init__(self, name, email, text):
+        self.name = name
         self.email = email
         self.text = text
 
     def __repr__(self):
-        return '<Comment: by %s at %s "%s">' % (self.by, self.created,
+        return '<Comment: by %s at %s "%s">' % (self.name, self.created,
                                                                 self.summary)
 
 

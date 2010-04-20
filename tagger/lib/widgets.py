@@ -30,7 +30,7 @@ from tw.forms import SingleSelectField, FileField, PasswordField
 from tw.dynforms import CascadingSingleSelectField, HidingTableForm
 from tw.dynforms import HidingSingleSelectField
 from tw.forms.validators import All, Regex, NotEmpty, UnicodeString, MaxLength
-from tw.forms.validators import OneOf
+from tw.forms.validators import OneOf, Email
 from tagger.lib.render import media_types
 
 
@@ -291,4 +291,50 @@ class FormMediaDelete(TableForm):
                                                 validator=None, disabled=True)
         uri_ = TextField(label_text='URI', size=TF_SIZE, validator=None,
                                                                 disabled=True)
+
+
+# Comment
+class FormCommentNew(TableForm):
+    """New comment form"""
+    class fields(WidgetsList):
+        came_from = HiddenField(validator=NotEmpty)
+        associableid = HiddenField(validator=NotEmpty)
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        email = TextField(label_text=l_('E-Mail'), size=TF_SIZE,
+                        validator=All(Email, NotEmpty))
+        text = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS)
+
+
+class FormCommentEdit(TableForm):
+    """Edit comment form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='PUT', validator=None)
+        commentid = HiddenField(validator=NotEmpty)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
+        date_ = TextField(label_text=l_('Date'), size=TF_SIZE, validator=None,
+                                                                disabled=True)
+        to_ = TextField(label_text=l_('To'), size=TF_SIZE, validator=None,
+                                                                disabled=True)
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        email = TextField(label_text=l_('E-Mail'), size=TF_SIZE,
+                        validator=All(Email, NotEmpty))
+        text = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS)
+
+
+class FormCommentDelete(TableForm):
+    """Delete comment confirmation form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='DELETE', validator=None)
+        commentid = HiddenField(validator=NotEmpty)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
+        date_ = TextField(label_text=l_('Date'), size=TF_SIZE, validator=None,
+                                                                disabled=True)
+        to_ = TextField(label_text=l_('To'), size=TF_SIZE, validator=None,
+                                                                disabled=True)
+        name_ = TextField(label_text=l_('Name'), size=TF_SIZE, validator=None,
+                                                                disabled=True)
+        text_ = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS,
+                                                validator=None, disabled=True)
 

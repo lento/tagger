@@ -6,7 +6,6 @@
 
 <div class="content_title">
     <h1>${_('Comments')}</h1>
-    <a class="button overlay" href="${tg.url('/comment/new')}" rel="#overlay">${_('add new')}</a>
 </div>
 
 <table>
@@ -25,7 +24,7 @@
         <td>${comment.created}</td>
         <td>${comment.id}</td>
         <td>${comment.to}</td>
-        <td>${comment.by}</td>
+        <td>${comment.name}</td>
         <td>${comment.email}</td>
         <td>${comment.summary}</td>
         <td><div class="status ${comment.status}">${comment.status}</div></td>
