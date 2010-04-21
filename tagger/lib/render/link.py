@@ -49,7 +49,7 @@ class LinkDirective(Directive):
     has_content = False
 
     def run(self):
-        linkid = int(self.arguments[0])
+        linkid = self.arguments[0]
         if len(self.arguments) > 1:
             label = self.arguments[1]
         elif isinstance(self.state.parent, nodes.substitution_definition):
@@ -58,7 +58,7 @@ class LinkDirective(Directive):
             label = ''
         label = cgi.escape(label)
 
-        text = '${w_link(linkid=%s, label="%s", extra=extra)}' % (linkid, label)
+        text = '${w_link(linkid="%s", label="%s", extra=extra)}' % (linkid, label)
         link_node = nodes.raw(rawsource='', text=text, format='html')
         return [link_node]
 
