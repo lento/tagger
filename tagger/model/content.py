@@ -600,7 +600,7 @@ class Media(DeclarativeBase):
         self.associable = Associable(u'media')
 
     def __repr__(self):
-        return '<Media: %s %s %s>' % (self.id, self, type, self.uri)
+        return '<Media: %s %s %s>' % (self.id, self.type, self.uri)
 
 DDL(orphaned_associable_trigger).execute_at('after-create', Media.__table__)
 add_language_props(Media, 
