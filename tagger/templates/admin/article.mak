@@ -12,9 +12,9 @@
 <table>
     <tr class="table_header">
         <th>${_('Date')}</th>
+        <th>${_('Category')}</th>
         <th>${_('ID')}</th>
         <th>${_('Title')}</th>
-        <th>${_('Category')}</th>
         <th>${_('Tags')}</th>
         <th>${_('Languages')}</th>
         <th>${_('Status')}</th>
@@ -23,9 +23,9 @@
     % for article in articles:
     <tr class="${article.id}">
         <td>${article.created}</td>
+        <td>${article.category.name[c.lang]}</td>
         <td>${article.id}</td>
         <td>${article.title[c.lang]}</td>
-        <td>${article.category.name[c.lang]}</td>
         <td>${', '.join([t.name[lang] for t in article.tags])}</td>
         <td>${', '.join(article.language_ids)}</td>
         <td>

@@ -104,7 +104,7 @@ class TestAdminController(TestController):
         eq_(str(actions('a')[1]['class']), 'icon delete overlay')
 
     def test_article(self):
-        """controllers.article.Controller.get_all is working properly"""
+        """controllers.admin.Controller.article is working properly"""
         languageid, tadm = self._fill_db()
         cat = Category(u'test_category', u'xx')
         DBSession.add(cat)
@@ -121,9 +121,9 @@ class TestAdminController(TestController):
 
         tr = response.html.table.find('tr', articleid)
         # Date
-        eq_(str(tr('td')[1]), '<td>%s</td>' % articleid)
-        eq_(str(tr('td')[2]), '<td>A Test Article!</td>')
-        eq_(str(tr('td')[3]), '<td>test_category</td>')
+        eq_(str(tr('td')[1]), '<td>test_category</td>')
+        eq_(str(tr('td')[2]), '<td>%s</td>' % articleid)
+        eq_(str(tr('td')[3]), '<td>A Test Article!</td>')
         eq_(str(tr('td')[4]), '<td></td>')
         eq_(str(tr('td')[5]), '<td>%s</td>' % languageid)
         # Status
