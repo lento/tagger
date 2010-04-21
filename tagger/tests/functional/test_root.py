@@ -42,6 +42,7 @@ class TestRootController(TestController):
         # You can look for specific strings:
         assert_true(msg in response)
 
+    # TODO: check for url "/category"
     def test_default(self):
         """articles can be retrived with url: /category/articleid"""
         languageid, categoryid, articleid = self._fill_db()

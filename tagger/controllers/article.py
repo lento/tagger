@@ -43,9 +43,13 @@ class Controller(RestController):
 
     @expose('json')
     @expose('tagger.templates.article.get_all')
-    def get_all(self):
+    def get_all(self, categoryid=None):
         """Return a list of articles"""
-        articles = DBSession.query(Article).all()
+        query = DBSession.query(Article)
+        if categoryid:
+            query = query.filter_by(category_id=categoryid)
+
+        articles = query.all()
         return dict(articles=articles)
 
     @expose('json')

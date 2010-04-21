@@ -21,7 +21,7 @@
 """Main Controller"""
 
 from tg import expose, flash, require, url, request, redirect, response
-from tg import tmpl_context
+from tg import tmpl_context, override_template
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what import predicates
 from tg.exceptions import HTTPNotFound
@@ -102,32 +102,37 @@ class RootController(BaseController):
         flash(_('No preferred language'))
         redirect(came_from)
 
-    @expose('tagger.templates.article.get_one')
+    @expose()
     def _default(self, *args, **kwargs):
-        if 'categoryid' in kwargs and 'articleid' in kwargs:
-            categoryid = kwargs['categoryid']
-            articleid = kwargs['articleid']
-        elif len(args) >= 2:
+        """Catch requests for "/<category>" or "/<category>/<article>" and
+        serve them through the article controller, otherwise rise a "Not Found"
+        error"""
+        if len(args) > 0:
             categoryid = args[0]
-            articleid = args[1]
+            category = DBSession.query(Category).get(categoryid.decode())
         else:
-            raise HTTPNotFound
+            category = None
 
-        if 'languageid' in kwargs:
-            languageid = kwargs['languageid']
-        elif len(args) >= 3:
+        if len(args) > 1:
+            articleid = args[1]
+            article = DBSession.query(Article).get(articleid.decode())
+        else:
+            article = None
+
+        if len(args) > 2:
             languageid = args[2]
         else:
             languageid = None
 
-        try:
-            category = DBSession.query(Category).filter_by(
-                                            id=categoryid.decode()).one()
-            article = DBSession.query(Article).filter_by(
-                    category_id=category.id, id=articleid.decode()).one()
-        except NoResultFound:
+        if article:
+            override_template(self._default,
+                                        'mako:tagger.templates.article.get_one')
+            return self.article.get_one(article.id, languageid)
+        elif category:
+            override_template(self._default,
+                                        'mako:tagger.templates.article.get_all')
+            return self.article.get_all(categoryid=category.id)
+        else:
             raise HTTPNotFound
-
-        return self.article.get_one(article.id, languageid)
 
 
