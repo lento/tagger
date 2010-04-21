@@ -78,7 +78,7 @@
         });
     </script>
     <div id="header">
-        <a href="${tg.url('/')}" class="logo"></a>
+        <div class="logo"></div>
         <div class="menu_top">
             <ul>
                 <li class="language_chooser">
@@ -105,13 +105,14 @@
         ${self.flash_wrapper()}
         <div class="menu_bottom">
             <ul>
+                <li class="home"><a href="${tg.url('/')}">${_('home')}</a></li>
                 % for cat in c.categories:
                 <li class="${cat.name[c.lang]}"><a href="${tg.url('/%s/' % cat.name[c.lang])}">${cat.name[c.lang]}</a></li>
                 % endfor
-                <li class="media"><a href="${tg.url('/media')}">media</a></li>
-                <li class="links"><a href="${tg.url('/link')}">links</a></li>
+                <li class="media"><a href="${tg.url('/media')}">${_('media')}</a></li>
+                <li class="links"><a href="${tg.url('/link')}">${_('links')}</a></li>
                 % if tg.predicates.has_permission('manage'):
-                <li class="admin"><a href="${tg.url('/admin')}">admin</a></li>
+                <li class="admin"><a href="${tg.url('/admin')}">${_('admin')}</a></li>
                 % endif
             </ul>
         </div>

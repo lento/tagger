@@ -54,7 +54,7 @@ class RootController(BaseController):
     @expose('tagger.templates.index')
     def index(self):
         """Handle the front-page."""
-        return dict(page='index')
+        return dict(page=('home', ''))
 
     @expose('tagger.templates.login')
     def login(self, came_from=url('/')):
@@ -127,11 +127,15 @@ class RootController(BaseController):
         if article:
             override_template(self._default,
                                         'mako:tagger.templates.article.get_one')
-            return self.article.get_one(article.id, languageid)
+            result = self.article.get_one(article.id, languageid)
+            result.update(page=(category.id, ''))
+            return result
         elif category:
             override_template(self._default,
                                         'mako:tagger.templates.article.get_all')
-            return self.article.get_all(categoryid=category.id)
+            result = self.article.get_all(categoryid=category.id)
+            result.update(page=(category.id, ''))
+            return result
         else:
             raise HTTPNotFound
 

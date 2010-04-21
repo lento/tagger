@@ -227,7 +227,6 @@ table td.icon {
     height: 160px;
     width: 160px;
     background-image: url(../images/logo.png);
-    z-index: 5;
 }
 
 #header .menu_top {
@@ -306,7 +305,6 @@ table td.icon {
     float: left;
     height: 100%;
     margin: 0 2px 2px 0;
-    padding: 0 10px;
 	border-radius: 5px;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -320,6 +318,10 @@ table td.icon {
 #header .menu_bottom ul li.active {
     background-color: #babdb6; /* Aluminium 3 */
     color: white;
+}
+
+#header .menu_bottom a {
+    padding: 0 10px;
 }
 
 /* Flash */
