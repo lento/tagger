@@ -226,6 +226,7 @@ table td.icon {
     height: 160px;
     width: 160px;
     background-image: url(../images/logo.png);
+    z-index: 5;
 }
 
 #header .menu_top {
