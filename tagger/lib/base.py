@@ -7,9 +7,13 @@ from tg.render import render
 from tg import request
 from pylons.i18n import _, ungettext, N_
 from tw.api import WidgetBunch, JSLink
-from tagger.model import DBSession, Language, Category
+from tagger.model import DBSession, Language, Category, BannerContent
+from tagger.lib.render import LinkWidget, MediaWidget
 
 __all__ = ['BaseController']
+
+w_link = LinkWidget()
+w_media = MediaWidget()
 
 # JQuery and plugins
 jquery_js = JSLink(link=url('/js/jquery.js'))
@@ -68,5 +72,12 @@ class BaseController(TGController):
 
         # add current url to template context
         tmpl_context.current_url = request.url
+
+        # set banner link and content
+        tmpl_context.w_link = w_link
+        tmpl_context.w_media = w_media
+        bc = DBSession.query(BannerContent).first()
+        tmpl_context.banner_mediaid = bc and bc.media_id or None
+        tmpl_context.banner_linkid = bc and bc.link_id or None
 
         return TGController.__call__(self, environ, start_response)

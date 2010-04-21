@@ -338,3 +338,12 @@ class FormCommentDelete(TableForm):
         text_ = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS,
                                                 validator=None, disabled=True)
 
+
+# Banner Content
+class FormBannerContent(TableForm):
+    """Edit Banner Content form"""
+    class fields(WidgetsList):
+        mediaid = SingleSelectField(label_text=l_('Media'), size=SF_SIZE)
+        linkid = SingleSelectField(label_text=l_('Link'), size=SF_SIZE)
+        
+

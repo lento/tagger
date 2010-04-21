@@ -89,6 +89,21 @@ def bootstrap(command, conf, vars):
 
     # <websetup.bootstrap.after.auth>
 
+    # banner_content
+    try:
+        banner_content = model.BannerContent()
+        model.DBSession.add(banner_content)
+
+        model.DBSession.flush()
+        transaction.commit()
+    except IntegrityError:
+        log.debug('Warning, there was a problem adding your BannerContent '
+                  'data, it may have already been added:')
+        import traceback
+        log.debug(traceback.format_exc())
+        transaction.abort()
+        log.debug('Continuing with bootstrapping...')
+
     # languages
     try:
         en = model.Language(u'en', u'english')

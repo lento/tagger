@@ -2,6 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%!
+    from tg.configuration import Bunch
     show_side = True
 %>
 
@@ -101,7 +102,18 @@
                 </li>
             </ul>
         </div>
-        <div class="banner"></div>
+        <div class="banner">
+            <%
+                extra=Bunch(lang=c.lang, url=tg.url)
+                if c.banner_mediaid:
+                    banner_content = c.w_media(mediaid=c.banner_mediaid, width=1065, height=120, extra=extra)
+                else:
+                    banner_content = ' '
+                if c.banner_linkid:
+                    banner_content = c.w_link(linkid='example', label=banner_content, extra=extra)
+            %>
+            ${banner_content | n}
+        </div>
         ${self.flash_wrapper()}
         <div class="menu_bottom">
             <ul>

@@ -20,16 +20,19 @@
 #
 """Admin Controller"""
 
-from tg import expose, flash, require, url, request, redirect
+from tg import expose, flash, require, url, request, redirect, tmpl_context
+from tg import validate
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
 from sqlalchemy import desc
 from tagger.lib.base import BaseController
 from tagger.model import DBSession, metadata, Language, Tag, Category
-from tagger.model import Article, Media, Link, Comment
+from tagger.model import Article, Media, Link, Comment, BannerContent
+from tagger.lib.widgets import FormBannerContent
 
 __all__ = ['RootController']
 
+f_banner = FormBannerContent(action=url('/admin/banner_set'))
 
 class Controller(BaseController):
     """The admin controller for the tagger application."""
@@ -89,4 +92,48 @@ class Controller(BaseController):
         comments = DBSession.query(Comment).order_by(desc('created')).all()
         return dict(comments=comments, page=('admin', 'comments'))
 
+    @expose('json')
+    @expose('tagger.templates.admin.banner')
+    def banner(self):
+        """Return a form to edit the banner contents"""
+        tmpl_context.f_banner = f_banner
+        lang = tmpl_context.lang
+
+        bc = DBSession.query(BannerContent).first()
+        fargs = dict(mediaid=bc.media_id,
+                     linkid=bc.link_id,
+                    )
+
+        querymedia = DBSession.query(Media).filter_by(type=u'image')
+        media_list = [('', '')]
+        media_list.extend([(m.id, m.name[lang]) for m in querymedia])
+        link_list = [('', '')]
+        link_list.extend([(l.id, l.name[lang]) for l in DBSession.query(Link)])
+        fcargs = dict(mediaid=dict(options=media_list),
+                      linkid=dict(options=link_list),
+                     )
+        return dict(args=fargs, child_args=fcargs, page=('admin', 'banner'))
+
+    @expose()
+    @validate(f_banner, error_handler=banner)
+    def banner_set(self, mediaid=None, linkid=None):
+        """Set the banner content"""
+        bc = DBSession.query(BannerContent).first()
+        media = mediaid and DBSession.query(Media).get(mediaid) or None
+        link = linkid and DBSession.query(Link).get(linkid) or None
+
+        modified = False
+        if bc.media != media:
+            bc.media = media
+            modified = True
+
+        if bc.link != link:
+            bc.link = link
+            modified = True
+
+        if modified:
+            flash(_('Updated Banner'), 'ok')
+        else:
+            flash(_('Banner is unchanged'), 'info')
+        redirect(url('/admin/banner/'))
 

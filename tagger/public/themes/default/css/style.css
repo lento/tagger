@@ -220,7 +220,6 @@ table td.icon {
 }
 
 #header .logo {
-    display: block;
     position: absolute;
     top: 0;
     left: 0;
@@ -286,11 +285,21 @@ table td.icon {
 	border-radius: 0 10px 10px 0;
 	-moz-border-radius: 0 10px 10px 0;
 	-webkit-border-radius: 0 10px 10px 0;
-    background: url(../images/banner.png), linear-gradient(90deg,#a40000,#f57900);
-    background: url(../images/banner.png), -moz-linear-gradient(90deg,#a40000,#f57900);
-    background: url(../images/banner.png), -webkit-gradient(linear,center bottom,center top,from(#a40000),to(#f57900));
+    background: linear-gradient(90deg,#a40000,#f57900);
+    background: -moz-linear-gradient(90deg,#a40000,#f57900);
+    background: -webkit-gradient(linear,center bottom,center top,from(#a40000),to(#f57900));
+    overflow: hidden;
 }
 
+#header .banner a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#header .banner img {
+	border: 0;
+}
 
 #header .menu_bottom {
     margin-top: 3px;

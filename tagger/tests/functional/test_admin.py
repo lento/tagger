@@ -24,7 +24,7 @@ from nose.tools import assert_true, eq_
 
 from tagger.tests import TestController
 from tagger.model import DBSession, User, Language, Tag, Category, Article
-from tagger.model import Media, Link, Comment
+from tagger.model import Media, Link, Comment, BannerContent
 import transaction
 
 
@@ -209,4 +209,43 @@ class TestAdminController(TestController):
         eq_(str(actions('a')[2]['class']), 'icon approve')
         eq_(str(actions('a')[3]['class']), 'icon spam')
 
+    def test_banner(self):
+        """controllers.admin.Controller.banner is working properly"""
+        
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.get('/admin/banner/', extra_environ=environ,
+                                                                    status=200)
+
+        eq_(response.html.form['action'], u'/admin/banner_set')
+        eq_(response.html.form['method'], u'post')
+        assert_true(response.html.find('select', {'name': 'mediaid'}),
+                                        '"mediaid" select element not found')
+        assert_true(response.html.find('select', {'name': 'linkid'}),
+                                        '"linkid" select element not found')
+
+    def test_banner_set(self):
+        """controllers.admin.Controller.banner_set is working properly"""
+        languageid, tadm = self._fill_db()
+        media = Media(u'image', u'test image', u'/test.png', tadm, u'xx',
+                                                                u'random text')
+        DBSession.add(media)
+        link = Link(u'test link', u'http://example.com', tadm, u'xx',
+                                                                u'random text')
+        DBSession.add(link)
+        DBSession.flush()
+        mediaid = media.id
+        linkid = link.id
+        transaction.commit()
+        
+        environ = {'REMOTE_USER': 'test_admin'}
+        response = self.app.post('/admin/banner_set',
+                                            dict(mediaid=mediaid,
+                                                 linkid=linkid,
+                                                ),
+                                            extra_environ=environ, status=302)
+        #redirected = response.follow(extra_environ=environ, status=200)
+
+        bc = DBSession.query(BannerContent).first()
+        eq_(bc.media_id, mediaid)
+        eq_(bc.link_id, linkid)
 
