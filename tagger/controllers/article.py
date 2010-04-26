@@ -22,6 +22,7 @@
 
 from tg import expose, url, tmpl_context, validate, require, flash, redirect
 from tg.controllers import RestController
+from tg.exceptions import HTTPNotFound
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tagger.model import DBSession, Language, Category, Article
 from tagger.model.helpers import tags_from_string
@@ -64,7 +65,10 @@ class Controller(RestController):
         else:
             lang = article.language_id
 
-        return dict(article=article, lang=lang)
+        if not article.published and not has_permission('manage'):
+            raise HTTPNotFound
+        else:
+            return dict(article=article, lang=lang)
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')
