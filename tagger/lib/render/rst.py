@@ -34,7 +34,7 @@ def render_mak(text, lang=None):
     extra = Bunch(url=url,
                   lang=lang,
                  )
-    return template.render(extra=extra, **widgets)
+    return template.render_unicode(extra=extra, **widgets)
 
 def render_text(text, lang=None):
     text = render_rst(text)
