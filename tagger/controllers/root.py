@@ -124,16 +124,21 @@ class RootController(BaseController):
         else:
             languageid = None
 
+        tag = kwargs.get('tag', None)
+        mode = kwargs.get('mode', 'all')
+
         if article:
             override_template(self._default,
                                         'mako:tagger.templates.article.get_one')
-            result = self.article.get_one(article.id, languageid)
+            result = self.article.get_one(article.id, languageid, tag=tag,
+                                                                    mode=mode)
             result.update(page=(category.id, ''))
             return result
         elif category:
             override_template(self._default,
                                         'mako:tagger.templates.article.get_all')
-            result = self.article.get_all(categoryid=category.id)
+            result = self.article.get_all(categoryid=category.id, tag=tag,
+                                                                    mode=mode)
             result.update(page=(category.id, ''))
             return result
         else:

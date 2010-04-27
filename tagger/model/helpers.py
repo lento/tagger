@@ -20,9 +20,11 @@
 #
 """Helper functions for models"""
 
-from tagger.model import DBSession, Tag, TagData
+from tagger.model import DBSession, Tag, TagData, Language
 
 def tags_from_string(s, create=True, lang=None):
+    if lang is None:
+        lang = DBSession.query(Language).first().id
     alltags = dict([(t.id, t) for t in DBSession.query(Tag)])
     alltagsdata = dict([(d.name, d) for d in DBSession.query(TagData)])
     tagnames = s and s.split(', ') or []

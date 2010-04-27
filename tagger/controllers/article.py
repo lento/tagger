@@ -44,13 +44,24 @@ class Controller(RestController):
 
     @expose('json')
     @expose('tagger.templates.article.get_all')
-    def get_all(self, categoryid=None):
+    def get_all(self, categoryid=None, tag=[], mode='all'):
         """Return a list of articles"""
         query = DBSession.query(Article)
         if categoryid:
             query = query.filter_by(category_id=categoryid)
 
         articles = query.all()
+
+        if tag:
+            log.debug('article.get_all: %s' % tag)
+            tagids = isinstance(tag, list) and tag or [tag]
+            tagstring = ', '.join(tagids)
+            tags = set(tags_from_string(tagstring, create=False))
+            if mode == 'all':
+                articles = [a for a in articles if set(a.tags) >= (tags)]
+            elif mode == 'any':
+                articles = [a for a in articles if set(a.tags) & (tags)]
+
         return dict(articles=articles)
 
     @expose('json')
