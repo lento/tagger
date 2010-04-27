@@ -88,6 +88,10 @@ table tr.odd {
     background-color: #f6f6f4; /* Aluminium 0 */
 }
 
+table tr:hover {
+    background-color: #d3d7cf; /* Aluminium 2 */
+}
+
 table tr.table_header {
     background-color: #d3d7cf; /* Aluminium 2 */
 }
