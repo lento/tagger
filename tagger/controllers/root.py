@@ -130,8 +130,7 @@ class RootController(BaseController):
         if article:
             override_template(self._default,
                                         'mako:tagger.templates.article.get_one')
-            result = self.article.get_one(article.id, languageid, tag=tag,
-                                                                    mode=mode)
+            result = self.article.get_one(article.id, languageid)
             result.update(page=(category.id, ''))
             return result
         elif category:
