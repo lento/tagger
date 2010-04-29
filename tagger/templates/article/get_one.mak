@@ -36,3 +36,7 @@
     ${render_text(article.text[lang], lang) | n}
 </div>
 
+<%def name="side()">
+    ${parent.side_related()}
+</%def>
+

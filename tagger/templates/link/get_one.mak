@@ -9,3 +9,7 @@
 <div>${link.uri}</div>
 <div>${link.description[lang]}</div>
 
+<%def name="side()">
+    ${parent.side_related()}
+</%def>
+

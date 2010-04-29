@@ -20,13 +20,26 @@
 #
 """Tagger utilities"""
 
-import re
-from docutils.core import publish_parts
+from operator import itemgetter
+from tagger.model import DBSession, Associable, Tag
 
-def make_id(text):
-    newid = text.lower()
-    newid = re.sub('[^a-z0-9_\s]', '', newid)
-    newid = newid.strip()
-    newid = re.sub('[\s]+', '-', newid)
-    return newid
+def find_related(tags, max_results=10):
+    """Return a list of related objects
+
+    Each element of the list is a tuple in the form:
+    (object, number of tags in common, creation date of the object)
+    """
+    tags = isinstance(tags, set) and tags or set(tags)
+    tagids = [t.id for t in tags]
+    query = DBSession.query(Associable)
+    query = query.filter(Associable.tags.any(Tag.id.in_(tagids)))
+    results = query.all()
+    results = [(o, len(set(o.tags) & tags), o.associated.created)
+                                                            for o in results]
+    results.sort(key=itemgetter(1, 2), reverse=True)
+    if max_results > 0:
+        return results[:max_results]
+    else:
+        return results
+
 

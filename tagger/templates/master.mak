@@ -143,6 +143,14 @@
 <%def name="side()">
 </%def>
 
+<%def name="side_related()">
+    <ul>
+        % for obj, numtags, created in related:
+            <li class="related ${obj.type}"><a href="">${obj}</a></li>
+        % endfor
+    </ul>
+</%def>
+
 <%def name="footer()">
     <div id="footer">
         <div class="copyright">${c.copyright}</div>

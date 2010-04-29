@@ -10,3 +10,7 @@
 <div>${media.uri}</div>
 <div>${media.description[lang]}</div>
 
+<%def name="side()">
+    ${parent.side_related()}
+</%def>
+

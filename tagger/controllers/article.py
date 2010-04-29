@@ -24,11 +24,12 @@ from tg import expose, url, tmpl_context, validate, require, flash, redirect
 from tg.controllers import RestController
 from tg.exceptions import HTTPNotFound
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
+from repoze.what.predicates import has_permission
 from tagger.model import DBSession, Language, Category, Article
 from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormArticleNew, FormArticleEdit
 from tagger.lib.widgets import FormArticleDelete
-from repoze.what.predicates import has_permission
+from tagger.lib.utils import find_related
 
 import logging
 log = logging.getLogger(__name__)
@@ -79,7 +80,8 @@ class Controller(RestController):
         if not article.published and not has_permission('manage'):
             raise HTTPNotFound
         else:
-            return dict(article=article, lang=lang)
+            return dict(article=article, lang=lang,
+                                            related=find_related(article.tags))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')

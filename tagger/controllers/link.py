@@ -23,10 +23,11 @@
 from tg import expose, tmpl_context, validate, require, flash, url
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
+from repoze.what.predicates import has_permission
 from tagger.model import DBSession, Link, Language
 from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormLinkNew, FormLinkEdit, FormLinkDelete
-from repoze.what.predicates import has_permission
+from tagger.lib.utils import find_related
 
 import logging
 log = logging.getLogger(__name__)
@@ -52,7 +53,8 @@ class Controller(RestController):
     def get_one(self, linkid, languageid=None):
         """Return a single link"""
         link = DBSession.query(Link).get(linkid.decode())
-        return dict(link=link, lang=languageid)
+        return dict(link=link, lang=languageid,
+                                            related=find_related(link.tags))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')

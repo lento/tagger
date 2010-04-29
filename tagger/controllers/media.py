@@ -29,8 +29,9 @@ from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
 from tagger.model import DBSession, Media, Language
 from tagger.model.helpers import tags_from_string
+from tagger.model.utils import make_id
 from tagger.lib.widgets import FormMediaNew, FormMediaEdit, FormMediaDelete
-from tagger.lib.utils import make_id
+from tagger.lib.utils import find_related
 
 import logging
 log = logging.getLogger(__name__)
@@ -56,7 +57,8 @@ class Controller(RestController):
     def get_one(self, mediaid, languageid=None):
         """Return a single media"""
         media = DBSession.query(Media).get(mediaid.decode())
-        return dict(media=media, lang=languageid)
+        return dict(media=media, lang=languageid,
+                                            related=find_related(media.tags))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')

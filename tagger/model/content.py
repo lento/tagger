@@ -30,7 +30,7 @@ from sqlalchemy.orm import relation, backref, synonym
 from tagger.model import DeclarativeBase, metadata
 from tagger.model.utils import mapped_scalar, dict_property, add_language_props
 from tagger.model.auth import User
-from tagger.lib.utils import make_id
+from tagger.model.utils import make_id
 
 import logging
 log = logging.getLogger(__name__)
@@ -50,6 +50,10 @@ class Associable(DeclarativeBase):
     @property
     def associated(self):
         return getattr(self, 'associated_%s' % self.association_type)
+
+    @property
+    def type(self):
+        return self.association_type
     
     # Methods
     def has_tags(self, tag_ids):
