@@ -21,25 +21,41 @@
 """Tagger utilities"""
 
 from operator import itemgetter
+from sqlalchemy import desc
 from tagger.model import DBSession, Associable, Tag
 
-def find_related(tags, max_results=10):
+def find_related(tags=set(), obj=None, max_results=10):
     """Return a list of related objects
 
     Each element of the list is a tuple in the form:
     (object, number of tags in common, creation date of the object)
     """
-    tags = isinstance(tags, set) and tags or set(tags)
+    if obj:
+        tags = set(obj.tags)
     tagids = [t.id for t in tags]
     query = DBSession.query(Associable)
     query = query.filter(Associable.tags.any(Tag.id.in_(tagids)))
+    query = query.order_by(desc('created'))
     results = query.all()
-    results = [(o, len(set(o.tags) & tags), o.associated.created)
-                                                            for o in results]
-    results.sort(key=itemgetter(1, 2), reverse=True)
+    if obj:
+        results.remove(obj.associable)
+    results = [(o, len(set(o.tags) & tags)) for o in results]
+    results.sort(key=itemgetter(1), reverse=True)
     if max_results > 0:
         return results[:max_results]
     else:
         return results
 
+def find_recent(max_results=10):
+    """Return a list of recent objects
+    
+    Each element of the list is a tuple in the form:
+    (object, creation date of the object)
+    """
+    query = DBSession.query(Associable)
+    query = query.order_by(desc('created'))
+    if max_results > 0:
+        query = query.limit(max_results)
+    results = query.all()
+    return results
 

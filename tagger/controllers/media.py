@@ -31,7 +31,7 @@ from tagger.model import DBSession, Media, Language
 from tagger.model.helpers import tags_from_string
 from tagger.model.utils import make_id
 from tagger.lib.widgets import FormMediaNew, FormMediaEdit, FormMediaDelete
-from tagger.lib.utils import find_related
+from tagger.lib.utils import find_related, find_recent
 
 import logging
 log = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ class Controller(RestController):
     def get_all(self):
         """Return a list of media"""
         media = DBSession.query(Media).all()
-        return dict(media=media, page=('media', ''))
+        return dict(media=media, recent=find_recent(), page=('media', ''))
 
     @expose('json')
     @expose('tagger.templates.media.get_one')
@@ -58,7 +58,7 @@ class Controller(RestController):
         """Return a single media"""
         media = DBSession.query(Media).get(mediaid.decode())
         return dict(media=media, lang=languageid,
-                                            related=find_related(media.tags))
+                                            related=find_related(obj=media))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')

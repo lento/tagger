@@ -29,7 +29,7 @@ from tagger.model import DBSession, Language, Category, Article
 from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormArticleNew, FormArticleEdit
 from tagger.lib.widgets import FormArticleDelete
-from tagger.lib.utils import find_related
+from tagger.lib.utils import find_related, find_recent
 
 import logging
 log = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class Controller(RestController):
             elif mode == 'any':
                 articles = [a for a in articles if set(a.tags) & (tags)]
 
-        return dict(articles=articles)
+        return dict(articles=articles, recent=find_recent())
 
     @expose('json')
     @expose('tagger.templates.article.get_one')
@@ -81,7 +81,7 @@ class Controller(RestController):
             raise HTTPNotFound
         else:
             return dict(article=article, lang=lang,
-                                            related=find_related(article.tags))
+                                            related=find_related(obj=article))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')

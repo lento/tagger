@@ -26,6 +26,7 @@ from sqlalchemy import Table, ForeignKey, Column, DDL, UniqueConstraint, desc
 from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
 from sqlalchemy.types import TIMESTAMP, Boolean, Enum
 from sqlalchemy.orm import relation, backref, synonym
+from sqlalchemy.ext.declarative import synonym_for
 
 from tagger.model import DeclarativeBase, metadata
 from tagger.model.utils import mapped_scalar, dict_property, add_language_props
@@ -45,6 +46,7 @@ class Associable(DeclarativeBase):
     # Columns
     id = Column(Integer, primary_key=True)
     association_type = Column(Unicode(50))
+    _created = Column('created', DateTime)
     
     # Properties
     @property
@@ -54,7 +56,12 @@ class Associable(DeclarativeBase):
     @property
     def type(self):
         return self.association_type
-    
+
+    @synonym_for('_created')
+    @property
+    def created(self):
+        return self._created
+
     # Methods
     def has_tags(self, tag_ids):
         find = set(tag_ids)
@@ -321,7 +328,7 @@ class Article(DeclarativeBase):
     user_id = Column(Integer, ForeignKey('auth_users.user_id'))
     category_id = Column(Unicode(50), ForeignKey('categories.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
-    created = Column(DateTime, default=datetime.now)
+    _created = Column('created', DateTime)
     published = Column(Boolean, default=False)
 
     # Relations
@@ -331,6 +338,11 @@ class Article(DeclarativeBase):
     category = relation('Category', backref='articles')
 
     # Properties
+    @synonym_for('_created')
+    @property
+    def created(self):
+        return self._created
+
     @property
     def tags(self):
         return self.associable.tags
@@ -376,6 +388,9 @@ class Article(DeclarativeBase):
         self.user = user
         self.pages.append(Page(title, lang, text=text, is_default=True))
         self.associable = Associable(u'article')
+        now = datetime.now()
+        self._created = now
+        self.associable._created = now
 
     def __repr__(self):
         return '<Article: %s>' % self.id
@@ -480,7 +495,7 @@ class Link(DeclarativeBase):
     id = Column(Unicode(255), primary_key=True)
     associable_id = Column(Integer, ForeignKey('associables.id'))
     user_id = Column(Integer, ForeignKey('auth_users.user_id'))
-    created = Column(DateTime, default=datetime.now)
+    _created = Column('created', DateTime)
     uri = Column(Unicode(255))
 
     # Relations
@@ -489,6 +504,11 @@ class Link(DeclarativeBase):
     user = relation('User', backref='links')
 
     # Properties
+    @synonym_for('_created')
+    @property
+    def created(self):
+        return self._created
+
     @property
     def tags(self):
         return self.associable.tags
@@ -508,6 +528,9 @@ class Link(DeclarativeBase):
         self.user = user
         self.data.append(LinkData(name, lang, description))
         self.associable = Associable(u'link')
+        now = datetime.now()
+        self._created = now        
+        self.associable._created = now
 
     def __repr__(self):
         return '<Link: %s %s>' % (self.id, self.uri)
@@ -572,7 +595,7 @@ class Media(DeclarativeBase):
     id = Column(Unicode(255), primary_key=True)
     associable_id = Column(Integer, ForeignKey('associables.id'))
     user_id = Column(Integer, ForeignKey('auth_users.user_id'))
-    created = Column(DateTime, default=datetime.now)
+    _created = Column('created', DateTime)
     type = Column(Unicode(50))
     uri = Column(Unicode(255))
 
@@ -582,6 +605,11 @@ class Media(DeclarativeBase):
     user = relation('User', backref='media')
 
     # Properties
+    @synonym_for('_created')
+    @property
+    def created(self):
+        return self._created
+
     @property
     def tags(self):
         return self.associable.tags
@@ -602,6 +630,9 @@ class Media(DeclarativeBase):
         self.user = user
         self.data.append(MediaData(name, lang, description))
         self.associable = Associable(u'media')
+        now = datetime.now()
+        self._created = now
+        self.associable._created = now
 
     def __repr__(self):
         return '<Media: %s %s %s>' % (self.id, self.type, self.uri)

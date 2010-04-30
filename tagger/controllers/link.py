@@ -27,7 +27,7 @@ from repoze.what.predicates import has_permission
 from tagger.model import DBSession, Link, Language
 from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormLinkNew, FormLinkEdit, FormLinkDelete
-from tagger.lib.utils import find_related
+from tagger.lib.utils import find_related, find_recent
 
 import logging
 log = logging.getLogger(__name__)
@@ -46,15 +46,14 @@ class Controller(RestController):
     def get_all(self):
         """Return a list of links"""
         links = DBSession.query(Link).all()
-        return dict(links=links, page=('links', ''))
+        return dict(links=links, recent=find_recent(), page=('links', ''))
 
     @expose('json')
     @expose('tagger.templates.link.get_one')
     def get_one(self, linkid, languageid=None):
         """Return a single link"""
         link = DBSession.query(Link).get(linkid.decode())
-        return dict(link=link, lang=languageid,
-                                            related=find_related(link.tags))
+        return dict(link=link, lang=languageid, related=find_related(obj=link))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')

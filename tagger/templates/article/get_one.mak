@@ -1,4 +1,5 @@
 <%inherit file="local:templates.master"/>
+<%namespace name="sidebars" file="local:templates.sidebars"/>
 
 <%!
     from tagger.lib.render.rst import render_text
@@ -37,6 +38,6 @@
 </div>
 
 <%def name="side()">
-    ${parent.side_related()}
+    ${sidebars.side_related()}
 </%def>
 
