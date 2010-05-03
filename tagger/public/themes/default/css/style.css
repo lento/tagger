@@ -152,6 +152,11 @@ table td.icon {
 .icon.revoke {background: url(../images/icons/16x16/revoke.png) left center no-repeat;}
 .icon.spam {background: url(../images/icons/16x16/spam.png) left center no-repeat;}
 .icon.unspam {background: url(../images/icons/16x16/unspam.png) left center no-repeat;}
+.icon.article {background: url(../images/icons/16x16/text.png) left center no-repeat;}
+.icon.link {background: url(../images/icons/16x16/link.png) left center no-repeat;}
+.icon.audio {background: url(../images/icons/16x16/audio.png) left center no-repeat;}
+.icon.video {background: url(../images/icons/16x16/video.png) left center no-repeat;}
+.icon.image {background: url(../images/icons/16x16/image.png) left center no-repeat;}
 
 /* Status */
 .status {

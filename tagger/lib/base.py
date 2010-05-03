@@ -9,11 +9,17 @@ from pylons.i18n import _, ungettext, N_
 from tw.api import WidgetBunch, JSLink
 from tagger.model import DBSession, Language, Category, BannerContent
 from tagger.lib.render import LinkWidget, MediaWidget
+from tagger.lib.widgets import SideArticle, SideMedia, SideLink
 
 __all__ = ['BaseController']
 
 w_link = LinkWidget()
 w_media = MediaWidget()
+w_sideobj = dict(
+    article=SideArticle(),
+    media=SideMedia(),
+    link=SideLink(),
+    )
 
 # JQuery and plugins
 jquery_js = JSLink(link=url('/js/jquery.js'))
@@ -79,5 +85,8 @@ class BaseController(TGController):
         bc = DBSession.query(BannerContent).first()
         tmpl_context.banner_mediaid = bc and bc.media_id or None
         tmpl_context.banner_linkid = bc and bc.link_id or None
+
+        # add Sidebar widgets
+        tmpl_context.w_sideobj = w_sideobj
 
         return TGController.__call__(self, environ, start_response)

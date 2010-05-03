@@ -345,5 +345,28 @@ class FormBannerContent(TableForm):
     class fields(WidgetsList):
         mediaid = SingleSelectField(label_text=l_('Media'), size=SF_SIZE)
         linkid = SingleSelectField(label_text=l_('Link'), size=SF_SIZE)
-        
+
+
+############################################################
+# Sidebar widgets
+############################################################
+
+class SideArticle(Widget):
+    """Show a article summary in the sidebar"""
+    params = ['article', 'tg']
+    template = 'mako:tagger.templates.widgets.side_article'
+
+
+class SideMedia(Widget):
+    """Show a media summary in the sidebar"""
+    params = ['media', 'tg']
+    template = 'mako:tagger.templates.widgets.side_media'
+
+
+class SideLink(Widget):
+    """Show a link summary in the sidebar"""
+    params = ['link', 'tg']
+    template = 'mako:tagger.templates.widgets.side_link'
+
+
 

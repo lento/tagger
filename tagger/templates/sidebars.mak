@@ -13,16 +13,24 @@
 
 <%def name="side_related()">
     <ul>
-        % for obj, numtags in related:
-            <li class="related ${obj.type}"><a href="">${obj.associated}</a></li>
+        % for assoc, numtags in related:
+            <li class="related ${assoc.type}">
+                % if assoc.type in c.w_sideobj:
+                    ${c.w_sideobj[assoc.type](obj=assoc.associated, tg=tg, lang=c.lang) | n}
+                % endif
+            </li>
         % endfor
     </ul>
 </%def>
 
 <%def name="side_recent()">
     <ul>
-        % for obj in recent:
-            <li class="related ${obj.type}"><a href="">${obj.associated}</a></li>
+        % for assoc in recent:
+            <li class="related ${assoc.type}">
+                % if assoc.type in c.w_sideobj:
+                    ${c.w_sideobj[assoc.type](obj=assoc.associated, tg=tg, lang=c.lang) | n}
+                % endif
+            </li>
         % endfor
     </ul>
 </%def>
