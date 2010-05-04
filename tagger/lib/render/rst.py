@@ -29,6 +29,13 @@ from tagger.lib.render import widgets
 def render_rst(text):
     return publish_parts(text, writer_name='html')['html_body']
 
+def render_rst_summary(text):
+    text = publish_parts(text, writer_name='html')['html_body']
+    splitted = text.split('<!-- more -->')
+    text = splitted[0]
+    has_more = len(splitted) > 1
+    return text, has_more
+
 def render_mak(text, lang=None):
     template = Template(text, default_filters=['trim'])
     extra = Bunch(url=url,
@@ -40,4 +47,9 @@ def render_text(text, lang=None):
     text = render_rst(text)
     text = render_mak(text, lang)
     return text
+
+def render_summary(text, lang=None):
+    text, has_more = render_rst_summary(text)
+    text = render_mak(text, lang)
+    return text, has_more
 

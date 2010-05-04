@@ -28,7 +28,7 @@ from repoze.what.predicates import has_permission
 from tagger.model import DBSession, Language, Category, Article
 from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormArticleNew, FormArticleEdit
-from tagger.lib.widgets import FormArticleDelete
+from tagger.lib.widgets import FormArticleDelete, ArticleTitle
 from tagger.lib.utils import find_related, find_recent
 
 import logging
@@ -39,6 +39,7 @@ f_new = FormArticleNew(action=url('/article/'))
 f_edit = FormArticleEdit(action=url('/article/'))
 f_delete = FormArticleDelete(action=url('/article/'))
 
+w_article_title = ArticleTitle()
 
 class Controller(RestController):
     """REST controller for managing articles"""
@@ -47,6 +48,7 @@ class Controller(RestController):
     @expose('tagger.templates.article.get_all')
     def get_all(self, categoryid=None, tag=[], mode='all'):
         """Return a list of articles"""
+        tmpl_context.w_article_title = w_article_title
         query = DBSession.query(Article)
         if categoryid:
             query = query.filter_by(category_id=categoryid)
@@ -69,6 +71,7 @@ class Controller(RestController):
     @expose('tagger.templates.article.get_one')
     def get_one(self, articleid, languageid=None):
         """Return a single article"""
+        tmpl_context.w_article_title = w_article_title
         article = DBSession.query(Article).get(articleid.decode())
         if languageid:
             lang = languageid
