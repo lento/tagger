@@ -513,11 +513,6 @@ table td.icon {
 	-webkit-border-radius: 4px;
 }
 
-.article_title .tag:hover {
-    background-color: #babdb6; /* Aluminium 3 */
-    color: white;
-}
-
 .article.summary {
     margin-bottom: 40px;
 }
