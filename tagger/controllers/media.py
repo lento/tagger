@@ -32,6 +32,7 @@ from tagger.model.helpers import tags_from_string
 from tagger.model.utils import make_id
 from tagger.lib.widgets import FormMediaNew, FormMediaEdit, FormMediaDelete
 from tagger.lib.widgets import ObjectTitle
+from tagger.lib.render import MediaWidget
 from tagger.lib.utils import find_related, find_recent
 
 import logging
@@ -43,6 +44,7 @@ f_edit = FormMediaEdit(action=url('/media/'))
 f_delete = FormMediaDelete(action=url('/media/'))
 
 w_object_title = ObjectTitle()
+w_media = MediaWidget()
 
 class Controller(RestController):
     """REST controller for managing media"""
@@ -52,6 +54,7 @@ class Controller(RestController):
     def get_all(self, tag=[], mode='all'):
         """Return a list of media"""
         tmpl_context.w_object_title = w_object_title
+        tmpl_context.w_media = w_media
         media = DBSession.query(Media).all()
 
         if tag:
@@ -70,6 +73,7 @@ class Controller(RestController):
     def get_one(self, mediaid, languageid=None):
         """Return a single media"""
         tmpl_context.w_object_title = w_object_title
+        tmpl_context.w_media = w_media
         media = DBSession.query(Media).get(mediaid.decode())
 
         if languageid:

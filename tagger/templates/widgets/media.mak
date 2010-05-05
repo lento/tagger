@@ -14,15 +14,15 @@
     <img src="${mediaurl}"
         alt="${label or media.uri}"
         title="${media.description[extra.lang] or ''}"
-        width="${width or '480'}"
-        height="${height or '270'}"
+        width="${width or 'auto'}"
+        height="${height or 'auto'}"
     />
 % elif media.type == 'video':
     <video src="${mediaurl}"
         title="${media.description[extra.lang] or ''}"
         controls
-        width="${width or '480'}"
-        height="${height or '270'}"
+        width="${width or 'auto'}"
+        height="${height or 'auto'}"
         onerror="alert('Can\'t load video');">
             ${flowplayer_js.render() | n}
             <%
@@ -31,7 +31,7 @@
             %>
             <a id="flowplayer_${media.id}"
                 href="${fallbackurl}"
-                style="display:block;width:${width or '480'}px;height:${height or '270'}px;">
+                style="display:block;width:${width or 'auto'}px;height:${height or 'auto'}px;">
             </a>
             <script type="text/javascript">
                 flowplayer(
