@@ -21,9 +21,12 @@
     % for m in media:
         <li class="object summary">
             ${c.w_object_title(obj=m, tg=tg, lang=c.lang, add_link=True) | n}
-            <div>
-                ${m.description[c.lang]}
-            </div>
+            % if m.description[lang]:
+                <div>
+                    ${m.description[c.lang]}
+                </div>
+                <br/>
+            % endif
             <div>
                 ${c.w_media(mediaid=m.id, extra=extra, width=120) | n}
             </div>

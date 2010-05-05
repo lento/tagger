@@ -13,13 +13,18 @@
   tagger - ${_('Media')}
 </%def>
 
-${c.w_object_title(obj=media, tg=tg, lang=lang) | n}
+<div class="object">
+    ${c.w_object_title(obj=media, tg=tg, lang=lang) | n}
 
-<div>
-    ${media.description[lang]}
-</div>
-<div>
-    ${c.w_media(mediaid=media.id, extra=extra) | n}
+    % if media.description[lang]:
+        <div>
+            ${media.description[lang]}
+        </div>
+        <br/>
+    % endif
+    <div>
+        ${c.w_media(mediaid=media.id, extra=extra) | n}
+    </div>
 </div>
 
 <%def name="side()">

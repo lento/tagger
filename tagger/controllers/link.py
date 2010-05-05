@@ -28,6 +28,7 @@ from tagger.model import DBSession, Link, Language
 from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormLinkNew, FormLinkEdit, FormLinkDelete
 from tagger.lib.widgets import ObjectTitle
+from tagger.lib.render import LinkWidget
 from tagger.lib.utils import find_related, find_recent
 
 import logging
@@ -39,6 +40,7 @@ f_edit = FormLinkEdit(action=url('/link/'))
 f_delete = FormLinkDelete(action=url('/link/'))
 
 w_object_title = ObjectTitle()
+w_link = LinkWidget()
 
 class Controller(RestController):
     """REST controller for managing links"""
@@ -48,6 +50,7 @@ class Controller(RestController):
     def get_all(self, tag=[], mode='all'):
         """Return a list of links"""
         tmpl_context.w_object_title = w_object_title
+        tmpl_context.w_link = w_link
         links = DBSession.query(Link).all()
 
         if tag:
@@ -66,6 +69,7 @@ class Controller(RestController):
     def get_one(self, linkid, languageid=None):
         """Return a single link"""
         tmpl_context.w_object_title = w_object_title
+        tmpl_context.w_link = w_link
         link = DBSession.query(Link).get(linkid.decode())
 
         if languageid:
