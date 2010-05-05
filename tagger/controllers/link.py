@@ -27,6 +27,7 @@ from repoze.what.predicates import has_permission
 from tagger.model import DBSession, Link, Language
 from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormLinkNew, FormLinkEdit, FormLinkDelete
+from tagger.lib.widgets import ObjectTitle
 from tagger.lib.utils import find_related, find_recent
 
 import logging
@@ -37,23 +38,44 @@ f_new = FormLinkNew(action=url('/link/'))
 f_edit = FormLinkEdit(action=url('/link/'))
 f_delete = FormLinkDelete(action=url('/link/'))
 
+w_object_title = ObjectTitle()
 
 class Controller(RestController):
     """REST controller for managing links"""
 
     @expose('json')
     @expose('tagger.templates.link.get_all')
-    def get_all(self):
+    def get_all(self, tag=[], mode='all'):
         """Return a list of links"""
+        tmpl_context.w_object_title = w_object_title
         links = DBSession.query(Link).all()
+
+        if tag:
+            tagids = isinstance(tag, list) and tag or [tag]
+            tagstring = ', '.join(tagids)
+            tags = set(tags_from_string(tagstring, create=False))
+            if mode == 'all':
+                links = [obj for obj in links if set(obj.tags) >= (tags)]
+            elif mode == 'any':
+                links = [obj for obj in links if set(obj.tags) & (tags)]
+
         return dict(links=links, recent=find_recent(), page=('links', ''))
 
     @expose('json')
     @expose('tagger.templates.link.get_one')
     def get_one(self, linkid, languageid=None):
         """Return a single link"""
+        tmpl_context.w_object_title = w_object_title
         link = DBSession.query(Link).get(linkid.decode())
-        return dict(link=link, lang=languageid, related=find_related(obj=link))
+
+        if languageid:
+            lang = languageid
+        elif tmpl_context.lang:
+            lang = tmpl_context.lang
+        else:
+            lang = link.language_id
+
+        return dict(link=link, lang=lang, related=find_related(obj=link))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')

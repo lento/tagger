@@ -31,6 +31,7 @@ from tagger.model import DBSession, Media, Language
 from tagger.model.helpers import tags_from_string
 from tagger.model.utils import make_id
 from tagger.lib.widgets import FormMediaNew, FormMediaEdit, FormMediaDelete
+from tagger.lib.widgets import ObjectTitle
 from tagger.lib.utils import find_related, find_recent
 
 import logging
@@ -41,24 +42,44 @@ f_new = FormMediaNew(action=url('/media/'))
 f_edit = FormMediaEdit(action=url('/media/'))
 f_delete = FormMediaDelete(action=url('/media/'))
 
+w_object_title = ObjectTitle()
 
 class Controller(RestController):
     """REST controller for managing media"""
 
     @expose('json')
     @expose('tagger.templates.media.get_all')
-    def get_all(self):
+    def get_all(self, tag=[], mode='all'):
         """Return a list of media"""
+        tmpl_context.w_object_title = w_object_title
         media = DBSession.query(Media).all()
+
+        if tag:
+            tagids = isinstance(tag, list) and tag or [tag]
+            tagstring = ', '.join(tagids)
+            tags = set(tags_from_string(tagstring, create=False))
+            if mode == 'all':
+                media = [obj for obj in media if set(obj.tags) >= (tags)]
+            elif mode == 'any':
+                media = [obj for obj in media if set(obj.tags) & (tags)]
+
         return dict(media=media, recent=find_recent(), page=('media', ''))
 
     @expose('json')
     @expose('tagger.templates.media.get_one')
     def get_one(self, mediaid, languageid=None):
         """Return a single media"""
+        tmpl_context.w_object_title = w_object_title
         media = DBSession.query(Media).get(mediaid.decode())
-        return dict(media=media, lang=languageid,
-                                            related=find_related(obj=media))
+
+        if languageid:
+            lang = languageid
+        elif tmpl_context.lang:
+            lang = tmpl_context.lang
+        else:
+            lang = media.language_id
+
+        return dict(media=media, lang=lang, related=find_related(obj=media))
 
     @require(has_permission('manage'))
     @expose('tagger.templates.forms.form')

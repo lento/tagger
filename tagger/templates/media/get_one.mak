@@ -5,11 +5,11 @@
   tagger - ${_('Media')}
 </%def>
 
-<div>${media.id}</div>
-<div>${media.type}</div>
-<div>${media.name[lang]}</div>
-<div>${media.uri}</div>
-<div>${media.description[lang]}</div>
+${c.w_object_title(obj=media, tg=tg, lang=lang) | n}
+
+<div>
+    ${media.description[lang]}
+</div>
 
 <%def name="side()">
     ${sidebars.side_related()}

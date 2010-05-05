@@ -5,10 +5,11 @@
   tagger - ${_('Link')}
 </%def>
 
-<div>${link.id}</div>
-<div>${link.name[lang]}</div>
-<div>${link.uri}</div>
-<div>${link.description[lang]}</div>
+${c.w_object_title(obj=link, tg=tg, lang=lang) | n}
+
+<div>
+    ${link.description[lang]}
+</div>
 
 <%def name="side()">
     ${sidebars.side_related()}

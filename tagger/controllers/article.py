@@ -61,9 +61,9 @@ class Controller(RestController):
             tagstring = ', '.join(tagids)
             tags = set(tags_from_string(tagstring, create=False))
             if mode == 'all':
-                articles = [a for a in articles if set(a.tags) >= (tags)]
+                articles = [obj for obj in articles if set(obj.tags) >= (tags)]
             elif mode == 'any':
-                articles = [a for a in articles if set(a.tags) & (tags)]
+                articles = [obj for obj in articles if set(obj.tags) & (tags)]
 
         return dict(articles=articles, recent=find_recent())
 
@@ -73,6 +73,7 @@ class Controller(RestController):
         """Return a single article"""
         tmpl_context.w_object_title = w_object_title
         article = DBSession.query(Article).get(articleid.decode())
+
         if languageid:
             lang = languageid
         elif tmpl_context.lang:
