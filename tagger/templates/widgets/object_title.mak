@@ -1,14 +1,16 @@
-<%
+<%!
     from tagger.model import Article, Media, Link
+%>
+<%
     if isinstance(obj, Article):
         name = obj.title[lang]
-        link = '/%s/%s' % (obj.category.id, obj.id)
+        prefix = '/%s' % obj.category.id
     elif isinstance(obj, Media):
         name = obj.name[lang]
-        link = '/media/%s' % obj.id
+        prefix = '/media'
     elif isinstance(obj, Link):
         name = obj.name[lang]
-        link = '/link/%s' % obj.id
+        prefix = '/link'
     else:
         name = None
         link = None
@@ -17,7 +19,7 @@
 <div class="object_title">
     <h1>
         % if add_link:
-            <a href="${tg.url(link)}">
+            <a href="${tg.url('%s/%s' % (prefix, obj.id))}">
         % endif
                 ${name}
         % if add_link:
@@ -30,7 +32,7 @@
     </div>
     <div class="tags">
         % for tag in obj.tags:
-            <a class="tag" href="">
+            <a class="tag" href="${tg.url('%s?tag=%s' % (prefix, tag.id))}">
                 ${tag.name[lang]}
             </a>
         % endfor
@@ -39,7 +41,7 @@
         % for language in obj.languages:
             <a class="language ${language.id == lang and 'active' or ''}"
                 title="${language.name}"
-                href="${tg.url('%s/%s' % (link, language.id))}"
+                href="${tg.url('%s/%s/%s' % (prefix, obj.id, language.id))}"
                 >
                     ${language.name}
             </a>
