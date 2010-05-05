@@ -4,6 +4,6 @@
 
 <a href="${url('/link/%s' % obj.id)}">
     <div class="icon link"></div>
-    <div>${obj.name[c.lang]}</div>
+    <div class="title" title="${obj.description[c.lang] or ''}">${obj.name[c.lang]}</div>
 </a>
 
