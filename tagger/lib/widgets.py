@@ -373,10 +373,10 @@ class SideLink(Widget):
 # Misc widgets
 ############################################################
 
-class ArticleTitle(Widget):
-    """Show a article title"""
-    params = ['article', 'tg', 'lang', 'add_link']
-    template = 'mako:tagger.templates.article.title'
+class ObjectTitle(Widget):
+    """Show a object title"""
+    params = ['obj', 'tg', 'lang', 'add_link']
+    template = 'mako:tagger.templates.widgets.object_title'
 
     add_link = False
 

@@ -9,7 +9,7 @@
   tagger - ${_('Article')}
 </%def>
 
-${c.w_article_title(article=article, tg=tg, lang=lang) | n}
+${c.w_object_title(obj=article, tg=tg, lang=lang) | n}
 
 <div>
     ${render_text(article.text[lang], lang) | n}

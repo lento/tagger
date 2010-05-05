@@ -474,30 +474,30 @@ table td.icon {
 
 
 /****************************************
- * Article
+ * Object
  ****************************************/
-.article_title {
+.object_title {
 	margin-bottom: 20px;
 }
 
-.article_title h1 {
+.object_title h1 {
 	border-bottom: 1px solid #babdb6; /* Aluminium 3 */
 }
 
-.article_title .date, .article_title .user, .article_title .language, .article_title .tag {
+.object_title .date, .object_title .user, .object_title .language, .object_title .tag {
     font-size: smaller;
 }
 
-.article_title .user {
+.object_title .user {
     font-weight: bold;
     font-style: italic;
 }
 
-.article_title .languages, .article_title .tags {
+.object_title .languages, .object_title .tags {
     margin-bottom: 2px;
 }
 
-.article_title .language {
+.object_title .language {
     margin-right: 2px;
     padding: 0 4px;
     background-color: #babdb6; /* Aluminium 3 */
@@ -507,11 +507,11 @@ table td.icon {
 	-webkit-border-radius: 4px;
 }
 
-.article_title .language.active {
+.object_title .language.active {
     background-color: #f57900; /* Orange 2 */
 }
 
-.article_title .tag {
+.object_title .tag {
     color: #888a85; /* Aluminium 4 */
     padding: 0 4px;
 	border-radius: 4px;
@@ -519,10 +519,10 @@ table td.icon {
 	-webkit-border-radius: 4px;
 }
 
-.article.summary {
+.object.summary {
     margin-bottom: 40px;
 }
 
-.article a:hover{
+.object a:hover{
     color: #a40000; /* Scarlet Red 3 */
 }

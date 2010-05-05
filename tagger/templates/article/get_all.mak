@@ -11,8 +11,8 @@
 
 <ul>
     % for article in articles:
-        <li class="article summary">
-            ${c.w_article_title(article=article, tg=tg, lang=c.lang, add_link=True) | n}
+        <li class="object summary">
+            ${c.w_object_title(obj=article, tg=tg, lang=c.lang, add_link=True) | n}
             <%
                 text, has_more = render_summary(article.text[lang], lang)
             %>
