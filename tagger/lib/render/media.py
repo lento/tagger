@@ -69,7 +69,7 @@ class MediaDirective(Directive):
                           'label="%s", '
                           'width=%s, '
                           'height=%s, '
-                          'extra=extra)}' % (mediaid, label, width, height))
+                          'lang=lang)}' % (mediaid, label, width, height))
         media_node = nodes.raw(rawsource='', text=text, format='html')
         return [media_node]
 

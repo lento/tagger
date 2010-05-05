@@ -1,4 +1,5 @@
 <%!
+    from tg import url
     from tagger.model import Article, Media, Link
 %>
 <%
@@ -19,7 +20,7 @@
 <div class="object_title">
     <h1>
         % if add_link:
-            <a href="${tg.url('%s/%s' % (prefix, obj.id))}">
+            <a href="${url('%s/%s' % (prefix, obj.id))}">
         % endif
                 ${name}
         % if add_link:
@@ -32,7 +33,7 @@
     </div>
     <div class="tags">
         % for tag in obj.tags:
-            <a class="tag" href="${tg.url('%s?tag=%s' % (prefix, tag.id))}">
+            <a class="tag" href="${url('%s?tag=%s' % (prefix, tag.id))}">
                 ${tag.name[lang]}
             </a>
         % endfor
@@ -41,7 +42,7 @@
         % for language in obj.languages:
             <a class="language ${language.id == lang and 'active' or ''}"
                 title="${language.name}"
-                href="${tg.url('%s/%s/%s' % (prefix, obj.id, language.id))}"
+                href="${url('%s/%s/%s' % (prefix, obj.id, language.id))}"
                 >
                     ${language.name}
             </a>

@@ -23,7 +23,6 @@
 from docutils.core import publish_parts
 from mako.template import Template
 from tg import url
-from tg.configuration import Bunch
 from tagger.lib.render import widgets
 
 def render_rst(text):
@@ -38,10 +37,7 @@ def render_rst_summary(text):
 
 def render_mak(text, lang=None):
     template = Template(text, default_filters=['trim'])
-    extra = Bunch(url=url,
-                  lang=lang,
-                 )
-    return template.render_unicode(extra=extra, **widgets)
+    return template.render_unicode(**widgets)
 
 def render_text(text, lang=None):
     text = render_rst(text)

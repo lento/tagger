@@ -16,7 +16,7 @@
         % for assoc, numtags in related:
             <li class="related ${assoc.type}">
                 % if assoc.type in c.w_sideobj:
-                    ${c.w_sideobj[assoc.type](obj=assoc.associated, tg=tg, lang=c.lang) | n}
+                    ${c.w_sideobj[assoc.type](obj=assoc.associated) | n}
                 % endif
             </li>
         % endfor
@@ -28,7 +28,7 @@
         % for assoc in recent:
             <li class="related ${assoc.type}">
                 % if assoc.type in c.w_sideobj:
-                    ${c.w_sideobj[assoc.type](obj=assoc.associated, tg=tg, lang=c.lang) | n}
+                    ${c.w_sideobj[assoc.type](obj=assoc.associated) | n}
                 % endif
             </li>
         % endfor

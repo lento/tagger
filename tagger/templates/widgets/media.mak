@@ -1,25 +1,25 @@
 <%!
     import os.path
-    from tg import app_globals as G
+    from tg import app_globals as G, tmpl_context as c, url
     from tagger.model import DBSession, Media
     from tagger.lib.base import flowplayer_js
 %>
 
 <%
     media = DBSession.query(Media).get(mediaid)
-    mediaurl = extra.url('/%s/%s' % (G.upload_prefix, media.uri))
+    mediaurl = url('/%s/%s' % (G.upload_prefix, media.uri))
 %>
 
 % if media.type == 'image':
     <img src="${mediaurl}"
         alt="${label or media.uri}"
-        title="${media.description[extra.lang] or ''}"
+        title="${media.description[lang] or ''}"
         width="${width or 'auto'}"
         height="${height or 'auto'}"
     />
 % elif media.type == 'video':
     <video src="${mediaurl}"
-        title="${media.description[extra.lang] or ''}"
+        title="${media.description[lang] or ''}"
         controls
         width="${width or 'auto'}"
         height="${height or 'auto'}"
@@ -36,7 +36,7 @@
             <script type="text/javascript">
                 flowplayer(
                     "flowplayer_${media.id}",
-                    "${extra.url('/swf/flowplayer-3.1.5.swf')}",
+                    "${url('/swf/flowplayer-3.1.5.swf')}",
                     {
                         clip: {
                             scaling: "orig",

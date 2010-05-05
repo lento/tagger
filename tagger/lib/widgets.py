@@ -353,19 +353,19 @@ class FormBannerContent(TableForm):
 
 class SideArticle(Widget):
     """Show a article summary in the sidebar"""
-    params = ['article', 'tg']
+    params = ['article']
     template = 'mako:tagger.templates.widgets.side_article'
 
 
 class SideMedia(Widget):
     """Show a media summary in the sidebar"""
-    params = ['media', 'tg']
+    params = ['media']
     template = 'mako:tagger.templates.widgets.side_media'
 
 
 class SideLink(Widget):
     """Show a link summary in the sidebar"""
-    params = ['link', 'tg']
+    params = ['link']
     template = 'mako:tagger.templates.widgets.side_link'
 
 
@@ -375,7 +375,7 @@ class SideLink(Widget):
 
 class ObjectTitle(Widget):
     """Show a object title"""
-    params = ['obj', 'tg', 'lang', 'add_link']
+    params = ['obj', 'lang', 'add_link']
     template = 'mako:tagger.templates.widgets.object_title'
 
     add_link = False
