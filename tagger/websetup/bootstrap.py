@@ -89,15 +89,18 @@ def bootstrap(command, conf, vars):
 
     # <websetup.bootstrap.after.auth>
 
-    # banner_content
+    # settings
     try:
-        banner_content = model.BannerContent()
-        model.DBSession.add(banner_content)
+        banner_link = model.Setting(id=u'banner_link', value=None)
+        model.DBSession.add(banner_link)
+
+        banner_media = model.Setting(id=u'banner_media', value=None)
+        model.DBSession.add(banner_media)
 
         model.DBSession.flush()
         transaction.commit()
     except IntegrityError:
-        log.debug('Warning, there was a problem adding your BannerContent '
+        log.debug('Warning, there was a problem adding your Setting '
                   'data, it may have already been added:')
         import traceback
         log.debug(traceback.format_exc())

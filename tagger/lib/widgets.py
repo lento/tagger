@@ -339,12 +339,16 @@ class FormCommentDelete(TableForm):
                                                 validator=None, disabled=True)
 
 
-# Banner Content
-class FormBannerContent(TableForm):
-    """Edit Banner Content form"""
+# Settings
+class FormSettings(TableForm):
+    """Edit Settings form"""
     class fields(WidgetsList):
-        mediaid = SingleSelectField(label_text=l_('Media'), size=SF_SIZE)
-        linkid = SingleSelectField(label_text=l_('Link'), size=SF_SIZE)
+        n_banner_media = HiddenField(name='name', default='banner_media')
+        v_banner_media = SingleSelectField(label_text=l_('Banner Media'),
+                                                    name='value', size=SF_SIZE)
+        n_banner_link = HiddenField(name='name', default='banner_link')
+        v_banner_link = SingleSelectField(label_text=l_('Banner Link'),
+                                                    name='value', size=SF_SIZE)
 
 
 ############################################################

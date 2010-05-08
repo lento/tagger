@@ -22,17 +22,21 @@
 
 from tg import expose, flash, require, url, request, redirect, tmpl_context
 from tg import validate
+from tg.exceptions import HTTPBadRequest
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
 from sqlalchemy import desc
 from tagger.lib.base import BaseController
 from tagger.model import DBSession, metadata, Language, Tag, Category
-from tagger.model import Article, Media, Link, Comment, BannerContent
-from tagger.lib.widgets import FormBannerContent
+from tagger.model import Article, Media, Link, Comment, Setting
+from tagger.lib.widgets import FormSettings
+
+import logging
+log = logging.getLogger(__name__)
 
 __all__ = ['RootController']
 
-f_banner = FormBannerContent(action=url('/admin/banner_set'))
+f_settings = FormSettings(action=url('/admin/settings_set'))
 
 class Controller(BaseController):
     """The admin controller for the tagger application."""
@@ -93,47 +97,48 @@ class Controller(BaseController):
         return dict(comments=comments, page=('admin', 'comments'))
 
     @expose('json')
-    @expose('tagger.templates.admin.banner')
-    def banner(self):
-        """Return a form to edit the banner contents"""
-        tmpl_context.f_banner = f_banner
+    @expose('tagger.templates.admin.settings')
+    def settings(self):
+        """Return a form to edit settings"""
+        tmpl_context.f_settings = f_settings
         lang = tmpl_context.lang
 
-        bc = DBSession.query(BannerContent).first()
-        fargs = dict(mediaid=bc.media_id,
-                     linkid=bc.link_id,
-                    )
+        query = DBSession.query(Setting)
+        settings = dict([('v_%s' % s.id, s.value) for s in query])
+        fargs = settings
 
         querymedia = DBSession.query(Media).filter_by(type=u'image')
         media_list = [('', '')]
         media_list.extend([(m.id, m.name[lang]) for m in querymedia])
         link_list = [('', '')]
         link_list.extend([(l.id, l.name[lang]) for l in DBSession.query(Link)])
-        fcargs = dict(mediaid=dict(options=media_list),
-                      linkid=dict(options=link_list),
+        fcargs = dict(v_banner_media=dict(options=media_list),
+                      v_banner_link=dict(options=link_list),
                      )
-        return dict(args=fargs, child_args=fcargs, page=('admin', 'banner'))
+        return dict(args=fargs, child_args=fcargs, page=('admin', 'settings'))
 
     @expose()
-    @validate(f_banner, error_handler=banner)
-    def banner_set(self, mediaid=None, linkid=None):
-        """Set the banner content"""
-        bc = DBSession.query(BannerContent).first()
-        media = mediaid and DBSession.query(Media).get(mediaid) or None
-        link = linkid and DBSession.query(Link).get(linkid) or None
+    @validate(f_settings, error_handler=settings)
+    def settings_set(self, name=None, value=None):
+        """Set settings values"""
+        query = DBSession.query(Setting)
+        settings = dict([(s.id, s) for s in query])
+        if not len(name) == len(value):
+            raise HTTPBadRequest("names and values don't match")
 
         modified = False
-        if bc.media != media:
-            bc.media = media
-            modified = True
-
-        if bc.link != link:
-            bc.link = link
-            modified = True
+        for n, v in zip(name, value):
+            if n in settings:
+                if not settings[n].value == v:
+                    settings[n].value = v
+                    modified = True
+            else:
+                DBSession.add(Setting(n, v))
+                modified = True
 
         if modified:
-            flash(_('Updated Banner'), 'ok')
+            flash(_('Updated Settings'), 'ok')
         else:
-            flash(_('Banner is unchanged'), 'info')
-        redirect(url('/admin/banner/'))
+            flash(_('Settings are unchanged'), 'info')
+        redirect(url('/admin/settings/'))
 

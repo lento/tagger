@@ -7,7 +7,7 @@ from tg.render import render
 from tg import request
 from pylons.i18n import _, ungettext, N_
 from tw.api import WidgetBunch, JSLink
-from tagger.model import DBSession, Language, Category, BannerContent
+from tagger.model import DBSession, Language, Category, Setting
 from tagger.lib.render import LinkWidget, MediaWidget
 from tagger.lib.widgets import SideArticle, SideMedia, SideLink
 
@@ -82,9 +82,10 @@ class BaseController(TGController):
         # set banner link and content
         tmpl_context.w_link = w_link
         tmpl_context.w_media = w_media
-        bc = DBSession.query(BannerContent).first()
-        tmpl_context.banner_mediaid = bc and bc.media_id or None
-        tmpl_context.banner_linkid = bc and bc.link_id or None
+        banner_media = DBSession.query(Setting).get(u'banner_media')
+        banner_link = DBSession.query(Setting).get(u'banner_link')
+        tmpl_context.banner_mediaid = banner_media and banner_media.value
+        tmpl_context.banner_linkid = banner_link and banner_link.value
 
         # add Sidebar widgets
         tmpl_context.w_sideobj = w_sideobj

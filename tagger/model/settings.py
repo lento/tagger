@@ -18,7 +18,7 @@
 # Original Copyright (c) 2010, Lorenzo Pierfederici <lpierfederici@gmail.com>
 # Contributor(s): 
 #
-"""Miscellaneous model"""
+"""Settings model"""
 
 from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Unicode, Integer
@@ -31,26 +31,20 @@ log = logging.getLogger(__name__)
 
 
 ############################################################
-# Banner Content
+# Settings
 ############################################################
-class BannerContent(DeclarativeBase):
-    __tablename__ = 'banner_content'
-    
-    # Columns
-    id = Column(Integer, primary_key=True)
-    media_id = Column(Unicode(255), ForeignKey('media.id'))
-    link_id = Column(Unicode(255), ForeignKey('links.id'))
+class Setting(DeclarativeBase):
+    __tablename__ = 'settings'
 
-    # Relations
-    media = relation('Media')
-    link = relation('Link')
+    # Columns
+    id = Column(Unicode(255), primary_key=True)
+    value = Column(Unicode(255))
 
     # Special methods
-    def __init__(self, media=None, link=None):
-        self.media = media
-        self.link = link
+    def __init__(self, id, value):
+        self.id = id
+        self.value = value
 
     def __repr__(self):
-        return '<BannerContent: media=%s link=%s>' % (self.media_id,
-                                                                self.link_id)
+        return '<Setting: id=%s value=%s>' % (self.id, self.value)
 

@@ -1,6 +1,6 @@
 <%def name="side_admin()">
     <ul>
-        <li class="banner"><a href="${tg.url('/admin/banner/')}">${_('banner')}</a></li>
+        <li class="settings"><a href="${tg.url('/admin/settings/')}">${_('settings')}</a></li>
         <li class="languages"><a href="${tg.url('/admin/language/')}">${_('languages')}</a></li>
         <li class="tags"><a href="${tg.url('/admin/tag/')}">${_('tags')}</a></li>
         <li class="categories"><a href="${tg.url('/admin/category/')}">${_('categories')}</a></li>

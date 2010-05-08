@@ -108,7 +108,7 @@
                 else:
                     banner_content = ' '
                 if c.banner_linkid:
-                    banner_content = c.w_link(linkid='example', label=banner_content, lang=c.lang)
+                    banner_content = c.w_link(linkid=c.banner_linkid, label=banner_content, lang=c.lang)
             %>
             ${banner_content | n}
         </div>

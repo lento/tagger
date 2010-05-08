@@ -1,8 +1,8 @@
 <%inherit file="local:templates.admin.index"/>
 
 <%def name="title()">
-  tagger - ${_('Banner')}
+  tagger - ${_('Settings')}
 </%def>
 
-${c.f_banner(args, child_args=child_args) | n}
+${c.f_settings(args, child_args=child_args) | n}
 
