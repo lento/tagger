@@ -30,10 +30,9 @@ def render_rst(text):
 
 def render_rst_summary(text):
     text = publish_parts(text, writer_name='html')['html_body']
-    splitted = text.split('<!-- more -->')
-    text = splitted[0]
-    has_more = len(splitted) > 1
-    return text, has_more
+    short, moretag, rest = text.partition('<!-- more -->')
+    has_more = not rest == ''
+    return short, has_more
 
 def render_mak(text, lang=None):
     template = Template(text, default_filters=['trim'])
