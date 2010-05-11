@@ -25,7 +25,7 @@ import tg
 from tg import config, url
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tw.api import Widget, WidgetsList
-from tw.forms import TableForm, TextField, TextArea, HiddenField
+from tw.forms import TableForm, TextField, TextArea, HiddenField, Spacer
 from tw.forms import SingleSelectField, FileField, PasswordField
 from tw.dynforms import CascadingSingleSelectField, HidingTableForm
 from tw.dynforms import HidingSingleSelectField
@@ -373,12 +373,26 @@ class FormCommentDelete(TableForm):
 class FormSettings(TableForm):
     """Edit Settings form"""
     class fields(WidgetsList):
+        n_theme = HiddenField(name='name', default='theme')
+        v_theme = SingleSelectField(label_text=l_('Theme'),
+                                                    name='value', size=SF_SIZE)
+        n_title = HiddenField(name='name', default='title')
+        v_title = TextField(label_text=l_('Site Title'),
+                                                    name='value', size=TF_SIZE)
+        n_copyright = HiddenField(name='name', default='copyright')
+        v_copyright = TextField(label_text=l_('Copyright Notice'),
+                                                    name='value', size=TF_SIZE)
+
+        spacer1 = Spacer(label_text='')
+
         n_banner_media = HiddenField(name='name', default='banner_media')
         v_banner_media = SingleSelectField(label_text=l_('Banner Media'),
                                                     name='value', size=SF_SIZE)
         n_banner_link = HiddenField(name='name', default='banner_link')
         v_banner_link = SingleSelectField(label_text=l_('Banner Link'),
                                                     name='value', size=SF_SIZE)
+
+        spacer2 = Spacer(label_text='')
 
 
 ############################################################

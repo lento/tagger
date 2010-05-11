@@ -21,7 +21,7 @@
 """Admin Controller"""
 
 from tg import expose, flash, require, url, request, redirect, tmpl_context
-from tg import validate
+from tg import validate, app_globals as G
 from tg.exceptions import HTTPBadRequest
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
@@ -114,6 +114,7 @@ class Controller(BaseController):
         link_list.extend([(l.id, l.name[lang]) for l in DBSession.query(Link)])
         fcargs = dict(v_banner_media=dict(options=media_list),
                       v_banner_link=dict(options=link_list),
+                      v_theme = dict(options=G.themes),
                      )
         return dict(args=fargs, child_args=fcargs, path=('admin', 'settings'))
 

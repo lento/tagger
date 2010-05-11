@@ -53,11 +53,22 @@ class BaseController(TGController):
         tmpl_context.identity = identity
         tmpl_context.user = identity and identity['user'] or False
 
+        # get settings from the db
+        settings = dict([(s.id, s.value) for s in DBSession.query(Setting)])
+
         # set theme, title and copyright notice
-        tmpl_context.theme = config.get('theme', 'default')
-        tmpl_context.title = config.get(
-                                    'title', 'Welcome to Tagger!').strip('\"')
-        tmpl_context.copyright = config.get('copyright', '').strip('\"')
+        tmpl_context.theme = (settings.get('theme') or
+                              config.get('theme') or
+                              'default'
+                             )
+        tmpl_context.title = (settings.get('title') or
+                              config.get('title').strip('\"') or
+                              'Welcome to Tagger!'
+                             )
+        tmpl_context.copyright = (settings.get('copyright') or
+                                  config.get('copyright').strip('\"') or
+                                  ''
+                                 )
 
         # load javascripts
         jquery_js.inject()
@@ -82,8 +93,8 @@ class BaseController(TGController):
         # set banner link and content
         tmpl_context.w_link = w_link
         tmpl_context.w_media = w_media
-        banner_media = DBSession.query(Setting).get(u'banner_media')
-        banner_link = DBSession.query(Setting).get(u'banner_link')
+        banner_media = settings.get(u'banner_media')
+        banner_link = settings.get(u'banner_link')
         tmpl_context.banner_mediaid = banner_media and banner_media.value
         tmpl_context.banner_linkid = banner_link and banner_link.value
 
