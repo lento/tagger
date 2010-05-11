@@ -26,7 +26,13 @@ from tg import url
 from tagger.lib.render import widgets
 
 def render_rst(text):
-    return publish_parts(text, writer_name='html')['html_body']
+    defaults = {'file_insertion_enabled': 0,
+                'raw_enabled': 0,
+                'report_level': 4,
+                '_disable_config': 1,
+               }
+    rst = publish_parts(text, writer_name='html', settings_overrides=defaults)
+    return rst['html_body']
 
 def render_rst_summary(text):
     text = publish_parts(text, writer_name='html')['html_body']
