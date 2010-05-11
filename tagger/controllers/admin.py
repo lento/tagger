@@ -45,56 +45,56 @@ class Controller(BaseController):
     @expose('tagger.templates.admin.index')
     def index(self):
         """Handle the front-page."""
-        return dict(page=('admin', ''))
+        return dict(path=('admin', ''))
 
     @expose('json')
     @expose('tagger.templates.admin.language')
     def language(self):
         """Return the list of all languages for administration"""
         languages = DBSession.query(Language).all()
-        return dict(languages=languages, page=('admin', 'languages'))
+        return dict(languages=languages, path=('admin', 'languages'))
 
     @expose('json')
     @expose('tagger.templates.admin.tag')
     def tag(self):
         """Return the list of all tags for administration"""
         tags = DBSession.query(Tag).all()
-        return dict(tags=tags, page=('admin', 'tags'))
+        return dict(tags=tags, path=('admin', 'tags'))
 
     @expose('json')
     @expose('tagger.templates.admin.category')
     def category(self):
         """Return the list of all categories for administration"""
         categories = DBSession.query(Category).all()
-        return dict(categories=categories, page=('admin', 'categories'))
+        return dict(categories=categories, path=('admin', 'categories'))
 
     @expose('json')
     @expose('tagger.templates.admin.article')
     def article(self):
         """Return the list of all articles for administration"""
         articles = DBSession.query(Article).order_by(desc('created')).all()
-        return dict(articles=articles, page=('admin', 'articles'))
+        return dict(articles=articles, path=('admin', 'articles'))
 
     @expose('json')
     @expose('tagger.templates.admin.media')
     def media(self,):
         """Return the list of all media for administration"""
         media = DBSession.query(Media).all()
-        return dict(media=media, page=('admin', 'media'))
+        return dict(media=media, path=('admin', 'media'))
 
     @expose('json')
     @expose('tagger.templates.admin.link')
     def link(self):
         """Return the list of all links for administration"""
         links = DBSession.query(Link).all()
-        return dict(links=links, page=('admin', 'links'))
+        return dict(links=links, path=('admin', 'links'))
 
     @expose('json')
     @expose('tagger.templates.admin.comment')
     def comment(self):
         """Return the list of all comments for administration"""
         comments = DBSession.query(Comment).order_by(desc('created')).all()
-        return dict(comments=comments, page=('admin', 'comments'))
+        return dict(comments=comments, path=('admin', 'comments'))
 
     @expose('json')
     @expose('tagger.templates.admin.settings')
@@ -115,7 +115,7 @@ class Controller(BaseController):
         fcargs = dict(v_banner_media=dict(options=media_list),
                       v_banner_link=dict(options=link_list),
                      )
-        return dict(args=fargs, child_args=fcargs, page=('admin', 'settings'))
+        return dict(args=fargs, child_args=fcargs, path=('admin', 'settings'))
 
     @expose()
     @validate(f_settings, error_handler=settings)

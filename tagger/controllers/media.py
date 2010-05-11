@@ -66,7 +66,7 @@ class Controller(RestController):
             elif mode == 'any':
                 media = [obj for obj in media if set(obj.tags) & (tags)]
 
-        return dict(media=media, recent=find_recent(), page=('media', ''))
+        return dict(media=media, recent=find_recent(), path=('media', ''))
 
     @expose('json')
     @expose('tagger.templates.media.get_one')

@@ -62,7 +62,7 @@ class Controller(RestController):
             elif mode == 'any':
                 links = [obj for obj in links if set(obj.tags) & (tags)]
 
-        return dict(links=links, recent=find_recent(), page=('links', ''))
+        return dict(links=links, recent=find_recent(), path=('links', ''))
 
     @expose('json')
     @expose('tagger.templates.link.get_one')

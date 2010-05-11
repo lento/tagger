@@ -14,12 +14,12 @@
     ##${c.j_startup()}
     <script type="text/javascript">
     $(function() {
-        % if page:
-            % if page[0]:
-                $("#header .menu_bottom .${page[0]}").addClass('active');
+        % if path:
+            % if path[0]:
+                $("#header .menu_bottom .${path[0]}").addClass('active');
             % endif
-            % if page[1]:
-                $("#side .${page[1]}").addClass('active');
+            % if path[1]:
+                $("#side .${path[1]}").addClass('active');
             % endif
         % endif
     });
