@@ -357,16 +357,20 @@ class Article(DeclarativeBase):
 
     @property
     def language_ids(self):
-        langs = set()
+        langs = []
         for p in self.pages:
-            langs |= p.language_ids
+            for l in p.language_ids:
+                if l not in langs:
+                    langs.append(l)
         return langs
 
     @property
     def languages(self):
-        langs = set()
+        langs = []
         for p in self.pages:
-            langs |= p.languages
+            for l in p.languages:
+                if l not in langs:
+                    langs.append(l)
         return langs
 
     @property
@@ -467,6 +471,7 @@ class PageData(DeclarativeBase):
 
     # Relations
     parent = relation('Page', backref=backref('data',
+                                order_by='PageData.created',
                                 collection_class=mapped_scalar('language_id')))
     language = relation('Language', backref=backref('pages_data'))
 
@@ -567,7 +572,14 @@ class LinkData(DeclarativeBase):
                                         onupdate='CASCADE', ondelete='CASCADE'))
     _name = Column('name', Unicode(255))
     description = Column(UnicodeText)
+    created = Column(DateTime, default=datetime.now)
     modified = Column(TIMESTAMP, default=datetime.now)
+
+    # Relations
+    parent = relation('Link', backref=backref('data',
+                                order_by='LinkData.created',
+                                collection_class=mapped_scalar('language_id')))
+    language = relation('Language', backref=backref('links_data'))
 
     # Properties
     def _get_name(self):
@@ -579,11 +591,6 @@ class LinkData(DeclarativeBase):
         self._name = val
 
     name = synonym('_name', descriptor=property(_get_name, _set_name))
-
-    # Relations
-    parent = relation('Link', backref=backref('data',
-                                collection_class=mapped_scalar('language_id')))
-    language = relation('Language', backref=backref('links_data'))
 
     # Special methods
     def __init__(self, name, lang, description=None):
@@ -669,7 +676,14 @@ class MediaData(DeclarativeBase):
                                         onupdate='CASCADE', ondelete='CASCADE'))
     _name = Column('name', Unicode(255))
     description = Column(UnicodeText)
+    created = Column(DateTime, default=datetime.now)
     modified = Column(TIMESTAMP, default=datetime.now)
+
+    # Relations
+    parent = relation('Media', backref=backref('data',
+                                order_by='MediaData.created',
+                                collection_class=mapped_scalar('language_id')))
+    language = relation('Language', backref=backref('media_data'))
 
     # Properties
     def _get_name(self):
@@ -681,11 +695,6 @@ class MediaData(DeclarativeBase):
         self._name = val
 
     name = synonym('_name', descriptor=property(_get_name, _set_name))
-
-    # Relations
-    parent = relation('Media', backref=backref('data',
-                                collection_class=mapped_scalar('language_id')))
-    language = relation('Language', backref=backref('media_data'))
 
     # Special methods
     def __init__(self, name, lang, description=None):

@@ -142,9 +142,8 @@ def dict_property(fget=None, fset=None, fdel=None, doc=None):
 def add_language_props(cls, props=[]):
     """Add language related properties to a class"""
     cls.language_id = property(lambda obj: obj.data[0].language_id)
-    cls.language_ids = property(
-                            lambda obj: set([d.language_id for d in obj.data]))
-    cls.languages = property(lambda obj: set([d.language for d in obj.data]))
+    cls.language_ids = property(lambda obj: [d.language_id for d in obj.data])
+    cls.languages = property(lambda obj: [d.language for d in obj.data])
 
     def prop_getter(attr):
         def _prop_get(obj, lang):
