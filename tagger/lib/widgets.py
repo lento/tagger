@@ -168,13 +168,9 @@ class FormArticleEdit(TableForm):
         _method = HiddenField(default='PUT', validator=None)
         articleid = HiddenField(validator=NotEmpty)
         id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
+        title_ = TextField(label_text=l_('Title'), size=TF_SIZE, validator=None,
+                                                                disabled=True)
         categoryid = SingleSelectField(label_text=l_('Category'), size=SF_SIZE)
-        languageid = CascadingSingleSelectField(label_text=l_('Language'),
-                        size=SF_SIZE, cascadeurl=url('/article/translation'),
-                        extra=['articleid'])
-        title = TextField(label_text=l_('Title'), size=TF_SIZE,
-                        validator=All(UnicodeString, NotEmpty, MaxLength(50)))
-        text = TextArea(label_text=l_('Text'), rows=20, cols=TA_COLS)
         tagids = TextField(label_text=l_('Tags'), size=TF_SIZE,
                         attrs=dict(title=l_('Comma separated list of tags')))
 
@@ -187,6 +183,40 @@ class FormArticleDelete(TableForm):
         id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
         title_ = TextField(label_text=l_('Title'), size=TF_SIZE, validator=None,
                                                                 disabled=True)
+
+
+# Page
+class FormPageNew(TableForm):
+    """New page form"""
+    class fields(WidgetsList):
+        articleid = HiddenField(validator=All(UnicodeString, NotEmpty))
+        languageid = SingleSelectField(label_text=l_('Language'), size=SF_SIZE)
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        text = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS)
+
+
+class FormPageEdit(TableForm):
+    """Edit page form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='PUT', validator=None)
+        pageid = HiddenField(validator=NotEmpty)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
+        languageid = CascadingSingleSelectField(label_text=l_('Language'),
+                        size=SF_SIZE, cascadeurl=tg.url('/page/translation'),
+                        extra=['pageid'])
+        name = TextField(label_text=l_('Name'), size=TF_SIZE,
+                        validator=All(UnicodeString, NotEmpty, MaxLength(255)))
+        text = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS)
+
+
+class FormPageDelete(TableForm):
+    """Delete page confirmation form"""
+    class fields(WidgetsList):
+        _method = HiddenField(default='DELETE', validator=None)
+        pageid = HiddenField(validator=NotEmpty)
+        id_ = TextField(size=TF_SIZE, validator=None, disabled=True)
+        stringid_ = TextField(size=TF_SIZE, validator=None, disabled=True)
 
 
 # Link

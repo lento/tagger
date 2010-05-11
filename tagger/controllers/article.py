@@ -130,18 +130,13 @@ class Controller(RestController):
         article = DBSession.query(Article).get(articleid.decode())
 
         tags = ', '.join([t.name[lang] for t in article.tags])
-        fargs = dict(articleid=article.id,
-                     id_=article.id,
+        fargs = dict(articleid=article.id, id_=article.id,
+                     title_=article.title[''],
                      categoryid=article.category_id,
-                     languageid=article.language_id,
-                     title=article.title[''],
-                     text=article.text[''],
                      tagids=tags,
                     )
         categories = [(c.id, c.name[lang]) for c in DBSession.query(Category)]
-        languages = [(l.id, l.name) for l in DBSession.query(Language)]
         fcargs = dict(categoryid=dict(options=categories),
-                      languageid=dict(options=languages),
                      )
         return dict(article=article, page=('admin', None), args=fargs,
                                                             child_args=fcargs)
@@ -150,23 +145,14 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
-    def put(self, articleid, title, categoryid, languageid, text=None,
-                                                                tagids=None):
+    def put(self, articleid, categoryid, tagids=None):
         """Edit a article"""
         lang = tmpl_context.lang or DBSession.query(Language).first().id
         article = DBSession.query(Article).get(articleid.decode())
 
         modified = False
-        if article.title[languageid] != title:
-            article.title[languageid] = title
-            modified = True
-
         if article.category_id != categoryid:
             article.category_id = categoryid
-            modified = True
-
-        if article.text[languageid] != text:
-            article.text[languageid] = text
             modified = True
 
         tags = tags_from_string(tagids, lang=lang)

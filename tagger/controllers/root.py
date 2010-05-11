@@ -31,7 +31,7 @@ from tagger.lib.base import BaseController
 from tagger.lib.widgets import FormLogin
 from tagger.controllers.error import ErrorController
 from tagger.controllers import admin, language, category, article, link, media
-from tagger.controllers import tag, comment
+from tagger.controllers import tag, comment, page
 from tagger.model import DBSession, Language, Category, Article
 
 __all__ = ['RootController']
@@ -50,6 +50,7 @@ class RootController(BaseController):
     media = media.Controller()
     tag = tag.Controller()
     comment = comment.Controller()
+    page = page.Controller()
 
     @expose('tagger.templates.index')
     def index(self):

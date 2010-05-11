@@ -386,7 +386,7 @@ class Article(DeclarativeBase):
         self.id = make_id(title)
         self.category = category
         self.user = user
-        self.pages.append(Page(title, lang, text=text, is_default=True))
+        self.pages.append(Page(title, lang, user, text=text, is_default=True))
         self.associable = Associable(u'article')
         now = datetime.now()
         self._created = now
@@ -413,20 +413,31 @@ class Page(DeclarativeBase):
     string_id = Column(Unicode(255))
     article_id = Column(Unicode(255), ForeignKey('articles.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
+    user_id = Column(Integer, ForeignKey('auth_users.user_id'))
+    _created = Column('created', DateTime)
 
     # Relations
     article = relation('Article', backref=backref('pages',
                                 collection_class=mapped_scalar('string_id')))
+    user = relation('User', backref='pages')
 
     # Properties
+    @synonym_for('_created')
+    @property
+    def created(self):
+        return self._created
+
     @property
     def modified(self):
         return max([d.modified for d in self.data])
 
     # Special methods
-    def __init__(self, name, lang, text=None, is_default=False):
+    def __init__(self, name, lang, user, text=None, is_default=False):
         self.string_id = is_default and u'default' or make_id(name)
         self.data.append(PageData(name, lang, text))
+        self.user = user
+        now = datetime.now()
+        self._created = now        
 
     def __repr__(self):
         return '<Page: [%s] %s %s>' % (self.article_id, self.id, self.string_id)
