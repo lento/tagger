@@ -91,13 +91,13 @@ def bootstrap(command, conf, vars):
 
     # settings
     try:
-        theme = model.Setting(id=u'theme', value='redtango')
+        theme = model.Setting(id=u'theme', value=u'redtango')
         model.DBSession.add(theme)
 
-        title = model.Setting(id=u'title', value='Welcome to Tagger!')
+        title = model.Setting(id=u'title', value=u'Welcome to Tagger!')
         model.DBSession.add(title)
 
-        copyright = model.Setting(id=u'copyright', value='© copyright notice')
+        copyright = model.Setting(id=u'copyright', value=u'© copyright notice')
         model.DBSession.add(copyright)
 
         banner_link = model.Setting(id=u'banner_link', value=None)
