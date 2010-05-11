@@ -25,31 +25,33 @@ from mako.template import Template
 from tg import url
 from tagger.lib.render import widgets
 
+defaults = {'file_insertion_enabled': 0,
+            'raw_enabled': 0,
+            'report_level': 4,
+            '_disable_config': 1,
+           }
+
 def render_rst(text):
-    defaults = {'file_insertion_enabled': 0,
-                'raw_enabled': 0,
-                'report_level': 4,
-                '_disable_config': 1,
-               }
     rst = publish_parts(text, writer_name='html', settings_overrides=defaults)
     return rst['html_body']
 
 def render_rst_summary(text):
-    text = publish_parts(text, writer_name='html')['html_body']
+    rst = publish_parts(text, writer_name='html', settings_overrides=defaults)
+    text = rst['html_body']
     short, moretag, rest = text.partition('<!-- more -->')
     has_more = not rest == ''
     return short, has_more
 
 def render_mak(text, lang=None):
     template = Template(text, default_filters=['trim'])
-    return template.render_unicode(**widgets)
+    return template.render_unicode(lang=lang or '', **widgets)
 
-def render_text(text, lang=None):
+def render_text(text, lang=''):
     text = render_rst(text)
     text = render_mak(text, lang)
     return text
 
-def render_summary(text, lang=None):
+def render_summary(text, lang=''):
     text, has_more = render_rst_summary(text)
     text = render_mak(text, lang)
     return text, has_more

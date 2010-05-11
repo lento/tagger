@@ -18,7 +18,7 @@
 # Original Copyright (c) 2010, Lorenzo Pierfederici <lpierfederici@gmail.com>
 # Contributor(s): 
 #
-"""Link render module"""
+"""Page link render module"""
 
 import cgi
 from tw.api import Widget
@@ -29,10 +29,10 @@ from docutils import nodes
 ############################################################
 # render widgets
 ############################################################
-class LinkWidget(Widget):
-    """Render a Link object"""
-    params = ['linkid', 'lang', 'label']
-    template = 'mako:tagger.templates.widgets.link'
+class PageLinkWidget(Widget):
+    """Render a PageLink object"""
+    params = ['pageid', 'lang', 'label']
+    template = 'mako:tagger.templates.widgets.pagelink'
 
     lang = ''
     label = None
@@ -41,15 +41,15 @@ class LinkWidget(Widget):
 ############################################################
 # reStructuredText directives
 ############################################################
-class LinkDirective(Directive):
-    """Return a LinkWidget invocation"""
+class PageLinkDirective(Directive):
+    """Return a PageLinkWidget invocation"""
     required_arguments = 1
     optional_arguments = 1
     option_spec = {}
     has_content = False
 
     def run(self):
-        linkid = self.arguments[0]
+        pageid = self.arguments[0]
         if len(self.arguments) > 1:
             label = self.arguments[1]
         elif isinstance(self.state.parent, nodes.substitution_definition):
@@ -58,7 +58,8 @@ class LinkDirective(Directive):
             label = ''
         label = cgi.escape(label)
 
-        text = '${w_link(linkid="%s", label="%s", lang=lang)}' % (linkid, label)
-        link_node = nodes.raw(rawsource='', text=text, format='html')
-        return [link_node]
+        text = '${w_pagelink(pageid="%s", label="%s", lang=lang)}' % (
+                                                                pageid, label)
+        pagelink_node = nodes.raw(rawsource='', text=text, format='html')
+        return [pagelink_node]
 

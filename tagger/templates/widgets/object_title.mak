@@ -13,8 +13,8 @@
         name = obj.name[lang]
         prefix = '/link'
     else:
-        name = None
-        link = None
+        name = ''
+        prefix = ''
 %>
 
 <div class="object_title">
@@ -40,7 +40,7 @@
     </div>
     <div class="languages">
         % for language in obj.languages:
-            <a class="language ${language.id == lang and 'active' or ''}"
+            <a class="language ${(lang and language.id == lang and 'active') or (language.id==obj.language_id and 'active') or ''}"
                 title="${language.name}"
                 href="${url('%s/%s/%s' % (prefix, obj.id, language.id))}"
                 >

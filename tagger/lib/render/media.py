@@ -36,7 +36,7 @@ class MediaWidget(Widget):
     params = ['mediaid', 'lang', 'label']
     template = 'mako:tagger.templates.widgets.media'
 
-    lang = None
+    lang = ''
     label = None
 
 
