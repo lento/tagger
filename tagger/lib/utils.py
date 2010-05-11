@@ -37,7 +37,7 @@ def find_related(tags=set(), obj=None, max_results=10):
     query = query.filter(Associable.tags.any(Tag.id.in_(tagids)))
     query = query.order_by(desc('created'))
     results = query.all()
-    if obj:
+    if obj and obj.associable in results:
         results.remove(obj.associable)
     results = [(o, len(set(o.tags) & tags)) for o in results]
     results.sort(key=itemgetter(1), reverse=True)
