@@ -157,6 +157,8 @@ table td.icon {
 .icon.audio {background: url(../images/icons/16x16/audio.png) left center no-repeat;}
 .icon.video {background: url(../images/icons/16x16/video.png) left center no-repeat;}
 .icon.image {background: url(../images/icons/16x16/image.png) left center no-repeat;}
+.icon.vimeo {background: url(../images/icons/16x16/vimeo.png) left center no-repeat;}
+.icon.youtube {background: url(../images/icons/16x16/youtube.png) left center no-repeat;}
 
 /* Status */
 .status {

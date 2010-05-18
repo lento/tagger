@@ -1,14 +1,16 @@
 <%def name="side_admin()">
-    <ul>
-        <li class="settings"><a href="${tg.url('/admin/settings/')}">${_('settings')}</a></li>
-        <li class="languages"><a href="${tg.url('/admin/language/')}">${_('languages')}</a></li>
-        <li class="tags"><a href="${tg.url('/admin/tag/')}">${_('tags')}</a></li>
-        <li class="categories"><a href="${tg.url('/admin/category/')}">${_('categories')}</a></li>
-        <li class="articles"><a href="${tg.url('/admin/article/')}">${_('articles')}</a></li>
-        <li class="media"><a href="${tg.url('/admin/media/')}">${_('media')}</a></li>
-        <li class="links"><a href="${tg.url('/admin/link/')}">${_('links')}</a></li>
-        <li class="comments"><a href="${tg.url('/admin/comment/')}">${_('comments')}</a></li>
-    </ul>
+    <div>
+        <ul>
+            <li class="settings"><div><a href="${tg.url('/admin/settings/')}">${_('settings')}</a></div></li>
+            <li class="languages"><div><a href="${tg.url('/admin/language/')}">${_('languages')}</a></div></li>
+            <li class="tags"><div><a href="${tg.url('/admin/tag/')}">${_('tags')}</a></div></li>
+            <li class="categories"><div><a href="${tg.url('/admin/category/')}">${_('categories')}</a></div></li>
+            <li class="articles"><div><a href="${tg.url('/admin/article/')}">${_('articles')}</a></div></li>
+            <li class="media"><div><a href="${tg.url('/admin/media/')}">${_('media')}</a></div></li>
+            <li class="links"><div><a href="${tg.url('/admin/link/')}">${_('links')}</a></div></li>
+            <li class="comments"><div><a href="${tg.url('/admin/comment/')}">${_('comments')}</a></div></li>
+        </ul>
+    </div>
 </%def>
 
 <%def name="side_related()">

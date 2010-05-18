@@ -24,7 +24,7 @@
                 <br/>
             % endif
             <div>
-                ${c.w_media(mediaid=m.id, lang=c.lang, width=120) | n}
+                ${c.w_media(mediaid=m.id, lang=c.lang, width=240) | n}
             </div>
         </li>
     % endfor

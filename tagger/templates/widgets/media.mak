@@ -20,7 +20,7 @@
 % elif media.type == 'video':
     <video src="${mediaurl}"
         title="${media.description[lang] or ''}"
-        controls
+        controls=""
         width="${width or 'auto'}"
         height="${height or 'auto'}"
         onerror="alert('Can\'t load video');">
@@ -46,7 +46,7 @@
             </script>
     </video>
 % elif media.type == 'youtube':
-    <object width="${width or '480'}" height="${height or '385'}">
+    <object width="${width or '480'}" height="${height or width and int(width*0.8) or '385'}">
         <param name="movie" value="http://www.youtube.com/v/${media.uri}&hl=en_US&fs=1&"></param>
         <param name="allowFullScreen" value="true"></param>
         <param name="allowscriptaccess" value="always"></param>
@@ -55,11 +55,11 @@
             allowscriptaccess="always"
             allowfullscreen="true"
             width="${width or '480'}"
-            height="385">
+            height="${height or width and int(width*0.8) or '385'}">
         </embed>
     </object>
 % elif media.type == 'vimeo':
-    <object width="${width or '480'}" height="${height or '264'}">
+    <object width="${width or '480'}" height="${height or width and int(width*0.55) or '264'}">
         <param name="allowfullscreen" value="true" />
         <param name="allowscriptaccess" value="always" />
         <param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=${media.uri}&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=1&amp;show_portrait=0&amp;color=&amp;fullscreen=1" />
@@ -68,7 +68,7 @@
             allowfullscreen="true"
             allowscriptaccess="always"
             width="${width or '480'}"
-            height="${height or '264'}">
+            height="${height or width and int(width*0.55) or '264'}">
         </embed>
     </object>
 % endif

@@ -11,7 +11,8 @@
             <span class="date">${obj.created}</span>
             <span class="user">${obj.user.user_name}</span>
         </div>
-        ${c.w_media(mediaid=obj.id, lang=c.lang, width=80)}
+        <div class="clearing"></div>
+        ${c.w_media(mediaid=obj.id, lang=c.lang, width=100)}
     </a>
 </div>
 
