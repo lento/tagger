@@ -12,26 +12,36 @@
 </%def>
 
 <%def name="side_related()">
-    <ul>
-        % for assoc, numtags in related:
-            <li class="related ${assoc.type}">
-                % if assoc.type in c.w_sideobj:
-                    ${c.w_sideobj[assoc.type](obj=assoc.associated) | n}
-                % endif
-            </li>
-        % endfor
-    </ul>
+    % if related:
+        <div>
+            <h1>${_('related stuff')}</h1>
+            <ul>
+                % for assoc, numtags in related:
+                    <li class="related ${assoc.type}">
+                        % if assoc.type in c.w_sideobj:
+                            ${c.w_sideobj[assoc.type](obj=assoc.associated) | n}
+                        % endif
+                    </li>
+                % endfor
+            </ul>
+        </div>
+    % endif
 </%def>
 
 <%def name="side_recent()">
-    <ul>
-        % for assoc in recent:
-            <li class="related ${assoc.type}">
-                % if assoc.type in c.w_sideobj:
-                    ${c.w_sideobj[assoc.type](obj=assoc.associated) | n}
-                % endif
-            </li>
-        % endfor
-    </ul>
+    % if recent:
+        <div>
+            <h1>${_('recent stuff')}</h1>
+            <ul>
+                % for assoc in recent:
+                    <li class="related ${assoc.type}">
+                        % if assoc.type in c.w_sideobj:
+                            ${c.w_sideobj[assoc.type](obj=assoc.associated) | n}
+                        % endif
+                    </li>
+                % endfor
+            </ul>
+        </div>
+    % endif
 </%def>
 
