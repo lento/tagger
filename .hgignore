@@ -11,3 +11,4 @@ syntax: regexp
 ^deployment_.*\.ini
 ^paster.log
 ^tagger.egg-info
+^tagger/public/themes/local_*
