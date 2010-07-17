@@ -10,5 +10,6 @@ syntax: regexp
 ^docs/build/
 ^deployment_.*\.ini
 ^paster.log
+^paster.pid
 ^tagger.egg-info
 ^tagger/public/themes/local_*
