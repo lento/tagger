@@ -382,6 +382,9 @@ class FormSettings(TableForm):
         n_copyright = HiddenField(name='name', default='copyright')
         v_copyright = TextField(label_text=l_('Copyright Notice'),
                                                     name='value', size=TF_SIZE)
+        n_cc = HiddenField(name='name', default='cc')
+        v_cc = SingleSelectField(label_text=l_('Creative Commons License'),
+                                                    name='value', size=SF_SIZE)
 
         spacer1 = Spacer(label_text='')
 

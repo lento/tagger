@@ -112,9 +112,19 @@ class Controller(BaseController):
         media_list.extend([(m.id, m.name[lang]) for m in querymedia])
         link_list = [('', '')]
         link_list.extend([(l.id, l.name[lang]) for l in DBSession.query(Link)])
+        cc_list = [
+            ('', ''),
+            ('cc by', 'CC Attribution'),
+            ('cc by-sa', 'CC Attribution Share Alike'),
+            ('cc by-nd', 'CC Attribution No Derivatives'),
+            ('cc by-nc', 'CC Attribution Non-Commercial'),
+            ('cc by-nc-sa', 'CC Attribution Non-Commercial Share Alike'),
+            ('cc by-nc-nd', 'CC Attribution Non-Commercial No Derivatives'),
+        ]
         fcargs = dict(v_banner_media=dict(options=media_list),
                       v_banner_link=dict(options=link_list),
                       v_theme = dict(options=G.themes),
+                      v_cc = dict(options=cc_list),
                      )
         return dict(args=fargs, child_args=fcargs, path=('admin', 'settings'))
 

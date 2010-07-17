@@ -69,6 +69,10 @@ class BaseController(TGController):
                                   config.get('copyright').strip('\"') or
                                   ''
                                  )
+        tmpl_context.cc = (settings.get('cc') or
+                           config.get('cc', '""').strip('\"') or
+                           ''
+                          )
 
         # load javascripts
         jquery_js.inject()
