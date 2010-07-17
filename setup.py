@@ -22,6 +22,7 @@ setup(
         "repoze.what-quickstart >= 1.0",
         "tw.dynforms",
         "docutils",
+        "MySQL-python",
                 ],
     setup_requires=["PasteScript >= 1.7"],
     paster_plugins=['PasteScript', 'Pylons', 'TurboGears2', 'tg.devtools'],
