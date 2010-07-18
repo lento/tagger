@@ -97,10 +97,8 @@ class BaseController(TGController):
         # set banner link and content
         tmpl_context.w_link = w_link
         tmpl_context.w_media = w_media
-        banner_media = settings.get(u'banner_media')
-        banner_link = settings.get(u'banner_link')
-        tmpl_context.banner_mediaid = banner_media and banner_media.value
-        tmpl_context.banner_linkid = banner_link and banner_link.value
+        tmpl_context.banner_mediaid = settings.get(u'banner_media', None)
+        tmpl_context.banner_linkid = settings.get(u'banner_link', None)
 
         # add Sidebar widgets
         tmpl_context.w_sideobj = w_sideobj
