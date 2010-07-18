@@ -29,7 +29,7 @@ ${c.f_edit(args, child_args=child_args) | n}
         <td>${page.name[c.lang]}</td>
         <td>${', '.join(page.language_ids)}</td>
         <td>
-            <a class="icon edit" title="${_('edit')}" href="${tg.url('/page/%s/%s/edit' % (article.id, page.string_id))}" rel="#overlay"></a>
+            <a class="icon edit overlay" title="${_('edit')}" href="${tg.url('/page/%s/%s/edit' % (article.id, page.string_id))}" rel="#overlay"></a>
             <a class="icon delete overlay" title="${_('delete')}" href="${tg.url('/page/%s/%s/delete' % (article.id, page.string_id))}" rel="#overlay"></a>
         </td>
     </tr>
