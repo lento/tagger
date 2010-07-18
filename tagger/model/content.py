@@ -448,7 +448,7 @@ class Page(DeclarativeBase):
 
 add_language_props(Page,
     [('name', lambda obj, lang, val: PageData(val, lang, None)),
-     ('text', lambda obj, lang, val: CategoryData(obj.name[''], lang, val)),
+     ('text', lambda obj, lang, val: PageData(obj.name[''], lang, val)),
     ])
 
 
