@@ -1,9 +1,10 @@
 <%inherit file="local:templates.master"/>
 <%namespace name="sidebars" file="local:templates.sidebars"/>
 
-<%def name="title()">
-  tagger - ${_('Media')}
-</%def>
+<%!
+    from pylons.i18n import lazy_ugettext as l_
+    subtitle = l_('Media')
+%>
 
 <div class="object">
     ${c.w_object_title(obj=media, lang=lang) | n}

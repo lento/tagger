@@ -1,8 +1,9 @@
 <%inherit file="local:templates.master"/>
 
-<%def name="title()">
-  tagger - ${_('Comment')}
-</%def>
+<%!
+    from pylons.i18n import lazy_ugettext as l_
+    subtitle = l_('Comment')
+%>
 
 <div>${comment.id}</div>
 <div>${comment.to}</div>

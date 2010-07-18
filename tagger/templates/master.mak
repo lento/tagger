@@ -3,6 +3,7 @@
 
 <%!
     show_side = True
+    subtitle = ''
 %>
 
 <html>
@@ -63,6 +64,8 @@
 
 <%def name="title()">
     ${c.title}
+    ${c.title and self.attr.subtitle and ' - '}
+    ${self.attr.subtitle}
 </%def>
 
 <%def name="header()">

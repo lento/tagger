@@ -62,15 +62,15 @@ class BaseController(TGController):
                               'default'
                              )
         tmpl_context.title = (settings.get('title') or
-                              config.get('title').strip('\"') or
-                              'Welcome to Tagger!'
+                              config.get('title', '').strip('\"') or
+                              ''
                              )
         tmpl_context.copyright = (settings.get('copyright') or
-                                  config.get('copyright').strip('\"') or
+                                  config.get('copyright', '').strip('\"') or
                                   ''
                                  )
         tmpl_context.cc = (settings.get('cc') or
-                           config.get('cc', '""').strip('\"') or
+                           config.get('cc', '').strip('\"') or
                            ''
                           )
 

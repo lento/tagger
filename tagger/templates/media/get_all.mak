@@ -3,11 +3,9 @@
 
 <%!
     from tg import tmpl_context as c
+    from pylons.i18n import lazy_ugettext as l_
+    subtitle = l_('Media')
 %>
-
-<%def name="title()">
-  tagger - ${_('Media')}
-</%def>
 
 <%def name="side()">
     ${sidebars.side_recent()}

@@ -3,11 +3,9 @@
 
 <%!
     from tagger.lib.render.rst import render_text
+    from pylons.i18n import lazy_ugettext as l_
+    subtitle = l_('Article')
 %>
-
-<%def name="title()">
-  tagger - ${_('Article')}
-</%def>
 
 ${c.w_object_title(obj=article, tg=tg, lang=lang) | n}
 
