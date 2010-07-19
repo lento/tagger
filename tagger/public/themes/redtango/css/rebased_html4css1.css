@@ -1,0 +1,293 @@
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 5951 2009-05-18 18:03:10Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+div.document .borderless, div.document table.borderless td, div.document table.borderless th  {
+  border: 0 }
+
+div.document table.borderless td, div.document table.borderless th  {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+div.document .first  {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+div.document .last, div.document .with-subtitle  {
+  margin-bottom: 0 ! important }
+
+div.document .hidden  {
+  display: none }
+
+div.document a.toc-backref  {
+  text-decoration: none ;
+  color: black }
+
+div.document blockquote.epigraph  {
+  margin: 2em 5em ; }
+
+div.document dl.docutils dd  {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.document div.abstract  {
+  margin: 2em 5em }
+
+div.document div.abstract p.topic-title  {
+  font-weight: bold ;
+  text-align: center }
+
+div.document div.admonition, div.document div.attention, div.document div.caution, div.document div.danger, div.document div.error,
+div.document div.hint, div.document div.important, div.document div.note, div.document div.tip, div.document div.warning  {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.document div.admonition p.admonition-title, div.document div.hint p.admonition-title,
+div.document div.important p.admonition-title, div.document div.note p.admonition-title,
+div.document div.tip p.admonition-title  {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.document div.attention p.admonition-title, div.document div.caution p.admonition-title,
+div.document div.danger p.admonition-title, div.document div.error p.admonition-title,
+div.document div.warning p.admonition-title  {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.document div.dedication  {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.document div.dedication p.topic-title  {
+  font-weight: bold ;
+  font-style: normal }
+
+div.document div.figure  {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.document div.footer, div.document div.header  {
+  clear: both;
+  font-size: smaller }
+
+div.document div.line-block  {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.document div.line-block div.line-block  {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.document div.sidebar  {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.document div.sidebar p.rubric  {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.document div.system-messages  {
+  margin: 5em }
+
+div.document div.system-messages h1  {
+  color: red }
+
+div.document div.system-message  {
+  border: medium outset ;
+  padding: 1em }
+
+div.document div.system-message p.system-message-title  {
+  color: red ;
+  font-weight: bold }
+
+div.document div.topic  {
+  margin: 2em }
+
+div.document h1.section-subtitle, div.document h2.section-subtitle, div.document h3.section-subtitle,
+div.document h4.section-subtitle, div.document h5.section-subtitle, div.document h6.section-subtitle  {
+  margin-top: 0.4em }
+
+div.document h1.title  {
+  text-align: center }
+
+div.document h2.subtitle  {
+  text-align: center }
+
+div.document hr.docutils  {
+  width: 75% }
+
+div.document img.align-left, div.document .figure.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+div.document img.align-right, div.document .figure.align-right  {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+div.document .align-left  {
+  text-align: left }
+
+div.document .align-center  {
+  clear: both ;
+  text-align: center }
+
+div.document .align-right  {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.document div.align-right  {
+  text-align: left }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+div.document ol.simple, div.document ul.simple  {
+  margin-bottom: 1em }
+
+div.document ol.arabic  {
+  list-style: decimal }
+
+div.document ol.loweralpha  {
+  list-style: lower-alpha }
+
+div.document ol.upperalpha  {
+  list-style: upper-alpha }
+
+div.document ol.lowerroman  {
+  list-style: lower-roman }
+
+div.document ol.upperroman  {
+  list-style: upper-roman }
+
+div.document p.attribution  {
+  text-align: right ;
+  margin-left: 50% }
+
+div.document p.caption  {
+  font-style: italic }
+
+div.document p.credits  {
+  font-style: italic ;
+  font-size: smaller }
+
+div.document p.label  {
+  white-space: nowrap }
+
+div.document p.rubric  {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+div.document p.sidebar-title  {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+div.document p.sidebar-subtitle  {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+div.document p.topic-title  {
+  font-weight: bold }
+
+div.document pre.address  {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+div.document pre.literal-block, div.document pre.doctest-block  {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.document span.classifier  {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+div.document span.classifier-delimiter  {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+div.document span.interpreted  {
+  font-family: sans-serif }
+
+div.document span.option  {
+  white-space: nowrap }
+
+div.document span.pre  {
+  white-space: pre }
+
+div.document span.problematic  {
+  color: red }
+
+div.document span.section-subtitle  {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+div.document table.citation  {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+div.document table.docinfo  {
+  margin: 2em 4em }
+
+div.document table.docutils  {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+div.document table.footnote  {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+div.document table.docutils td, div.document table.docutils th,
+div.document table.docinfo td, div.document table.docinfo th  {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+div.document table.docutils th.field-name, div.document table.docinfo th.docinfo-name  {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+div.document h1 tt.docutils, div.document h2 tt.docutils, div.document h3 tt.docutils,
+div.document h4 tt.docutils, div.document h5 tt.docutils, div.document h6 tt.docutils  {
+  font-size: 100% }
+
+div.document ul.auto-toc  {
+  list-style-type: none }

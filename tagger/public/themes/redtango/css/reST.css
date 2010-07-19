@@ -1,0 +1,6 @@
+@import url(rebased_html4css1.css);
+
+div.document ul {
+    list-style: disc;
+}
+
