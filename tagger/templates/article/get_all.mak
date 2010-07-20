@@ -12,7 +12,7 @@
         <li class="object summary">
             ${c.w_object_title(obj=article, tg=tg, lang=c.lang, add_link=True) | n}
             <%
-                text, has_more = render_summary(article.text[lang], lang)
+                text, has_more = render_summary(article.text[c.lang], c.lang)
             %>
             <div>
                 ${text | n}

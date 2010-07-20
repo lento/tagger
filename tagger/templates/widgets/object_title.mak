@@ -40,7 +40,7 @@
     </div>
     <div class="languages">
         % for language in obj.languages:
-            <a class="language ${(lang and language.id == lang and 'active') or (language.id==obj.language_id and 'active') or ''}"
+            <a class="language ${(lang and language.id == lang and 'active') or (not lang and language.id==obj.language_id and 'active') or ''}"
                 title="${language.name}"
                 href="${url('%s/%s/%s' % (prefix, obj.id, language.id))}"
                 >
