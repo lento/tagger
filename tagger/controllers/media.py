@@ -21,7 +21,7 @@
 """Media controller"""
 
 import os.path, shutil
-from tg import expose, tmpl_context, validate, require, flash, url
+from tg import expose, tmpl_context, validate, require, flash, url, redirect
 from tg import app_globals as G
 from tg.controllers import RestController
 from tg.exceptions import HTTPClientError
@@ -55,7 +55,9 @@ class Controller(RestController):
         """Return a list of media"""
         tmpl_context.w_object_title = w_object_title
         tmpl_context.w_media = w_media
-        media = DBSession.query(Media).all()
+        query = DBSession.query(Media)
+        query = query.join(Article.associable).filter_by(published=True)
+        media = query.all()
 
         if tag:
             tagids = isinstance(tag, list) and tag or [tag]
@@ -271,7 +273,7 @@ class Controller(RestController):
         return dict(redirect_to=url('/admin/media/'))
 
     # REST-like methods
-    _custom_actions = ['translation']
+    _custom_actions = ['translation', 'publish', 'unpublish']
     
     @expose('json')
     def translation(self, mediaid, value):
@@ -282,4 +284,32 @@ class Controller(RestController):
         description = media.description[value]
         
         return dict(name=name, description=description)
+
+    @require(has_permission('manage'))
+    @expose()
+    def publish(self, mediaid):
+        """Make media visible to users"""
+        media = DBSession.query(Media).get(mediaid.decode())
+
+        if media.published:
+            flash('%s %s' % (_('Media is already published:'), mediaid), 'info')
+        else:
+            media.published = True
+            flash('%s %s' % (_('Published Media:'), mediaid), 'ok')
+
+        redirect(url('/admin/media/'))
+
+    @require(has_permission('manage'))
+    @expose()
+    def unpublish(self, mediaid):
+        """Revert media publication and making it invisible to user"""
+        media = DBSession.query(Media).get(mediaid.decode())
+
+        if media.published:
+            media.published = False
+            flash('%s %s' % (_('Unpublished Media:'), mediaid), 'ok')
+        else:
+            flash('%s %s' % (_('Media is not published:'), mediaid), 'info')
+
+        redirect(url('/admin/media/'))
 

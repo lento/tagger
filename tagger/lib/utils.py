@@ -33,7 +33,7 @@ def find_related(tags=set(), obj=None, max_results=10):
     if obj:
         tags = set(obj.tags)
     tagids = [t.id for t in tags]
-    query = DBSession.query(Associable)
+    query = DBSession.query(Associable).filter_by(published=True)
     query = query.filter(Associable.tags.any(Tag.id.in_(tagids)))
     query = query.order_by(desc('created'))
     results = query.all()
@@ -52,7 +52,7 @@ def find_recent(max_results=10):
     Each element of the list is a tuple in the form:
     (object, creation date of the object)
     """
-    query = DBSession.query(Associable)
+    query = DBSession.query(Associable).filter_by(published=True)
     query = query.order_by(desc('created'))
     if max_results > 0:
         query = query.limit(max_results)

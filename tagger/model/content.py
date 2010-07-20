@@ -47,6 +47,7 @@ class Associable(DeclarativeBase):
     id = Column(Integer, primary_key=True)
     association_type = Column(Unicode(50))
     _created = Column('created', DateTime)
+    published = Column(Boolean, default=True)
     
     # Properties
     @property
@@ -329,7 +330,6 @@ class Article(DeclarativeBase):
     category_id = Column(Unicode(50), ForeignKey('categories.id',
                                         onupdate='CASCADE', ondelete='CASCADE'))
     _created = Column('created', DateTime)
-    published = Column(Boolean, default=False)
 
     # Relations
     associable = relation('Associable', backref=backref('associated_article',
@@ -384,6 +384,11 @@ class Article(DeclarativeBase):
     @property
     def modified(self):
         return max([p.modified for p in self.pages])
+    
+    published = property(
+        lambda self: self.associable.published,
+        lambda self, val: setattr(self.associable, 'published', val)
+    )
 
     # Special methods
     def __init__(self, title, category, lang, user, text=None):
@@ -395,6 +400,7 @@ class Article(DeclarativeBase):
         now = datetime.now()
         self._created = now
         self.associable._created = now
+        self.published = False
 
     def __repr__(self):
         return '<Article: %s>' % self.id
@@ -537,6 +543,11 @@ class Link(DeclarativeBase):
     def modified(self):
         return max([d.modified for d in self.data])
 
+    published = property(
+        lambda self: self.associable.published,
+        lambda self, val: setattr(self.associable, 'published', val)
+    )
+
     # Special methods
     def __init__(self, name, uri, user, lang, description=None):
         self.id = make_id(name)
@@ -639,6 +650,11 @@ class Media(DeclarativeBase):
     @property
     def modified(self):
         return max([d.modified for d in self.data])
+
+    published = property(
+        lambda self: self.associable.published,
+        lambda self, val: setattr(self.associable, 'published', val)
+    )
 
     # Special methods
     def __init__(self, type, name, uri, user, lang, description=None):

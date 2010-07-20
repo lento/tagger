@@ -52,6 +52,7 @@ class Controller(RestController):
         query = DBSession.query(Article)
         if categoryid:
             query = query.filter_by(category_id=categoryid)
+        query = query.join(Article.associable).filter_by(published=True)
 
         articles = query.all()
 

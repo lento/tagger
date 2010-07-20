@@ -20,7 +20,7 @@
 #
 """Link controller"""
 
-from tg import expose, tmpl_context, validate, require, flash, url
+from tg import expose, tmpl_context, validate, require, flash, url, redirect
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
@@ -51,7 +51,9 @@ class Controller(RestController):
         """Return a list of links"""
         tmpl_context.w_object_title = w_object_title
         tmpl_context.w_link = w_link
-        links = DBSession.query(Link).all()
+        query = DBSession.query(Link)
+        query = query.join(Article.associable).filter_by(published=True)
+        links = query.all()
 
         if tag:
             tagids = isinstance(tag, list) and tag or [tag]
@@ -198,7 +200,7 @@ class Controller(RestController):
         return dict(redirect_to=url('/admin/link/'))
 
     # REST-like methods
-    _custom_actions = ['translation']
+    _custom_actions = ['translation', 'publish', 'unpublish']
     
     @expose('json')
     def translation(self, linkid, value):
@@ -209,4 +211,32 @@ class Controller(RestController):
         description = link.description[value]
         
         return dict(name=name, description=description)
+
+    @require(has_permission('manage'))
+    @expose()
+    def publish(self, linkid):
+        """Make link visible to users"""
+        link = DBSession.query(Link).get(linkid.decode())
+
+        if link.published:
+            flash('%s %s' % (_('Link is already published:'), linkid), 'info')
+        else:
+            link.published = True
+            flash('%s %s' % (_('Published Link:'), linkid), 'ok')
+
+        redirect(url('/admin/link/'))
+
+    @require(has_permission('manage'))
+    @expose()
+    def unpublish(self, linkid):
+        """Revert link publication and making it invisible to user"""
+        link = DBSession.query(Link).get(linkid.decode())
+
+        if link.published:
+            link.published = False
+            flash('%s %s' % (_('Unpublished Link:'), linkid), 'ok')
+        else:
+            flash('%s %s' % (_('Link is not published:'), linkid), 'info')
+
+        redirect(url('/admin/link/'))
 

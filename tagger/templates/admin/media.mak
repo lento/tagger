@@ -20,6 +20,7 @@ ${dummy or ''}
         <th>${_('URI')}</th>
         <th>${_('Tags')}</th>
         <th>${_('Languages')}</th>
+        <th>${_('Status')}</th>
         <th>${_('Actions')}</th>
     </tr>
     % for m in media:
@@ -31,8 +32,18 @@ ${dummy or ''}
         <td>${', '.join([t.name[lang] for t in m.tags])}</td>
         <td>${', '.join(m.language_ids)}</td>
         <td>
+            <div class="status ${m.published and _('published') or _('draft')}">
+                ${m.published and _('published') or _('draft')}
+            </div>
+        </td>
+        <td>
             <a class="icon edit overlay" title="${_('edit')}" href="${tg.url('/media/%s/edit' % m.id)}" rel="#overlay"></a>
             <a class="icon delete overlay" title="${_('delete')}" href="${tg.url('/media/%s/delete' % m.id)}" rel="#overlay"></a>
+            % if m.published:
+                <a class="icon unpublish" title="${_('unpublish')}" href="${tg.url('/media/%s/unpublish' % m.id)}" rel="#overlay"></a>
+            % else:
+                <a class="icon publish" title="${_('publish')}" href="${tg.url('/media/%s/publish' % m.id)}" rel="#overlay"></a>
+            % endif
         </td>
     </tr>
     % endfor
