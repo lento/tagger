@@ -569,6 +569,11 @@ table td.icon {
     margin-bottom: 40px;
 }
 
+.object .more {
+    font-size: smaller;
+    color: #3465a4; /* Sky Blue 2 */
+}
+
 .object a:hover{
     color: #a40000; /* Scarlet Red 3 */
 }

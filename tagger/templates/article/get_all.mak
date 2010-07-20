@@ -17,13 +17,13 @@
             <div>
                 ${text | n}
             </div>
-            <div>
-                % if has_more:
+            % if has_more:
+                <div class="more">
                     <a href="${tg.url('/%s/%s' % (article.category.id, article.id))}">
                         [...${_('read more')}]
                     </a>
-                % endif
-            </div>
+                </div>
+            % endif
         </li>
     % endfor
 </ul>

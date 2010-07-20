@@ -4,3 +4,11 @@ div.document ul {
     list-style: disc;
 }
 
+div.document a {
+    color: #3465a4; /* Sky Blue 2 */
+}
+
+div.document a:hover{
+    color: #a40000; /* Scarlet Red 3 */
+}
+
