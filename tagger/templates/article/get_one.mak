@@ -7,13 +7,15 @@
     subtitle = l_('Article')
 %>
 
-${c.w_object_title(obj=article, tg=tg, lang=lang) | n}
-
-<div>
-    ${render_text(article.text[lang], lang) | n}
-</div>
-
 <%def name="side()">
     ${sidebars.side_related()}
 </%def>
+
+<div class="object">
+    ${c.w_object_title(obj=article, tg=tg, lang=lang) | n}
+
+    <div>
+        ${render_text(article.text[lang], lang) | n}
+    </div>
+</div>
 

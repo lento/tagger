@@ -429,5 +429,5 @@ class ObjectTitle(Widget):
     params = ['obj', 'lang', 'add_link']
     template = 'mako:tagger.templates.widgets.object_title'
 
-    add_link = False
+    add_link = True
 
