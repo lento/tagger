@@ -35,6 +35,7 @@ from tagger.lib.render import media_types
 
 
 TF_SIZE = 44    # TextField
+TN_SIZE = 4     # TextField for numbers
 TA_COLS = 50    # TextArea
 TA_ROWS = 5
 SF_SIZE = 10    # SelectField
@@ -396,6 +397,10 @@ class FormSettings(TableForm):
                                                     name='value', size=SF_SIZE)
 
         spacer2 = Spacer(label_text='')
+        
+        n_max_results = HiddenField(name='name', default='max_results')
+        v_max_results = TextField(label_text=l_('Max results per page'),
+                                                    name='value', size=TN_SIZE)
 
 
 ############################################################

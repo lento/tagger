@@ -494,6 +494,22 @@ table td.icon {
 	margin-bottom: 20px;
 }
 
+.more_results {
+    font-size: smaller;
+    color: #babdb6; /* Aluminium 3 */
+}
+
+.more_results a {
+    margin-right: 2px;
+    padding: 0 4px;
+    background-color: #babdb6; /* Aluminium 3 */
+    color: white;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+
 
 /****************************************
  * Footer

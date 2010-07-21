@@ -28,6 +28,15 @@
     % endfor
 </ul>
 
+% if more_results:
+    <div class="more_results">
+        ${'%s %s' % (more_results, _('more articles in this category'))}
+        <a href="${tg.url('/%s?max_results=0' % article.category.id)}">
+            ${_('view all')}
+        </a>
+    </div>
+% endif
+
 <%def name="side()">
     ${sidebars.side_recent()}
 </%def>

@@ -32,7 +32,7 @@ from tagger.lib.widgets import FormLogin
 from tagger.controllers.error import ErrorController
 from tagger.controllers import admin, language, category, article, link, media
 from tagger.controllers import tag, comment, page
-from tagger.model import DBSession, Language, Category, Article
+from tagger.model import DBSession, Language, Category, Article, Setting
 
 __all__ = ['RootController']
 
@@ -108,25 +108,30 @@ class RootController(BaseController):
         """Catch requests for "/<category>" or "/<category>/<article>" and
         serve them through the article controller, otherwise rise a "Not Found"
         error"""
-        if len(args) > 0:
+        num_args = len(args)
+        if num_args > 0:
             categoryid = args[0]
             category = DBSession.query(Category).get(categoryid.decode())
         else:
             category = None
 
-        if len(args) > 1:
+        if num_args > 1:
             articleid = args[1]
             article = DBSession.query(Article).get(articleid.decode())
         else:
             article = None
 
-        if len(args) > 2:
+        if num_args > 2:
             languageid = args[2]
         else:
             languageid = None
 
         tag = kwargs.get('tag', None)
         mode = kwargs.get('mode', 'all')
+
+        settings = dict([(s.id, s.value) for s in DBSession.query(Setting)])
+        max_results = int(kwargs.get('max_results',
+                                                settings.get('max_results', 0)))
 
         if article:
             override_template(self._default,
@@ -138,7 +143,7 @@ class RootController(BaseController):
             override_template(self._default,
                                         'mako:tagger.templates.article.get_all')
             result = self.article.get_all(categoryid=category.id, tag=tag,
-                                                                    mode=mode)
+                                            max_results=max_results, mode=mode)
             result.update(path=(category.id, ''))
             return result
         else:

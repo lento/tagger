@@ -25,7 +25,8 @@ from tg.controllers import RestController
 from tg.exceptions import HTTPNotFound
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
-from tagger.model import DBSession, Language, Category, Article
+from sqlalchemy import desc
+from tagger.model import DBSession, Language, Category, Article, Setting
 from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormArticleNew, FormArticleEdit
 from tagger.lib.widgets import FormArticleDelete, ObjectTitle
@@ -46,15 +47,26 @@ class Controller(RestController):
 
     @expose('json')
     @expose('tagger.templates.article.get_all')
-    def get_all(self, categoryid=None, tag=[], mode='all'):
+    def get_all(self, categoryid=None, tag=[], max_results=None, mode='all'):
         """Return a list of articles"""
+        settings = dict([(s.id, s.value) for s in DBSession.query(Setting)])
+        if max_results is None:
+            max_result = settings.get('max_results', 0)
+
         tmpl_context.w_object_title = w_object_title
         query = DBSession.query(Article)
         if categoryid:
             query = query.filter_by(category_id=categoryid)
         query = query.join(Article.associable).filter_by(published=True)
+        query = query.order_by(desc(Article.created))
 
-        articles = query.all()
+        tot_results = query.count()
+        if max_results:
+            articles = query[0:max_results]
+            more_results = max(tot_results - max_results, 0)
+        else:
+            articles = query.all()
+            more_results = False
 
         if tag:
             log.debug('article.get_all: %s' % tag)
@@ -66,7 +78,8 @@ class Controller(RestController):
             elif mode == 'any':
                 articles = [obj for obj in articles if set(obj.tags) & (tags)]
 
-        return dict(articles=articles, recent=find_recent())
+        return dict(articles=articles, more_results=more_results,
+                                                          recent=find_recent())
 
     @expose('json')
     @expose('tagger.templates.article.get_one')

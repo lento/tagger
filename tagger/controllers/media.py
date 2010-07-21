@@ -27,7 +27,7 @@ from tg.controllers import RestController
 from tg.exceptions import HTTPClientError
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
-from tagger.model import DBSession, Media, Language
+from tagger.model import DBSession, Media, Language, Setting
 from tagger.model.helpers import tags_from_string
 from tagger.model.utils import make_id
 from tagger.lib.widgets import FormMediaNew, FormMediaEdit, FormMediaDelete
@@ -51,13 +51,24 @@ class Controller(RestController):
 
     @expose('json')
     @expose('tagger.templates.media.get_all')
-    def get_all(self, tag=[], mode='all'):
+    def get_all(self, tag=[], max_results=None, mode='all'):
         """Return a list of media"""
+        settings = dict([(s.id, s.value) for s in DBSession.query(Setting)])
+        if max_results is None:
+            max_result = settings.get('max_results', 0)
+
         tmpl_context.w_object_title = w_object_title
         tmpl_context.w_media = w_media
         query = DBSession.query(Media)
-        query = query.join(Article.associable).filter_by(published=True)
-        media = query.all()
+        query = query.join(Media.associable).filter_by(published=True)
+
+        tot_results = query.count()
+        if max_results:
+            media = query[0:max_results]
+            more_results = max(tot_results - max_results, 0)
+        else:
+            media = query.all()
+            more_results = False
 
         if tag:
             tagids = isinstance(tag, list) and tag or [tag]
@@ -68,7 +79,8 @@ class Controller(RestController):
             elif mode == 'any':
                 media = [obj for obj in media if set(obj.tags) & (tags)]
 
-        return dict(media=media, recent=find_recent(), path=('media', ''))
+        return dict(media=media, recent=find_recent(), path=('media', ''),
+                                                    more_results=more_results)
 
     @expose('json')
     @expose('tagger.templates.media.get_one')

@@ -24,7 +24,7 @@ from tg import expose, tmpl_context, validate, require, flash, url, redirect
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
-from tagger.model import DBSession, Link, Language
+from tagger.model import DBSession, Link, Language, Setting
 from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormLinkNew, FormLinkEdit, FormLinkDelete
 from tagger.lib.widgets import ObjectTitle
@@ -47,13 +47,24 @@ class Controller(RestController):
 
     @expose('json')
     @expose('tagger.templates.link.get_all')
-    def get_all(self, tag=[], mode='all'):
+    def get_all(self, tag=[], max_results=None, mode='all'):
         """Return a list of links"""
+        settings = dict([(s.id, s.value) for s in DBSession.query(Setting)])
+        if max_results is None:
+            max_result = settings.get('max_results', 0)
+
         tmpl_context.w_object_title = w_object_title
         tmpl_context.w_link = w_link
         query = DBSession.query(Link)
-        query = query.join(Article.associable).filter_by(published=True)
-        links = query.all()
+        query = query.join(Link.associable).filter_by(published=True)
+
+        tot_results = query.count()
+        if max_results:
+            links = query[0:max_results]
+            more_results = max(tot_results - max_results, 0)
+        else:
+            links = query.all()
+            more_results = False
 
         if tag:
             tagids = isinstance(tag, list) and tag or [tag]
@@ -64,7 +75,8 @@ class Controller(RestController):
             elif mode == 'any':
                 links = [obj for obj in links if set(obj.tags) & (tags)]
 
-        return dict(links=links, recent=find_recent(), path=('links', ''))
+        return dict(links=links, recent=find_recent(), path=('links', ''),
+                                                    more_results=more_results)
 
     @expose('json')
     @expose('tagger.templates.link.get_one')
