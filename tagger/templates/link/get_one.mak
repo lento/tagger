@@ -15,7 +15,7 @@
         </div>
         <br/>
     % endif
-    <div>
+    <div class="document">
         ${c.w_link(linkid=link.id, lang=lang) | n}
     </div>
 </div>
