@@ -8,7 +8,11 @@ div.document a {
     color: #3465a4; /* Sky Blue 2 */
 }
 
-div.document a:hover{
+div.document a:hover {
     color: #a40000; /* Scarlet Red 3 */
+}
+
+div.document .not_found {
+    color: #f57900; /* Orange 2 */
 }
 
