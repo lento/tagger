@@ -51,7 +51,9 @@ class Controller(RestController):
         """Return a list of articles"""
         settings = dict([(s.id, s.value) for s in DBSession.query(Setting)])
         if max_results is None:
-            max_result = settings.get('max_results', 0)
+            max_results = int(settings.get('max_results', 0))
+        else:
+            max_results = int(max_results)
 
         tmpl_context.w_object_title = w_object_title
         query = DBSession.query(Article)
