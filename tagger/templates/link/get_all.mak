@@ -11,14 +11,16 @@
     % for link in links:
         <li class="object summary">
             ${c.w_object_title(obj=link, lang=c.lang, add_link=True) | n}
-            % if link.description[c.lang]:
-                <div>
-                    ${link.description[c.lang]}
+            <div class="object_body">
+                % if link.description[c.lang]:
+                    <div>
+                        ${link.description[c.lang]}
+                    </div>
+                    <br/>
+                % endif
+                <div class="document">
+                    ${c.w_link(linkid=link.id, lang=c.lang) | n}
                 </div>
-                <br/>
-            % endif
-            <div class="document">
-                ${c.w_link(linkid=link.id, lang=c.lang) | n}
             </div>
         </li>
     % endfor

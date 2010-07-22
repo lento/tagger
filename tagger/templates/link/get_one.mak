@@ -9,14 +9,16 @@
 <div class="object">
     ${c.w_object_title(obj=link, lang=lang) | n}
 
-    % if link.description[lang]:
-        <div>
-            ${link.description[lang]}
+    <div class="object_body">
+        % if link.description[lang]:
+            <div>
+                ${link.description[lang]}
+            </div>
+            <br/>
+        % endif
+        <div class="document">
+            ${c.w_link(linkid=link.id, lang=lang) | n}
         </div>
-        <br/>
-    % endif
-    <div class="document">
-        ${c.w_link(linkid=link.id, lang=lang) | n}
     </div>
 </div>
 

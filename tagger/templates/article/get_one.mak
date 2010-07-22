@@ -14,7 +14,7 @@
 <div class="object">
     ${c.w_object_title(obj=article, tg=tg, lang=lang) | n}
 
-    <div>
+    <div class="object_body">
         ${render_text(article.text[lang], lang) | n}
     </div>
 </div>
