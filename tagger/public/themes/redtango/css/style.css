@@ -453,7 +453,7 @@ table td.icon {
 	-webkit-border-radius: 5px;
 }
 
-#side li > div:hover {
+#side li > div:hover, #side li > div:hover h2 {
     background-color: #a40000; /* Scarlet Red 3 */
     color: white;
 }
