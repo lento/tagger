@@ -14,9 +14,8 @@
             <%
                 text, has_more = render_summary(article.text[c.lang], c.lang)
             %>
-            <div>
+            <div class="object_body">
                 ${text | n}
-            </div>
             % if has_more:
                 <div class="more">
                     <a href="${tg.url('/%s/%s' % (article.category.id, article.id))}">
@@ -24,6 +23,7 @@
                     </a>
                 </div>
             % endif
+            </div>
         </li>
     % endfor
 </ul>

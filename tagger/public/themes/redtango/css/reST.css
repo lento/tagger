@@ -1,5 +1,30 @@
 @import url(rebased_html4css1.css);
 
+/**********************************************************************
+ * Document
+ **********************************************************************/
+div.document {
+    font-family:DejaVuSansBook,'Lucida Sans Unicode','Lucida Grande','Lucida Sans','DejaVu Sans Condensed',sans-serif;
+    /*font-family: DejaVuSansBook;*/
+}   
+
+div.document h1, div.document h2, div.document h3, div.document h4,
+div.document h5, div.document h6 {
+    font-family:CartoGothicStdBook, 'Century Gothic',Futura,'URW Gothic L',sans-serif;
+    letter-spacing:0.04em;
+    color: #4e9a06; /* Chameleon 3 */
+}
+
+div.document h1 { font-size: 1.5em; margin: 1.4em 0 0 0}
+div.document .section:first-child h1 { margin: 0 }
+div.document h2 { font-size: 1.17em; }
+div.document h3 { font-size: 1.12em; }
+
+div.document p {
+    margin: 0.5em 0 0 0;
+    font-family: DejaVuSansBook,Verdana,Geneva,'Bitstream Vera Sans','DejaVu Sans',sans-serif;
+}
+
 div.document ul {
     list-style: disc;
 }

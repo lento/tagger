@@ -5,7 +5,7 @@
 <div>
     <a href="${url('/media/%s' % obj.id)}">
         <h2>${obj.name[c.lang]}</h2>
-        <div>
+        <div class="info">
             <span class="icon ${obj.type}"></span>
             <span class="type">${obj.type}</span>
             <span class="date">${obj.created}</span>

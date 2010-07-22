@@ -30,10 +30,8 @@ common colors from the tango palette:
 #a40000; / * Scarlet Red 3 * /
 */
 
-/**********************************************************************
- * reStructuredText custom style
- **********************************************************************/
-@import url(reST.css);
+@import url(font-face.css); /* fonts */
+@import url(reST.css); /* reStructuredText custom style */
 
 
 /**********************************************************************
@@ -45,16 +43,16 @@ html {
 }
 
 body {
-	margin: 0 20px;
-	padding: 10px 20px;
-	max-width: 1200px;
-	margin: 0 auto;
-	font-family:"Lucida Grande","Lucida Sans Unicode",geneva,verdana,sans-serif;
-	text-align: left;
+    margin: 0 20px;
+    padding: 10px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: DejaVuSansBook,Verdana,Geneva,'Bitstream Vera Sans','DejaVu Sans',sans-serif;
+    text-align: left;
 }
 
 :focus {
-  outline-style: none;
+    outline-style: none;
 }
 
 a {
@@ -70,6 +68,7 @@ ul {
 
 h1 {
     margin: 0;
+    font-size: 1.8em;
 }
 
 
@@ -319,7 +318,7 @@ table td.icon {
 #header .banner a {
     display: block;
     width: 100%;
-    height: 100%;
+    height: 100%;CartoGothicStdBook
 }
 
 #header .banner img {
@@ -328,6 +327,9 @@ table td.icon {
 
 #header .menu_bottom {
     margin-top: 3px;
+    font-family: CartoGothicStdBook,'Century Gothic',Futura,'URW Gothic L',sans-serif;
+    font-size: 1.2em;
+    color: #babdb6; /* Aluminium 3 */
 }
 
 #header .menu_bottom ul {
@@ -406,6 +408,7 @@ table td.icon {
     width: 240px;
 	margin-bottom: 20px;
 	padding-left: 10px;
+    font-family:CartoGothicStdBook, 'Century Gothic',Futura,'URW Gothic L',sans-serif;
 	/*border-left: 1px solid #babdb6; / * Aluminium 3 * /*/
 	opacity: 0.9;
 }
@@ -428,8 +431,8 @@ table td.icon {
 
 #side h2 {
     margin: 0;
-    /*font-weight: bold;*/
     font-size: medium;
+    color: #a40000; /* Scarlet Red 3 */
 }
 
 #side ul {
@@ -539,10 +542,16 @@ table td.icon {
  * Object
  ****************************************/
 .object_title {
-	margin-bottom: 20px;
+	/*margin-bottom: 20px;*/
+	padding: 10px;
+	background-color: #eeeeec; /* Aluminium 1 */
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 }
 
 .object_title h1 {
+    color: #a40000; /* Scarlet Red 3 */
 	border-bottom: 1px solid #babdb6; /* Aluminium 3 */
 }
 
@@ -583,6 +592,10 @@ table td.icon {
 
 .object.summary {
     margin-bottom: 40px;
+}
+
+.object_body {
+    margin: 5px 0 0 20px;
 }
 
 .object .more {

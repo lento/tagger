@@ -5,7 +5,7 @@
 <div>
     <a href="${url('/%s/%s' % (obj.category_id, obj.id))}">
         <h2>${obj.title[c.lang]}</h2>
-        <div>
+        <div class="info">
             <span class="icon article"></span>
             <span class="type">${obj.category.name[c.lang]}</span>
             <span class="date">${obj.created}</span>
