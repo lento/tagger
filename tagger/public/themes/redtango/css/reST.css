@@ -42,3 +42,6 @@ div.document .not_found {
     color: #f57900; /* Orange 2 */
 }
 
+div.document .more {
+    margin-top: 15px;
+}
