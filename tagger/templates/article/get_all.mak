@@ -3,9 +3,13 @@
 
 <%!
     from tagger.lib.render.rst import render_summary
-    from pylons.i18n import lazy_ugettext as l_
-    subtitle = l_('Articles')
 %>
+
+<%def name="title()">
+    ${c.title}
+    ${c.title and category and ' - '}
+    ${category.name[c.lang]}
+</%def>
 
 <ul>
     % for article in articles:

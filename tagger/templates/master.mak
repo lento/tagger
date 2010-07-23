@@ -120,7 +120,7 @@
             <ul>
                 <li class="home"><a href="${tg.url('/')}">${_('home')}</a></li>
                 % for cat in c.categories:
-                <li class="${cat.name[c.lang]}"><a href="${tg.url('/%s/' % cat.name[c.lang])}">${cat.name[c.lang]}</a></li>
+                <li class="${cat.id}"><a href="${tg.url('/%s/' % cat.id)}">${cat.name[c.lang]}</a></li>
                 % endfor
                 <li class="media"><a href="${tg.url('/media')}">${_('media')}</a></li>
                 <li class="links"><a href="${tg.url('/link')}">${_('links')}</a></li>

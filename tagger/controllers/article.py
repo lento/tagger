@@ -54,11 +54,17 @@ class Controller(RestController):
             max_results = int(settings.get('max_results', 0))
         else:
             max_results = int(max_results)
+        lang = getattr(tmpl_context, 'lang', None)
 
         tmpl_context.w_object_title = w_object_title
         query = DBSession.query(Article)
+
         if categoryid:
             query = query.filter_by(category_id=categoryid)
+            category = DBSession.query(Category).get(categoryid)
+        else:
+            category = None
+
         query = query.join(Article.associable).filter_by(published=True)
         query = query.order_by(desc(Article.created))
 
@@ -81,7 +87,7 @@ class Controller(RestController):
                 articles = [obj for obj in articles if set(obj.tags) & (tags)]
 
         return dict(articles=articles, more_results=more_results,
-                                                          recent=find_recent())
+                                      category=category, recent=find_recent())
 
     @expose('json')
     @expose('tagger.templates.article.get_one')
