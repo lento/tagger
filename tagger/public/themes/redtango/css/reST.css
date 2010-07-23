@@ -26,7 +26,8 @@ div.document p {
 }
 
 div.document ul {
-    list-style: disc;
+    list-style: disc inside none;
+    padding-left: 10px;
 }
 
 div.document a {
