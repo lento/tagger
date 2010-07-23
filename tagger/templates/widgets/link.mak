@@ -6,4 +6,8 @@
     link = DBSession.query(Link).get(linkid)
 %>
 
-<a href="${link.uri}" title="${link.description[lang]}">${label or link.uri}</a>
+% if link:
+    <a href="${link.uri}" title="${link.description[lang]}">${label or link.uri}</a>
+% else:
+    <span class="not_found" title="${_('link not found')}">${linkid}</span>
+% endif
