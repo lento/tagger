@@ -79,14 +79,14 @@ class Controller(BaseController):
     @expose('tagger.templates.admin.media')
     def media(self,):
         """Return the list of all media for administration"""
-        media = DBSession.query(Media).all()
+        media = DBSession.query(Media).order_by(desc('created')).all()
         return dict(media=media, path=('admin', 'media'))
 
     @expose('json')
     @expose('tagger.templates.admin.link')
     def link(self):
         """Return the list of all links for administration"""
-        links = DBSession.query(Link).all()
+        links = DBSession.query(Link).order_by(desc('created')).all()
         return dict(links=links, path=('admin', 'links'))
 
     @expose('json')

@@ -24,6 +24,7 @@ from tg import expose, tmpl_context, validate, require, flash, url, redirect
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
+from sqlalchemy import desc
 from tagger.model import DBSession, Link, Language, Setting
 from tagger.model.helpers import tags_from_string
 from tagger.lib.widgets import FormLinkNew, FormLinkEdit, FormLinkDelete
@@ -59,6 +60,7 @@ class Controller(RestController):
         tmpl_context.w_link = w_link
         query = DBSession.query(Link)
         query = query.join(Link.associable).filter_by(published=True)
+        query = query.order_by(desc(Link.created))
 
         tot_results = query.count()
         if max_results:

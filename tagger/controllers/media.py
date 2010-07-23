@@ -27,6 +27,7 @@ from tg.controllers import RestController
 from tg.exceptions import HTTPClientError
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what.predicates import has_permission
+from sqlalchemy import desc
 from tagger.model import DBSession, Media, Language, Setting
 from tagger.model.helpers import tags_from_string
 from tagger.model.utils import make_id
@@ -63,6 +64,7 @@ class Controller(RestController):
         tmpl_context.w_media = w_media
         query = DBSession.query(Media)
         query = query.join(Media.associable).filter_by(published=True)
+        query = query.order_by(desc(Media.created))
 
         tot_results = query.count()
         if max_results:
