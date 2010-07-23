@@ -282,6 +282,7 @@ class Controller(RestController):
 
         for mediadata in media.data:
             DBSession.delete(mediadata)
+        DBSession.delete(media.associable)
         DBSession.delete(media)
         flash('%s %s' % (_('Deleted Media:'), media.id), 'ok')
         return dict(redirect_to=url('/admin/media/'))

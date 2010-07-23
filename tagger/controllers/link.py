@@ -209,6 +209,7 @@ class Controller(RestController):
 
         for linkdata in link.data:
             DBSession.delete(linkdata)
+        DBSession.delete(link.associable)
         DBSession.delete(link)
         flash('%s %s' % (_('Deleted Link:'), link.id), 'ok')
         return dict(redirect_to=url('/admin/link/'))

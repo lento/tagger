@@ -22,7 +22,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import Table, ForeignKey, Column, DDL, UniqueConstraint, desc
+from sqlalchemy import Table, ForeignKey, Column, UniqueConstraint, desc
 from sqlalchemy.types import Unicode, UnicodeText, Integer, DateTime
 from sqlalchemy.types import TIMESTAMP, Boolean, Enum
 from sqlalchemy.orm import relation, backref, synonym
@@ -75,15 +75,6 @@ class Associable(DeclarativeBase):
 
     def __repr__(self):
         return '<Associable: %s (%s)>' % (self.id or 0, self.association_type)
-
-orphaned_associable_trigger = (
-    #'DROP TRIGGER IF EXISTS delete_orphaned_%(table)s_associable; '
-    'CREATE TRIGGER delete_orphaned_%(table)s_associable '
-    'AFTER DELETE '
-    'ON %(table)s '
-    'FOR EACH ROW '
-        'DELETE FROM associables WHERE id=old.associable_id; '
-    )
 
 
 # Association table for the many-to-many relationship associables-tags.
@@ -405,8 +396,6 @@ class Article(DeclarativeBase):
     def __repr__(self):
         return '<Article: %s>' % self.id
 
-DDL(orphaned_associable_trigger).execute_at('after-create', Article.__table__)
-
 
 ############################################################
 # Page
@@ -562,7 +551,6 @@ class Link(DeclarativeBase):
     def __repr__(self):
         return '<Link: %s %s>' % (self.id, self.uri)
 
-DDL(orphaned_associable_trigger).execute_at('after-create', Link.__table__)
 add_language_props(Link, 
     [('name', lambda obj, lang, val: LinkData(val, lang, None)),
      ('description', lambda obj, lang, val: LinkData(obj.name[''], lang, val)),
@@ -671,7 +659,6 @@ class Media(DeclarativeBase):
     def __repr__(self):
         return '<Media: %s %s %s>' % (self.id, self.type, self.uri)
 
-DDL(orphaned_associable_trigger).execute_at('after-create', Media.__table__)
 add_language_props(Media, 
     [('name', lambda obj, lang, val: MediaData(val, lang, None)),
      ('description', lambda obj, lang, val: MediaData(obj.name[''],lang, val)),

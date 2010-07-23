@@ -220,6 +220,7 @@ class Controller(RestController):
             for pagedata in page.data:
                 DBSession.delete(pagedata)
             DBSession.delete(page)
+        DBSession.delete(article.associable)
         DBSession.delete(article)
         flash('%s %s' % (_('Deleted Article:'), article.id), 'ok')
         return dict(redirect_to=url('/admin/article/'))
