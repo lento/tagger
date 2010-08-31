@@ -485,7 +485,7 @@ table td.icon {
  ****************************************/
 #content_with_side {
 	margin: 0 260px 20px 0;
-	min-height: 300px;
+	min-height: 400px;
 }
 
 #content_without_side {
@@ -512,6 +512,27 @@ table td.icon {
 	-webkit-border-radius: 4px;
 }
 
+
+/****************************************
+ * Tag Cloud
+ ****************************************/
+#tag_cloud {
+/*    border: 1px solid black;*/
+    position: absolute;
+    width: 640px;
+    height: 400px;
+    top: 190px;
+    left: 80px;
+}
+
+.tag {
+    -moz-border-radius: 5px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
 
 
 /****************************************
