@@ -20,6 +20,7 @@
 #
 """Page controller"""
 
+import datetime
 from tg import expose, tmpl_context, validate, require, flash, url
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
@@ -107,12 +108,24 @@ class Controller(RestController):
 
         fargs = dict(pageid=page.id, id_=page.id,
                      languageid=page.language_id,
+                     version=page.version,
+                     modified=page.data[0].modified,
                      name=page.name[''],
                      text=page.text[''],
                     )
 
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
-        fcargs = dict(languageid=dict(options=languages))
+
+        data = page.data[0]
+        DataHistory = data.__history_mapper__.class_
+        query = DBSession.query(DataHistory).filter_by(id=data.id)
+        versions = range(query.count(), 0, -1)
+        versions.insert(0, int(data.version))
+
+        fcargs = dict(
+            languageid=dict(options=languages),
+            version=dict(options=versions),
+            )
         return dict(title='%s %s' % (_('Edit page:'), page.string_id),
                                                 args=fargs, child_args=fcargs)
 
@@ -120,7 +133,8 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
-    def put(self, pageid, name, languageid, text=None):
+    def put(self, pageid, name, languageid, text=None, version=None,
+                                                                modified=None):
         """Edit a page"""
         lang = tmpl_context.lang or DBSession.query(Language).first().id
         page = DBSession.query(Page).get(pageid)
@@ -135,6 +149,7 @@ class Controller(RestController):
             modified = True
 
         if modified:
+            page.data[languageid].modified = datetime.datetime.now()
             flash('%s %s' % (_('Updated Page:'), page.string_id), 'ok')
         else:
             flash('%s %s' % (_('Page is unchanged:'), page.string_id), 'info')
@@ -175,15 +190,47 @@ class Controller(RestController):
         return dict(redirect_to=url('/article/%s/edit' % page.article.id))
 
     # REST-like methods
-    _custom_actions = ['translation']
+    _custom_actions = ['translation', 'version']
     
     @expose('json')
     def translation(self, pageid, value):
         """Return a page translation"""
         page = DBSession.query(Page).get(pageid)
+        data = page.data[value]
+
+        if data:
+            DataHistory = data.__history_mapper__.class_
+            query = DBSession.query(DataHistory).filter_by(id=data.id)
+            versions = range(query.count(), 0, -1)
+            versions.insert(0, int(data.version))
+            modified = data.modified
+        else:
+            versions = [0]
+            modified = _('(new translation)')
 
         name = page.name[value]
         text = page.text[value]
         
-        return dict(name=name, text=text)
+        return dict(version=versions, modified=modified, name=name, text=text)
+
+    @expose('json')
+    def version(self, pageid, languageid, value):
+        """Return a page version"""
+        page = DBSession.query(Page).get(pageid)
+        data = page.data[languageid]
+
+        if int(value) == data.version:
+            modified = data.modified
+            name = data.name
+            text = data.text
+        else:
+            DataHistory = data.__history_mapper__.class_
+            query = DBSession.query(DataHistory).filter_by(id=data.id)
+            ver = query.filter_by(version=value).one()
+
+            modified = ver.modified
+            name = ver.name
+            text = ver.text
+
+        return dict(modified=modified, name=name, text=text)
 

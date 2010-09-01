@@ -20,6 +20,7 @@
 #
 """Link controller"""
 
+import datetime
 from tg import expose, tmpl_context, validate, require, flash, url, redirect
 from tg.controllers import RestController
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
@@ -140,13 +141,25 @@ class Controller(RestController):
         fargs = dict(linkid=link.id, id_=link.id,
                      uri=link.uri,
                      languageid=link.language_id,
+                     version=link.version,
+                     modified=link.data[0].modified,
                      name=link.name[''],
                      description=link.description[''],
                      tagids=tags,
                     )
 
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
-        fcargs = dict(languageid=dict(options=languages))
+
+        data = link.data[0]
+        DataHistory = data.__history_mapper__.class_
+        query = DBSession.query(DataHistory).filter_by(id=data.id)
+        versions = range(query.count(), 0, -1)
+        versions.insert(0, int(data.version))
+
+        fcargs = dict(
+            languageid=dict(options=languages),
+            version=dict(options=versions),
+            )
         return dict(title='%s %s' % (_('Edit link:'), link.id),
                                                 args=fargs, child_args=fcargs)
 
@@ -154,7 +167,8 @@ class Controller(RestController):
     @expose('json')
     @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
-    def put(self, linkid, name, uri, languageid, description=None, tagids=None):
+    def put(self, linkid, name, uri, languageid, description=None, tagids=None,
+                                                version=None, modified=None):
         """Edit a link"""
         lang = tmpl_context.lang or DBSession.query(Language).first().id
         link = DBSession.query(Link).get(linkid.decode())
@@ -178,6 +192,7 @@ class Controller(RestController):
             modified = True
 
         if modified:
+            link.data[languageid].modified = datetime.datetime.now()
             flash('%s %s' % (_('Updated Link:'), link.id), 'ok')
         else:
             flash('%s %s' % (_('Link is unchanged:'), link.id), 'info')
@@ -217,17 +232,50 @@ class Controller(RestController):
         return dict(redirect_to=url('/admin/link/'))
 
     # REST-like methods
-    _custom_actions = ['translation', 'publish', 'unpublish']
+    _custom_actions = ['translation', 'version', 'publish', 'unpublish']
     
     @expose('json')
     def translation(self, linkid, value):
         """Return a link translation"""
         link = DBSession.query(Link).get(linkid.decode())
+        data = link.data[value]
+
+        if data:
+            DataHistory = data.__history_mapper__.class_
+            query = DBSession.query(DataHistory).filter_by(id=data.id)
+            versions = range(query.count(), 0, -1)
+            versions.insert(0, int(data.version))
+            modified = data.modified
+        else:
+            versions = [0]
+            modified = _('(new translation)')
 
         name = link.name[value]
         description = link.description[value]
         
-        return dict(name=name, description=description)
+        return dict(version=versions, modified=modified, name=name,
+                                                        description=description)
+
+    @expose('json')
+    def version(self, linkid, languageid, value):
+        """Return a link version"""
+        link = DBSession.query(Link).get(linkid)
+        data = link.data[languageid]
+
+        if int(value) == data.version:
+            modified = data.modified
+            name = data.name
+            description = data.description
+        else:
+            DataHistory = data.__history_mapper__.class_
+            query = DBSession.query(DataHistory).filter_by(id=data.id)
+            ver = query.filter_by(version=value).one()
+
+            modified = ver.modified
+            name = ver.name
+            description = ver.description
+
+        return dict(modified=modified, name=name, description=description)
 
     @require(has_permission('manage'))
     @expose()

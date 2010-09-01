@@ -27,6 +27,7 @@ from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tw.api import Widget, WidgetsList
 from tw.forms import TableForm, TextField, TextArea, HiddenField, Spacer
 from tw.forms import SingleSelectField, FileField, PasswordField
+from tw.forms import  LabelHiddenField
 from tw.dynforms import CascadingSingleSelectField, HidingTableForm
 from tw.dynforms import HidingSingleSelectField
 from tw.forms.validators import All, Regex, NotEmpty, UnicodeString, MaxLength
@@ -206,6 +207,11 @@ class FormPageEdit(TableForm):
         languageid = CascadingSingleSelectField(label_text=l_('Language'),
                         size=SF_SIZE, cascadeurl=tg.url('/page/translation'),
                         extra=['pageid'])
+        version = CascadingSingleSelectField(label_text=l_('Version'),
+                        size=SF_SIZE, cascadeurl=tg.url('/page/version'),
+                        extra=['pageid', 'languageid'])
+        modified = TextField(disabled=True, label_text=l_('Last Modified'),
+                                                                validator=None)
         name = TextField(label_text=l_('Name'), size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         text = TextArea(label_text=l_('Text'), rows=TA_ROWS, cols=TA_COLS)
@@ -246,6 +252,11 @@ class FormLinkEdit(TableForm):
         languageid = CascadingSingleSelectField(label_text=l_('Language'),
                         size=SF_SIZE, cascadeurl=tg.url('/link/translation'),
                         extra=['linkid'])
+        version = CascadingSingleSelectField(label_text=l_('Version'),
+                        size=SF_SIZE, cascadeurl=tg.url('/link/version'),
+                        extra=['linkid', 'languageid'])
+        modified = TextField(disabled=True, label_text=l_('Last Modified'),
+                                                                validator=None)
         name = TextField(label_text=l_('Name'), size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         description = TextArea(label_text=l_('Description'), rows=TA_ROWS,
@@ -304,6 +315,11 @@ class FormMediaEdit(TableForm):
         languageid = CascadingSingleSelectField(label_text=l_('Language'),
                         size=SF_SIZE, cascadeurl=tg.url('/media/translation'),
                         extra=['mediaid'])
+        version = CascadingSingleSelectField(label_text=l_('Version'),
+                        size=SF_SIZE, cascadeurl=tg.url('/media/version'),
+                        extra=['mediaid', 'languageid'])
+        modified = TextField(disabled=True, label_text=l_('Last Modified'),
+                                                                validator=None)
         name = TextField(label_text=l_('Name'), size=TF_SIZE,
                         validator=All(UnicodeString, NotEmpty, MaxLength(255)))
         description = TextArea(label_text=l_('Description'), rows=TA_ROWS,

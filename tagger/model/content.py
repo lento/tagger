@@ -29,9 +29,11 @@ from sqlalchemy.orm import relation, backref, synonym
 from sqlalchemy.ext.declarative import synonym_for
 
 from tagger.model import DeclarativeBase, metadata
-from tagger.model.utils import mapped_scalar, dict_property, add_language_props
+from tagger.model.utils import mapped_scalar, dict_property
+from tagger.model.utils import add_language_props, add_version_props
 from tagger.model.auth import User
 from tagger.model.utils import make_id
+from tagger.model.history_meta import VersionedMeta
 
 import logging
 log = logging.getLogger(__name__)
@@ -445,10 +447,12 @@ add_language_props(Page,
     [('name', lambda obj, lang, val: PageData(val, lang, None)),
      ('text', lambda obj, lang, val: PageData(obj.name[''], lang, val)),
     ])
+add_version_props(Page)
 
 
 class PageData(DeclarativeBase):
     """Language specific Page data"""
+    __metaclass__ = VersionedMeta
     __tablename__ = 'pages_data'
     __table_args__ = (UniqueConstraint('parent_id', 'language_id'),
                       {})
@@ -555,10 +559,12 @@ add_language_props(Link,
     [('name', lambda obj, lang, val: LinkData(val, lang, None)),
      ('description', lambda obj, lang, val: LinkData(obj.name[''], lang, val)),
     ])
+add_version_props(Link)
 
 
 class LinkData(DeclarativeBase):
     """Language specific Link data"""
+    __metaclass__ = VersionedMeta
     __tablename__ = 'links_data'
     __table_args__ = (UniqueConstraint('parent_id', 'language_id'),
                       {})
@@ -663,10 +669,12 @@ add_language_props(Media,
     [('name', lambda obj, lang, val: MediaData(val, lang, None)),
      ('description', lambda obj, lang, val: MediaData(obj.name[''],lang, val)),
     ])
+add_version_props(Media)
 
 
 class MediaData(DeclarativeBase):
     """Language specific Media data"""
+    __metaclass__ = VersionedMeta
     __tablename__ = 'media_data'
     __table_args__ = (UniqueConstraint('parent_id', 'language_id'),
                       {})

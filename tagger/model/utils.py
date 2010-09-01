@@ -166,6 +166,10 @@ def add_language_props(cls, props=[]):
         super(cls.__class__, cls).__setattr__(
             prop, dict_property(prop_getter(prop), prop_setter(prop, append)))
 
+def add_version_props(cls):
+    """Add language related properties to a class"""
+    cls.version = property(lambda obj: obj.data[0].version)
+
 
 class TriggerRemover(SchemaVisitor):
     """Sqlalchemy SchemaVisitor to traverse the schema and remove

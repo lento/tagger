@@ -20,7 +20,7 @@
 #
 """Media controller"""
 
-import os.path, shutil
+import os.path, shutil, datetime
 from tg import expose, tmpl_context, validate, require, flash, url, redirect
 from tg import app_globals as G
 from tg.controllers import RestController
@@ -182,13 +182,25 @@ class Controller(RestController):
                      mediatype_=media.type,
                      uri=media.uri,
                      languageid=media.language_id,
+                     version=media.version,
+                     modified=media.data[0].modified,
                      name=media.name[''],
                      description=media.description[''],
                      tagids=tags,
                     )
 
         languages = [(l.id, l.name) for l in DBSession.query(Language)]
-        fcargs = dict(languageid=dict(options=languages))
+
+        data = media.data[0]
+        DataHistory = data.__history_mapper__.class_
+        query = DBSession.query(DataHistory).filter_by(id=data.id)
+        versions = range(query.count(), 0, -1)
+        versions.insert(0, int(data.version))
+
+        fcargs = dict(
+            languageid=dict(options=languages),
+            version=dict(options=versions),
+            )
         return dict(title='%s %s' % (_('Edit media:'), media.id),
                                                 args=fargs, child_args=fcargs)
 
@@ -197,7 +209,7 @@ class Controller(RestController):
     @expose('tagger.templates.redirect_parent')
     @validate(f_edit, error_handler=edit)
     def put(self, mediaid, uri, languageid, name, description=None,
-                                                                tagids=None):
+                                    tagids=None, version=None, modified=None):
         """Edit a media"""
         lang = tmpl_context.lang or DBSession.query(Language).first().id
         media = DBSession.query(Media).get(mediaid.decode())
@@ -221,6 +233,7 @@ class Controller(RestController):
             modified = True
 
         if modified:
+            media.data[languageid].modified = datetime.datetime.now()
             flash('%s %s' % (_('Updated Media:'), media.id), 'ok')
         else:
             flash('%s %s' % (_('Media is unchanged:'), media.id), 'info')
@@ -290,17 +303,50 @@ class Controller(RestController):
         return dict(redirect_to=url('/admin/media/'))
 
     # REST-like methods
-    _custom_actions = ['translation', 'publish', 'unpublish']
+    _custom_actions = ['translation', 'version', 'publish', 'unpublish']
     
     @expose('json')
     def translation(self, mediaid, value):
         """Return a media translation"""
         media = DBSession.query(Media).get(mediaid)
+        data = media.data[value]
+
+        if data:
+            DataHistory = data.__history_mapper__.class_
+            query = DBSession.query(DataHistory).filter_by(id=data.id)
+            versions = range(query.count(), 0, -1)
+            versions.insert(0, int(data.version))
+            modified = data.modified
+        else:
+            versions = [0]
+            modified = _('(new translation)')
 
         name = media.name[value]
         description = media.description[value]
         
-        return dict(name=name, description=description)
+        return dict(version=versions, modified=modified, name=name,
+                                                        description=description)
+
+    @expose('json')
+    def version(self, mediaid, languageid, value):
+        """Return a media version"""
+        media = DBSession.query(Media).get(mediaid)
+        data = media.data[languageid]
+
+        if int(value) == data.version:
+            modified = data.modified
+            name = data.name
+            description = data.description
+        else:
+            DataHistory = data.__history_mapper__.class_
+            query = DBSession.query(DataHistory).filter_by(id=data.id)
+            ver = query.filter_by(version=value).one()
+
+            modified = ver.modified
+            name = ver.name
+            description = ver.description
+
+        return dict(modified=modified, name=name, description=description)
 
     @require(has_permission('manage'))
     @expose()
