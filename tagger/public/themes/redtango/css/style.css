@@ -30,7 +30,7 @@ common colors from the tango palette:
 #a40000; / * Scarlet Red 3 * /
 */
 
-@import url(font-face.css); /* fonts */
+/*@import url(font-face.css); / * fonts * /*/
 @import url(reST.css); /* reStructuredText custom style */
 
 
@@ -45,9 +45,10 @@ html {
 body {
     margin: 0 20px;
     padding: 10px 20px;
-    max-width: 1200px;
+    max-width: 1080px;
     margin: 0 auto;
-    font-family: DejaVuSansBook,Verdana,Geneva,'Bitstream Vera Sans','DejaVu Sans',sans-serif;
+/*    font-family: DejaVuSansBook,Verdana,Geneva,'Bitstream Vera Sans','DejaVu Sans',sans-serif;*/
+    font-family: Verdana,Geneva,'DejaVu Sans','Bitstream Vera Sans',sans-serif;
     text-align: left;
 }
 
@@ -231,15 +232,14 @@ table td.icon {
  ****************************************/
 #header {
     position: relative;
-	min-width: 425px;
+	min-width: 520px;
 	margin-bottom: 20px;
-	padding-left: 135px;
 }
 
 #header .logo {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 40px;
+    left: -1px;
     height: 160px;
     width: 160px;
     background-image: url(../images/logo.png);
@@ -304,14 +304,15 @@ table td.icon {
 }
 
 #header .banner {
-	max-width: 1065px;
-	height: 120px;
-	border-radius: 0 10px 10px 0;
-	-moz-border-radius: 0 10px 10px 0;
-	-webkit-border-radius: 0 10px 10px 0;
-    background: linear-gradient(90deg,#a40000,#f57900);
-    background: -moz-linear-gradient(90deg,#a40000,#f57900);
-    background: -webkit-gradient(linear,center bottom,center top,from(#a40000),to(#f57900));
+	max-width: 1080px;
+	height: 180px;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-box-shadow: 2px 2px 16px #555753 inset; /* Aluminium 5 */
+    background: url(../images/banner.jpg), linear-gradient(90deg,#a40000,#f57900);
+    background: url(../images/banner.jpg), -moz-linear-gradient(90deg,#a40000,#f57900);
+    background: url(../images/banner.jpg), -webkit-gradient(linear,center bottom,center top,from(#a40000),to(#f57900));
     overflow: hidden;
 }
 
@@ -327,7 +328,8 @@ table td.icon {
 
 #header .menu_bottom {
     margin-top: 3px;
-    font-family: CartoGothicStdBook,'Century Gothic',Futura,'URW Gothic L',sans-serif;
+/*    font-family: CartoGothicStdBook,'Century Gothic',Futura,'URW Gothic L',sans-serif;*/
+/*    font-family: Constantina,Georgia,'Nimbus Roman No9 L',serif;*/
     font-size: 1.2em;
     color: #babdb6; /* Aluminium 3 */
 }
@@ -397,7 +399,8 @@ table td.icon {
  * Main
  ****************************************/
 #main {
-    min-width: 560px;
+    min-width: 500px;
+    padding-left: 20px;
 }
 
 /****************************************
@@ -408,14 +411,16 @@ table td.icon {
     width: 240px;
 	margin-bottom: 20px;
 	padding-left: 10px;
-    font-family:CartoGothicStdBook, 'Century Gothic',Futura,'URW Gothic L',sans-serif;
-	/*border-left: 1px solid #babdb6; / * Aluminium 3 * /*/
+/*    font-family:CartoGothicStdBook, 'Century Gothic',Futura,'URW Gothic L',sans-serif;*/
+/*    font-family: Constantina,Georgia,'Nimbus Roman No9 L',serif;*/
 	opacity: 0.9;
 }
 
 #side > div {
     padding: 10px;
-	background-color: #eeeeec; /* Aluminium 1 */
+    background: linear-gradient(90deg,#fcfcfc,#eeeeec);
+    background: -moz-linear-gradient(90deg,#fcfcfc,#eeeeec);
+    background: -webkit-linear-gradient(90deg,#fcfcfc,#eeeeec);
 	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
@@ -432,6 +437,7 @@ table td.icon {
 #side h2 {
     margin: 0;
     font-size: medium;
+    font-weight: normal;
     color: #a40000; /* Scarlet Red 3 */
 }
 
@@ -565,14 +571,18 @@ table td.icon {
 .object_title {
 	/*margin-bottom: 20px;*/
 	padding: 10px;
-	background-color: #eeeeec; /* Aluminium 1 */
+    background: linear-gradient(90deg,#fcfcfc,#eeeeec);
+    background: -moz-linear-gradient(90deg,#fcfcfc,#eeeeec);
+    background: -webkit-linear-gradient(90deg,#fcfcfc,#eeeeec);
 	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
+/*    font-family: Constantina,Georgia,'Nimbus Roman No9 L',serif;*/
 }
 
 .object_title h1 {
     color: #a40000; /* Scarlet Red 3 */
+    font-weight: normal;
 	border-bottom: 1px solid #babdb6; /* Aluminium 3 */
 }
 

@@ -20,4 +20,5 @@ deployment_*\.ini
 paster.log
 paster.pid
 tagger/public/themes/local_*
+tagger/public/upload
 

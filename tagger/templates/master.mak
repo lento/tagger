@@ -105,15 +105,17 @@
             </ul>
         </div>
         <div class="banner">
+            <!--
             <%
                 if c.banner_mediaid:
-                    banner_content = c.w_media(mediaid=c.banner_mediaid, width=1065, height=120, lang=c.lang)
+                    banner_content = c.w_media(mediaid=c.banner_mediaid, width=1080, height=180, lang=c.lang)
                 else:
                     banner_content = ' '
                 if c.banner_linkid:
                     banner_content = c.w_link(linkid=c.banner_linkid, label=banner_content, lang=c.lang)
             %>
             ${banner_content | n}
+            -->
         </div>
         ${self.flash_wrapper()}
         <div class="menu_bottom">
