@@ -81,7 +81,15 @@
         });
     </script>
     <div id="header">
-        <div class="logo"></div>
+        <div class="logo">
+            % if c.logo_mediaurl:
+                <script type="text/javascript">
+                    $(function() {
+                        $(".logo").css("background-image", "url('${c.logo_mediaurl}')");
+                    });
+                </script>
+            % endif
+        </div>
         <div class="menu_top">
             <ul>
                 <li class="language_chooser">
@@ -105,17 +113,16 @@
             </ul>
         </div>
         <div class="banner">
-            <!--
-            <%
-                if c.banner_mediaid:
-                    banner_content = c.w_media(mediaid=c.banner_mediaid, width=1080, height=180, lang=c.lang)
-                else:
-                    banner_content = ' '
-                if c.banner_linkid:
-                    banner_content = c.w_link(linkid=c.banner_linkid, label=banner_content, lang=c.lang)
-            %>
-            ${banner_content | n}
-            -->
+            % if c.banner_linkid:
+                ${c.w_link(linkid=c.banner_linkid, label=' ', lang=c.lang) | n}
+            % endif
+            % if c.banner_mediaurl:
+                <script type="text/javascript">
+                    $(function() {
+                        $(".banner").css("background-image", "url('${c.banner_mediaurl}')");
+                    });
+                </script>
+            % endif
         </div>
         ${self.flash_wrapper()}
         <div class="menu_bottom">

@@ -261,10 +261,11 @@ table td.icon {
 
 #header .menu_top li {
     float: right;
-    margin-left: 2px;
     padding: 2px 6px;
     background-color: #73d216; /* Chameleon 2 */
     color: white;
+    border: 2px solid white;
+    border-right-width: 0;
 }
 
 #header .menu_top li:first-child {
@@ -277,11 +278,6 @@ table td.icon {
 	border-radius: 6px 0 0 6px;
 	-moz-border-radius: 6px 0 0 6px;
 	-webkit-border-radius: 6px 0 0 6px;
-}
-
-#header .menu_top .languages {
-    /*position: absolute;*/
-    /*background-color: #73d216;*/ /* Chameleon 2 */
 }
 
 #header .menu_top .current_language {
@@ -310,9 +306,9 @@ table td.icon {
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-moz-box-shadow: 2px 2px 16px #555753 inset; /* Aluminium 5 */
-    background: url(../images/banner.jpg), linear-gradient(90deg,#a40000,#f57900);
-    background: url(../images/banner.jpg), -moz-linear-gradient(90deg,#a40000,#f57900);
-    background: url(../images/banner.jpg), -webkit-gradient(linear,center bottom,center top,from(#a40000),to(#f57900));
+    background: linear-gradient(90deg,#a40000,#f57900);
+    background: -moz-linear-gradient(90deg,#a40000,#f57900);
+    background: -webkit-gradient(linear,center bottom,center top,from(#a40000),to(#f57900));
     overflow: hidden;
 }
 

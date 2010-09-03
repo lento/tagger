@@ -121,7 +121,8 @@ class Controller(BaseController):
             ('cc by-nc-sa', 'CC Attribution Non-Commercial Share Alike'),
             ('cc by-nc-nd', 'CC Attribution Non-Commercial No Derivatives'),
         ]
-        fcargs = dict(v_banner_media=dict(options=media_list),
+        fcargs = dict(v_logo_media=dict(options=media_list),
+                      v_banner_media=dict(options=media_list),
                       v_banner_link=dict(options=link_list),
                       v_theme = dict(options=G.themes),
                       v_cc = dict(options=cc_list),

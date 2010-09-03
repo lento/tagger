@@ -2,12 +2,12 @@
 
 """The base Controller API."""
 
-from tg import TGController, tmpl_context, config, i18n, url
+from tg import TGController, tmpl_context, config, i18n, url, app_globals as G
 from tg.render import render
 from tg import request
 from pylons.i18n import _, ungettext, N_
 from tw.api import WidgetBunch, JSLink
-from tagger.model import DBSession, Language, Category, Setting
+from tagger.model import DBSession, Language, Category, Setting, Media
 from tagger.lib.render import LinkWidget, MediaWidget
 from tagger.lib.widgets import SideArticle, SideMedia, SideLink
 
@@ -100,11 +100,20 @@ class BaseController(TGController):
         # add current url to template context
         tmpl_context.current_url = request.url
 
-        # set banner link and content
+        # set logo
+        l_mediaid = settings.get(u'logo_media', None)
+        l_media = l_mediaid and DBSession.query(Media).get(l_mediaid)
+        l_mediaurl = l_media and url('/%s/%s' % (G.upload_prefix, l_media.uri))
+        tmpl_context.logo_mediaurl = l_mediaurl
+
+        # set banner link and background image
         tmpl_context.w_link = w_link
         tmpl_context.w_media = w_media
-        tmpl_context.banner_mediaid = settings.get(u'banner_media', None)
         tmpl_context.banner_linkid = settings.get(u'banner_link', None)
+        b_mediaid = settings.get(u'banner_media', None)
+        b_media = b_mediaid and DBSession.query(Media).get(b_mediaid)
+        b_mediaurl = b_media and url('/%s/%s' % (G.upload_prefix, b_media.uri))
+        tmpl_context.banner_mediaurl = b_mediaurl
 
         # add Sidebar widgets
         tmpl_context.w_sideobj = w_sideobj

@@ -405,6 +405,9 @@ class FormSettings(TableForm):
 
         spacer1 = Spacer(label_text='')
 
+        n_logo_media = HiddenField(name='name', default='logo_media')
+        v_logo_media = SingleSelectField(label_text=l_('Logo Media'),
+                                                    name='value', size=SF_SIZE)
         n_banner_media = HiddenField(name='name', default='banner_media')
         v_banner_media = SingleSelectField(label_text=l_('Banner Media'),
                                                     name='value', size=SF_SIZE)
