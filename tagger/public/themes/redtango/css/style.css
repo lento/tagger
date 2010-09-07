@@ -272,6 +272,7 @@ table td.icon {
 	border-radius: 0 6px 6px 0;
 	-moz-border-radius: 0 6px 6px 0;
 	-webkit-border-radius: 0 6px 6px 0;
+    border-right-width: 2px;
 }
 
 #header .menu_top li:last-child {
