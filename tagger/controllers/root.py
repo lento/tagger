@@ -55,7 +55,8 @@ class RootController(BaseController):
     @expose('tagger.templates.index')
     def index(self):
         """Handle the front-page."""
-        return dict(path=('home', ''))
+#        return dict(path=('home', ''))
+        redirect('/blog')
 
     @expose('tagger.templates.login')
     def login(self, came_from=url('/')):
