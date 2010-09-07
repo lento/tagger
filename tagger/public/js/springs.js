@@ -32,7 +32,7 @@ springs.P = [];
 springs.DISTMATRIX = [];
 
 /* DOM elements */
-springs.CLASS = 'tag';
+springs.CLASS = 'tagnode';
 springs.SELECTOR = '.' + springs.CLASS;
 springs.ANISPEED = 100;
 springs.ANIEASING = 'linear';
