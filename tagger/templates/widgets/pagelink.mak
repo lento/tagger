@@ -1,17 +1,10 @@
 <%!
     import tg
-    from tagger.model import DBSession, Page
-    from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+    from tagger.model.helpers import get_page
 %>
 
 <%
-    try:
-        if pageid.isdigit():
-            page = DBSession.query(Page).get(pageid)
-        else:
-            page = DBSession.query(Page).filter_by(string_id=pageid).one()
-    except NoResultFound, MultipleResultsFound:
-        page = None
+    page = get_page(pageid)
 %>
 
 % if page:

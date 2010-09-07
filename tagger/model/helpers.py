@@ -20,7 +20,8 @@
 #
 """Helper functions for models"""
 
-from tagger.model import DBSession, Tag, TagData, Language
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from tagger.model import DBSession, Tag, TagData, Language, Page
 
 def tags_from_string(s, create=True, lang=None):
     if lang is None:
@@ -39,4 +40,20 @@ def tags_from_string(s, create=True, lang=None):
             DBSession.add(tag)
         tags.append(tag)
     return tags
+
+def get_page(pageid):
+    """Return a page given its id or its article/string_id path"""
+    try:
+        if isinstance(pageid, int) or pageid.isdigit():
+            page = DBSession.query(Page).get(pageid)
+        elif '/' in pageid:
+            articleid, pageid = pageid.split('/')
+            query = DBSession.query(Page)
+            query = query.filter_by(string_id=pageid, article_id=articleid)
+            page = query.one()
+        else:
+            page = None
+    except NoResultFound, MultipleResultsFound:
+        page = None
+    return page
 
