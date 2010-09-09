@@ -4,32 +4,68 @@
  * Document
  **********************************************************************/
 div.document {
-    font-family:DejaVuSansBook,'Lucida Sans Unicode','Lucida Grande','Lucida Sans','DejaVu Sans Condensed',sans-serif;
-    /*font-family: DejaVuSansBook;*/
+/*    font-family:DejaVuSansBook,'Lucida Sans Unicode','Lucida Grande','Lucida Sans','DejaVu Sans Condensed',sans-serif;*/
+    font-family: Verdana,Geneva,'DejaVu Sans','Bitstream Vera Sans',sans-serif;
 }   
 
+/* titles */
 div.document h1, div.document h2, div.document h3, div.document h4,
 div.document h5, div.document h6 {
-    font-family:CartoGothicStdBook, 'Century Gothic',Futura,'URW Gothic L',sans-serif;
-    letter-spacing:0.04em;
+/*    font-family:CartoGothicStdBook, 'Century Gothic',Futura,'URW Gothic L',sans-serif;*/
+/*    letter-spacing:0.04em;*/
     color: #4e9a06; /* Chameleon 3 */
 }
 
-div.document h1 { font-size: 1.5em; margin: 1.4em 0 0 0}
-div.document .section:first-child h1 { margin: 0 }
-div.document h2 { font-size: 1.17em; }
-div.document h3 { font-size: 1.12em; }
-
-div.document p {
-    margin: 0.5em 0 0 0;
-    font-family: DejaVuSansBook,Verdana,Geneva,'Bitstream Vera Sans','DejaVu Sans',sans-serif;
+div.document h1 {
+    font-size: 1.6em;
+    margin: 2.5em 0 0 0;
 }
 
+div.document .section:first-child h1 {
+    margin: 0;
+}
+
+div.document h2 {
+    font-size: 1.3em;
+    margin: 2.5em 0 0 0;
+}
+
+div.document h1 + .section > h2 {
+    margin-top: 1em;
+}
+
+div.document h3 {
+    font-size: 1.12em;
+    font-weight: normal;
+}
+
+/* paragraphs */
+div.document p {
+    margin: 0.5em 0 0 0;
+}
+
+/* lists */
 div.document ul {
-    list-style: disc inside none;
+    list-style: disc outside none;
     padding-left: 10px;
 }
 
+/* definition lists */
+div.document dt {
+    font-weight: bold;
+    font-style: italic;
+}
+
+/* block quotes */
+div.document blockquote {
+    margin: 0 30px;
+}
+
+div.document div.line-block {
+    margin: 0 0 10px 0;
+}
+
+/* links */
 div.document a {
     color: #3465a4; /* Sky Blue 2 */
 }
@@ -42,6 +78,37 @@ div.document .not_found {
     color: #f57900; /* Orange 2 */
 }
 
+/* "more" comment */
 div.document .more {
     margin-top: 15px;
 }
+
+/* admonitions */
+div.document div.admonition, div.document div.attention, div.document div.caution, div.document div.danger, div.document div.error,
+div.document div.hint, div.document div.important, div.document div.note, div.document div.tip, div.document div.warning  {
+    margin: 0.5em 0;
+    border: 1px solid #4e9a06; /* Chameleon 3 */
+    padding: 1em;
+    background-color: #f6f6f4; /* Aluminium 0 */
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    box-shadow: 4px 4px 10px #555753; /* Aluminium 5 */
+    -moz-box-shadow: 4px 4px 10px #555753; /* Aluminium 5 */
+    -webkit-box-shadow: 4px 4px 10px #555753; /* Aluminium 5 */
+}
+
+p.admonition-title {
+    font-size: 1.17em;
+    font-weight: normal;
+    font-style: italic;
+    color: #4e9a06; /* Chameleon 3 */
+}
+
+div.admonition table {
+    margin: 0 ! important;
+}
+
+div.admonition tr {
+    background-color: inherit ! important;
+}
+
