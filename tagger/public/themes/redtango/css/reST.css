@@ -6,7 +6,7 @@
 div.document {
 /*    font-family:DejaVuSansBook,'Lucida Sans Unicode','Lucida Grande','Lucida Sans','DejaVu Sans Condensed',sans-serif;*/
     font-family: Verdana,Geneva,'DejaVu Sans','Bitstream Vera Sans',sans-serif;
-}   
+}
 
 /* titles */
 div.document h1, div.document h2, div.document h3, div.document h4,
@@ -14,6 +14,12 @@ div.document h5, div.document h6 {
 /*    font-family:CartoGothicStdBook, 'Century Gothic',Futura,'URW Gothic L',sans-serif;*/
 /*    letter-spacing:0.04em;*/
     color: #4e9a06; /* Chameleon 3 */
+}
+
+div.document h1.title {
+    font-size: 2em;
+    margin: 0.5em 0 3.5em 0;
+    text-align: left;
 }
 
 div.document h1 {
