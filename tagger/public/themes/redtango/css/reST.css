@@ -4,26 +4,24 @@
  * Document
  **********************************************************************/
 div.document {
-/*    font-family:DejaVuSansBook,'Lucida Sans Unicode','Lucida Grande','Lucida Sans','DejaVu Sans Condensed',sans-serif;*/
-    font-family: Verdana,Geneva,'DejaVu Sans','Bitstream Vera Sans',sans-serif;
+    font-family: 'DejaVu Sans','Bitstream Vera Sans',Verdana,sans-serif;
+    font-size: 11pt;
 }
 
 /* titles */
 div.document h1, div.document h2, div.document h3, div.document h4,
 div.document h5, div.document h6 {
-/*    font-family:CartoGothicStdBook, 'Century Gothic',Futura,'URW Gothic L',sans-serif;*/
-/*    letter-spacing:0.04em;*/
     color: #4e9a06; /* Chameleon 3 */
 }
 
 div.document h1.title {
-    font-size: 2em;
+    font-size: 1.8em;
     margin: 0.5em 0 3.5em 0;
     text-align: left;
 }
 
 div.document h1 {
-    font-size: 1.6em;
+    font-size: 1.4em;
     margin: 2.5em 0 0 0;
 }
 
@@ -32,7 +30,7 @@ div.document .section:first-child h1 {
 }
 
 div.document h2 {
-    font-size: 1.3em;
+    font-size: 1.2em;
     margin: 2.5em 0 0 0;
 }
 
@@ -104,7 +102,6 @@ div.document div.hint, div.document div.important, div.document div.note, div.do
 }
 
 p.admonition-title {
-    font-size: 1.17em;
     font-weight: normal;
     font-style: italic;
     color: #4e9a06; /* Chameleon 3 */
