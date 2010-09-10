@@ -9,10 +9,10 @@ except ImportError:
 setup(
     name='tagger',
     version='0.1',
-    description='A content aggregator',
+    description='A personal website and blog management system',
     author='Lorenzo Pierfederici',
     author_email='lpierfederici@gmail.com',
-    #url='',
+    url='http://lorenzopierfederici.net/software/tagger',
     install_requires=[
         "TurboGears2 >= 2.1b2",
         "Babel >=0.9.4",
